@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/features-*.R C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/backend-*.R)"
+      "Bash(ls C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/features-*.R C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/backend-*.R)",
+      "Bash(wc:*)",
+      "Bash(grep -v \"^R$\\\\|^tests$\\\\|^vignettes$\\\\|^man$\\\\|^data\")"
     ]
   }
 }
