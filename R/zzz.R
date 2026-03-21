@@ -31,4 +31,6 @@
   .onLoad_lightgbm()
   .onLoad_random_forest()
   .onLoad_elastic_net()
+  # DL backends (Round 11)
+  .onLoad_nbeats()
 }
