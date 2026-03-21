@@ -44,6 +44,8 @@ head(s_fft$as_tibble())
 Other features: 
 \code{\link{milt_step_calendar}()},
 \code{\link{milt_step_lag}()},
-\code{\link{milt_step_rolling}()}
+\code{\link{milt_step_rolling}()},
+\code{\link{milt_step_scale}()},
+\code{\link{milt_step_unscale}()}
 }
 \concept{features}

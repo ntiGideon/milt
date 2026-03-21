@@ -61,8 +61,12 @@ as_tibble(bt)
 \code{\link[=milt_model]{milt_model()}}, \code{\link[=milt_fit]{milt_fit()}}, \code{\link[=milt_forecast]{milt_forecast()}}, \code{\link[=milt_accuracy]{milt_accuracy()}}
 
 Other model: 
+\code{\link{milt_compare}()},
+\code{\link{milt_cv}()},
+\code{\link{milt_ensemble}()},
 \code{\link{milt_fit}()},
 \code{\link{milt_forecast}()},
+\code{\link{milt_local_model}()},
 \code{\link{milt_model}()},
 \code{\link{milt_predict}()},
 \code{\link{milt_refit}()},

@@ -31,7 +31,11 @@ m <- milt_model("naive") |> milt_fit(s)
 
 Other model: 
 \code{\link{milt_backtest}()},
+\code{\link{milt_compare}()},
+\code{\link{milt_cv}()},
+\code{\link{milt_ensemble}()},
 \code{\link{milt_forecast}()},
+\code{\link{milt_local_model}()},
 \code{\link{milt_model}()},
 \code{\link{milt_predict}()},
 \code{\link{milt_refit}()},

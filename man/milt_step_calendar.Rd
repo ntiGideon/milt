@@ -38,6 +38,8 @@ head(s_cal$as_tibble())
 Other features: 
 \code{\link{milt_step_fourier}()},
 \code{\link{milt_step_lag}()},
-\code{\link{milt_step_rolling}()}
+\code{\link{milt_step_rolling}()},
+\code{\link{milt_step_scale}()},
+\code{\link{milt_step_unscale}()}
 }
 \concept{features}
