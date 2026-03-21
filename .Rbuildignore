@@ -1,0 +1,11 @@
+^renv$
+^renv\.lock$
+^.*\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^data-raw$
+^_pkgdown\.yml$
+^docs$
+^\.github$
+^milt-project-requirements\.txt$
+^CLAUDE\.md$

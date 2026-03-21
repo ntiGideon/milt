@@ -1,0 +1,61 @@
+Package: milt
+Title: Modern Integrated Library for Timeseries
+Version: 0.1.0
+Authors@R: person("Gideon", "Nti Boateng",
+                   email = "gidiboateng200@gmail.com",
+                   role = c("aut", "cre"))
+Description: A unified framework for time series forecasting, anomaly
+    detection, classification, and analysis in R. Provides a consistent API
+    across classical statistical models, machine learning, and deep learning
+    approaches. Includes backtesting, pipeline construction, multi-series
+    support, and model explainability.
+License: MIT + file LICENSE
+URL: https://github.com/ntiGideon/milt
+BugReports: https://github.com/ntiGideon/milt/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+LazyData: true
+Depends: R (>= 4.1.0)
+Imports:
+    R6 (>= 2.5.0),
+    rlang (>= 1.1.0),
+    cli (>= 3.6.0),
+    glue (>= 1.6.0),
+    vctrs (>= 0.6.0),
+    tibble (>= 3.2.0),
+    dplyr (>= 1.1.0),
+    tidyr (>= 1.3.0),
+    lubridate (>= 1.9.0),
+    tsibble (>= 1.1.0),
+    ggplot2 (>= 3.4.0),
+    data.table (>= 1.14.0)
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    forecast (>= 8.21),
+    fable (>= 0.3.0),
+    fabletools (>= 0.3.0),
+    feasts (>= 0.3.0),
+    prophet,
+    xgboost,
+    lightgbm,
+    ranger,
+    glmnet,
+    e1071,
+    torch (>= 0.11.0),
+    reticulate,
+    furrr,
+    future,
+    arrow,
+    isotree,
+    dbscan,
+    changepoint,
+    CausalImpact,
+    shiny,
+    plumber,
+    pkgdown,
+    covr
+Config/testthat/edition: 3
+VignetteBuilder: knitr

@@ -1,0 +1,1246 @@
+================================================================================
+PROJECT REQUIREMENTS: MILT — Modern Integrated Library for Timeseries
+================================================================================
+Language: R
+Package Type: CRAN-ready R package
+License: MIT
+Minimum R Version: 4.1.0 (for native pipe |> support)
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1. PROJECT OVERVIEW
+2. ARCHITECTURE & DESIGN PRINCIPLES
+3. PACKAGE STRUCTURE
+4. PHASE 1: FOUNDATION (Build First)
+5. PHASE 2: ML & EVALUATION
+6. PHASE 3: DEEP LEARNING
+7. PHASE 4: ADVANCED FEATURES
+8. PHASE 5: ECOSYSTEM & SCALE
+9. PHASE 6: POLISH & COMMUNITY
+10. CODING STANDARDS & CONVENTIONS
+11. TESTING REQUIREMENTS
+12. DOCUMENTATION REQUIREMENTS
+13. CI/CD & INFRASTRUCTURE
+14. DEPENDENCY MANAGEMENT
+15. PERFORMANCE REQUIREMENTS
+16. CRAN COMPLIANCE RULES
+17. API REFERENCE (COMPLETE FUNCTION LIST)
+18. BUILD ORDER (EXACT SEQUENCE)
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+
+WHAT IS MILT?
+MILT is a unified, production-grade R package for time series analysis,
+forecasting, anomaly detection, and classification. It fills the gap that
+Python's Darts, sktime, and tslearn occupy — but natively in R with a
+tidyverse-friendly API.
+
+CORE VALUE PROPOSITION:
+- One consistent API for ALL time series models (classical, ML, deep learning)
+- Every model follows: milt_model() |> milt_fit() |> milt_forecast()
+- Anomaly detection, clustering, classification — not just forecasting
+- Pipeline engine for reproducible, deployable workflows
+- Tidyverse-native: works with |>, ggplot2, tibbles
+
+TARGET USERS:
+- R data scientists doing time series work
+- Teams frustrated by fragmented R time series ecosystem
+- Python Darts/sktime users who prefer or need to work in R
+
+PACKAGE NAME: milt
+FUNCTION PREFIX: milt_
+CLASS PREFIX: Milt (e.g., MiltSeries, MiltModel, MiltForecast)
+BACKRONYM: Modern Integrated Library for Timeseries
+
+================================================================================
+2. ARCHITECTURE & DESIGN PRINCIPLES
+================================================================================
+
+ARCHITECTURE LAYERS:
+┌─────────────────────────────────────────────────────────┐
+│ Layer 1: USER-FACING API (S3 generics + exported fns)   │
+│ milt_series() | milt_model() | milt_forecast()          │
+│ milt_detect() | milt_explain() | milt_pipeline()        │
+├─────────────────────────────────────────────────────────┤
+│ Layer 2: CORE ENGINE (R6 classes, internal logic)       │
+│ MiltSeries | ModelRegistry | BacktestEngine             │
+│ PipelineEngine | MetricEngine | TunerEngine             │
+├─────────────────────────────────────────────────────────┤
+│ Layer 3: MODEL BACKENDS (isolated adapters)             │
+│ Classical: forecast, fable, stats                       │
+│ ML: tidymodels, xgboost, lightgbm, ranger               │
+│ DL: torch for R, reticulate fallback                    │
+├─────────────────────────────────────────────────────────┤
+│ Layer 4: DATA LAYER                                     │
+│ tsibble integration | arrow/parquet | data.table         │
+│ multi-series | covariates | missing data handling        │
+└─────────────────────────────────────────────────────────┘
+
+DESIGN PRINCIPLES (Follow these strictly):
+
+P1 — CONSISTENCY ABOVE ALL:
+    Every model, detector, classifier, and clusterer follows the same
+    interface pattern. No exceptions. Users learn one API and it works
+    for everything.
+
+P2 — PIPE-FRIENDLY:
+    Every user-facing function takes data/object as the FIRST argument
+    and returns an object that can be piped forward. Support both |> and
+    magrittr %>%.
+
+P3 — FAIL LOUDLY AND HELPFULLY:
+    Use cli package for all user-facing messages. Errors must tell the
+    user WHAT went wrong and HOW to fix it. Never fail silently.
+    Example: "x `series` has 3 gaps. Use `milt_fill_gaps()` before fitting."
+
+P4 — LAZY DEPENDENCY LOADING:
+    Heavy dependencies (torch, reticulate, prophet, lightgbm) go in
+    Suggests and are loaded on demand with check_installed() from rlang.
+    Core functionality must work with only Imports dependencies.
+
+P5 — S3 OUTSIDE, R6 INSIDE:
+    Users interact with S3 generics (print, plot, summary, format).
+    Internal state management uses R6 classes.
+    Users should NEVER need to call $methods directly.
+
+P6 — TIDY DATA IN, TIDY DATA OUT:
+    Accept tibbles, data.frames, tsibbles, ts, xts, zoo objects.
+    Return tibbles or MiltSeries objects (which print nicely).
+    Forecasts return tidy long-format data.
+
+P7 — MODULAR BACKENDS:
+    Each model backend is an isolated file. Adding a new model should
+    require creating ONE file and registering it. No changes to core.
+
+P8 — DOCUMENTATION IS NOT OPTIONAL:
+    Every exported function has roxygen2 docs with: description,
+    all params documented, return value, at least one example,
+    cross-references (@seealso). No function ships without docs.
+
+================================================================================
+3. PACKAGE STRUCTURE
+================================================================================
+
+Build the following directory structure:
+
+milt/
+├── DESCRIPTION
+├── NAMESPACE
+├── LICENSE
+├── LICENSE.md
+├── README.md
+├── .Rbuildignore
+├── .gitignore
+├── R/
+│   ├── milt-package.R              # Package-level docs, imports, .onLoad
+│   ├── utils.R                     # Internal utilities, validation helpers
+│   ├── utils-checks.R              # Input validation functions
+│   ├── utils-cli.R                 # CLI messaging helpers (info, warn, error)
+│   ├── utils-conversions.R         # Type conversion helpers
+│   │
+│   ├── # ── CORE DATA CLASSES ──
+│   ├── MiltSeries.R                # R6 class + S3 methods for time series object
+│   ├── MiltForecast.R              # R6 class + S3 methods for forecast results
+│   ├── MiltAnomalies.R             # R6 class + S3 methods for anomaly results
+│   │
+│   ├── # ── SERIES OPERATIONS ──
+│   ├── series-create.R             # milt_series() constructor
+│   ├── series-manipulate.R         # milt_split, milt_window, milt_resample
+│   ├── series-fill.R               # milt_fill_gaps()
+│   ├── series-covariates.R         # milt_add_covariates()
+│   ├── series-diagnostics.R        # milt_diagnose()
+│   ├── series-plot.R               # plot.MiltSeries, autoplot methods
+│   │
+│   ├── # ── MODEL FRAMEWORK ──
+│   ├── model-registry.R            # Internal model registration system
+│   ├── model-interface.R           # milt_model(), milt_fit(), milt_forecast()
+│   ├── model-predict.R             # milt_predict(), milt_residuals()
+│   ├── model-ensemble.R            # milt_ensemble()
+│   │
+│   ├── # ── CLASSICAL MODEL BACKENDS ──
+│   ├── backend-arima.R             # Auto-ARIMA wrapper (forecast pkg)
+│   ├── backend-ets.R               # ETS wrapper (forecast pkg)
+│   ├── backend-theta.R             # Theta method wrapper
+│   ├── backend-stl.R               # STL decomposition wrapper
+│   ├── backend-tbats.R             # TBATS/BATS wrapper
+│   ├── backend-prophet.R           # Prophet wrapper
+│   ├── backend-croston.R           # Croston for intermittent demand
+│   ├── backend-naive.R             # Naive, SNaive, Drift baselines
+│   │
+│   ├── # ── ML MODEL BACKENDS ──
+│   ├── backend-xgboost.R           # XGBoost wrapper
+│   ├── backend-lightgbm.R          # LightGBM wrapper
+│   ├── backend-random-forest.R     # Random Forest (ranger) wrapper
+│   ├── backend-elastic-net.R       # Elastic Net (glmnet) wrapper
+│   ├── backend-svm.R               # SVM regression wrapper
+│   ├── backend-knn.R               # KNN regression wrapper
+│   │
+│   ├── # ── DEEP LEARNING BACKENDS ──
+│   ├── backend-nbeats.R            # N-BEATS (torch)
+│   ├── backend-nhits.R             # N-HiTS (torch)
+│   ├── backend-tft.R               # Temporal Fusion Transformer (torch)
+│   ├── backend-deepar.R            # DeepAR (torch)
+│   ├── backend-tcn.R               # Temporal Convolutional Network (torch)
+│   ├── backend-patch-tst.R         # PatchTST (torch)
+│   │
+│   ├── # ── FEATURE ENGINEERING ──
+│   ├── features-lags.R             # Lag feature generation
+│   ├── features-rolling.R          # Rolling statistics
+│   ├── features-fourier.R          # Fourier terms
+│   ├── features-calendar.R         # Calendar features (day of week, holidays)
+│   ├── features-scale.R            # Scaling / normalization
+│   │
+│   ├── # ── EVALUATION ──
+│   ├── metrics.R                   # All metric functions (MASE, RMSSE, etc.)
+│   ├── backtest.R                  # milt_backtest()
+│   ├── compare.R                   # milt_compare()
+│   ├── crossval.R                  # milt_cv()
+│   │
+│   ├── # ── ANOMALY DETECTION ──
+│   ├── detect-interface.R          # milt_detector(), milt_detect()
+│   ├── detect-stl.R                # STL-based anomaly detection
+│   ├── detect-iqr.R                # IQR-based detection
+│   ├── detect-gesd.R               # GESD detection
+│   ├── detect-grubbs.R             # Grubbs test
+│   ├── detect-iforest.R            # Isolation Forest
+│   ├── detect-lof.R                # Local Outlier Factor
+│   ├── detect-autoencoder.R        # Autoencoder-based (torch)
+│   ├── detect-ensemble.R           # Ensemble anomaly detection
+│   │
+│   ├── # ── CHANGEPOINT DETECTION ──
+│   ├── changepoint.R               # milt_changepoints()
+│   │
+│   ├── # ── CLUSTERING ──
+│   ├── cluster.R                   # milt_cluster()
+│   │
+│   ├── # ── CLASSIFICATION ──
+│   ├── classify.R                  # milt_classifier()
+│   │
+│   ├── # ── PIPELINE ──
+│   ├── pipeline.R                  # milt_pipeline(), milt_step_*()
+│   │
+│   ├── # ── EXPLAINABILITY ──
+│   ├── explain.R                   # milt_explain()
+│   │
+│   ├── # ── REPORTING ──
+│   ├── eda.R                       # milt_eda()
+│   ├── report.R                    # milt_report()
+│   │
+│   ├── # ── DEPLOYMENT ──
+│   ├── save-load.R                 # milt_save(), milt_load()
+│   ├── serve.R                     # milt_serve() — Plumber API
+│   ├── dashboard.R                 # milt_dashboard() — Shiny template
+│   │
+│   └── zzz.R                       # .onLoad, .onAttach, startup messages
+│
+├── tests/
+│   ├── testthat.R
+│   └── testthat/
+│       ├── test-MiltSeries.R
+│       ├── test-series-create.R
+│       ├── test-series-manipulate.R
+│       ├── test-model-interface.R
+│       ├── test-backend-arima.R
+│       ├── test-backend-ets.R
+│       ├── test-backend-xgboost.R
+│       ├── test-metrics.R
+│       ├── test-backtest.R
+│       ├── test-detect-interface.R
+│       ├── test-pipeline.R
+│       └── ... (one test file per R source file)
+│
+├── man/                            # Auto-generated by roxygen2
+├── vignettes/
+│   ├── milt-getting-started.Rmd
+│   ├── milt-forecasting.Rmd
+│   ├── milt-anomaly-detection.Rmd
+│   ├── milt-pipelines.Rmd
+│   ├── milt-deep-learning.Rmd
+│   ├── milt-multi-series.Rmd
+│   └── milt-deployment.Rmd
+│
+├── inst/
+│   ├── CITATION
+│   └── extdata/                    # Sample datasets
+│       ├── air_passengers.csv
+│       └── retail_sales.csv
+│
+├── data/                           # Lazy-loaded package datasets
+│   └── (generated by usethis::use_data())
+│
+├── data-raw/                       # Scripts to prepare package datasets
+│   └── prepare_datasets.R
+│
+└── _pkgdown.yml                    # pkgdown site configuration
+
+================================================================================
+4. PHASE 1: FOUNDATION — BUILD THIS FIRST
+================================================================================
+
+GOAL: Establish the core data structure, 5 classical models, basic plotting,
+      and metrics. This phase must be rock-solid before anything else.
+
+STEP 1.1 — Package Skeleton
+─────────────────────────────
+Create these files first:
+  - DESCRIPTION (see spec below)
+  - NAMESPACE (generated by roxygen2, but set up devtools workflow)
+  - .Rbuildignore
+  - .gitignore
+  - R/milt-package.R
+  - R/zzz.R
+
+DESCRIPTION file must contain:
+```
+Package: milt
+Title: Modern Integrated Library for Timeseries
+Version: 0.1.0
+Authors@R: person("YOUR_NAME", "YOUR_SURNAME", 
+                   email = "your@email.com",
+                   role = c("aut", "cre"))
+Description: A unified framework for time series forecasting, anomaly 
+    detection, classification, and analysis in R. Provides a consistent API
+    across classical statistical models, machine learning, and deep learning
+    approaches. Includes backtesting, pipeline construction, multi-series
+    support, and model explainability.
+License: MIT + file LICENSE
+URL: https://github.com/YOUR_USERNAME/milt
+BugReports: https://github.com/YOUR_USERNAME/milt/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+LazyData: true
+Depends: R (>= 4.1.0)
+Imports:
+    R6 (>= 2.5.0),
+    rlang (>= 1.1.0),
+    cli (>= 3.6.0),
+    glue (>= 1.6.0),
+    vctrs (>= 0.6.0),
+    tibble (>= 3.2.0),
+    dplyr (>= 1.1.0),
+    tidyr (>= 1.3.0),
+    lubridate (>= 1.9.0),
+    tsibble (>= 1.1.0),
+    ggplot2 (>= 3.4.0),
+    data.table (>= 1.14.0)
+Suggests:
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown,
+    forecast (>= 8.21),
+    fable (>= 0.3.0),
+    fabletools (>= 0.3.0),
+    feasts (>= 0.3.0),
+    prophet,
+    xgboost,
+    lightgbm,
+    ranger,
+    glmnet,
+    e1071,
+    torch (>= 0.11.0),
+    reticulate,
+    furrr,
+    future,
+    arrow,
+    isotree,
+    dbscan,
+    changepoint,
+    CausalImpact,
+    shiny,
+    plumber,
+    pkgdown,
+    covr
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+```
+
+STEP 1.2 — Utility Functions
+─────────────────────────────
+File: R/utils.R
+  - `%||%` operator (null default)
+  - `is_scalar_character()`, `is_scalar_numeric()`, `is_scalar_logical()`
+  - `assert_milt_series()` — validate MiltSeries input
+  - `assert_positive_integer()` — validate horizon, lags, etc.
+
+File: R/utils-checks.R
+  - `check_installed_backend(pkg, model_name)` — checks if a Suggests
+    package is available, gives helpful error if not.
+    Example: check_installed_backend("forecast", "auto_arima") should
+    produce: "The `forecast` package is required for the 'auto_arima' model.
+    Install it with: install.packages('forecast')"
+  - `check_series_has_no_gaps(series)` — error if gaps exist
+  - `check_series_has_enough_data(series, min_obs)` — error if too short
+  - `check_covariates_aligned(series, covariates)` — validate covariate alignment
+
+File: R/utils-cli.R
+  - `milt_info(msg)` — cli::cli_inform with milt prefix
+  - `milt_warn(msg)` — cli::cli_warn with milt prefix
+  - `milt_abort(msg)` — cli::cli_abort with milt prefix
+  - All messages use cli formatting: {.var x}, {.fn milt_fit}, {.val 12}
+
+File: R/utils-conversions.R
+  - `as_milt_series()` — internal generic to convert various types
+  - Methods for: ts, xts, zoo, tsibble, data.frame, tibble
+  - `milt_to_ts()`, `milt_to_tsibble()`, `milt_to_tibble()` — export converters
+
+STEP 1.3 — MiltSeries Class
+─────────────────────────────
+File: R/MiltSeries.R
+
+This is the MOST IMPORTANT class. Everything depends on it. Build it carefully.
+
+R6 Class: MiltSeriesR6
+  Private fields:
+    - .data          # tibble with time column + value column(s)
+    - .time_col      # character: name of time column
+    - .value_cols    # character vector: names of value columns
+    - .group_col     # character or NULL: name of grouping column (multi-series)
+    - .frequency     # numeric or character: detected or specified frequency
+    - .static_covs   # tibble or NULL: static covariates per group
+    - .past_covs     # tibble or NULL: past-observed covariates
+    - .future_covs   # tibble or NULL: future-known covariates
+    - .metadata      # list: arbitrary user metadata
+
+  Public methods:
+    - initialize(data, time_col, value_cols, group_col, frequency)
+    - n_timesteps()       # number of time points
+    - n_components()      # number of value columns
+    - n_series()          # number of groups (1 if univariate)
+    - start_time()        # first timestamp
+    - end_time()          # last timestamp
+    - freq()              # frequency
+    - is_univariate()     # TRUE if single value column
+    - is_multivariate()   # TRUE if multiple value columns
+    - is_multi_series()   # TRUE if group_col is set
+    - has_gaps()          # TRUE if missing time steps exist
+    - gaps()              # tibble of gap locations
+    - values()            # extract values as matrix or vector
+    - times()             # extract time column as vector
+    - as_tibble()         # convert to tibble
+    - as_tsibble()        # convert to tsibble
+    - as_ts()             # convert to ts object (univariate only)
+    - clone_with(data)    # create new MiltSeries with same metadata but new data
+
+S3 methods to register:
+    - print.MiltSeries     — clean summary output showing dimensions,
+                             frequency, time range, preview of data
+    - summary.MiltSeries   — descriptive statistics per value column
+    - plot.MiltSeries      — ggplot2 line plot, faceted if multi-series
+    - autoplot.MiltSeries  — same as plot, for ggplot2 compatibility
+    - as.data.frame.MiltSeries
+    - as_tibble.MiltSeries
+    - `[.MiltSeries`       — subsetting by time index
+    - length.MiltSeries    — returns n_timesteps
+    - dim.MiltSeries       — returns c(n_timesteps, n_components)
+    - head.MiltSeries / tail.MiltSeries
+
+CRITICAL: The print method must be informative and clean:
+```
+# A MiltSeries: 144 x 1 [monthly]
+# Time range: 1949 Jan — 1960 Dec
+# Components: passengers
+# Gaps: none
+# A tibble: 144 x 2
+  time       passengers
+  <date>          <dbl>
+1 1949-01-01        112
+2 1949-02-01        118
+3 1949-03-01        132
+# ... with 141 more rows
+```
+
+File: R/series-create.R
+  - `milt_series()` — the main constructor. Must handle:
+    - milt_series(AirPassengers)                    # from ts object
+    - milt_series(xts_obj)                          # from xts
+    - milt_series(tsibble_obj)                      # from tsibble
+    - milt_series(df, time_col = "date",
+                  value_cols = "sales")             # from data.frame
+    - milt_series(df, time_col = "date",
+                  value_cols = c("sales", "traffic"),
+                  group_col = "store_id")           # multi-series
+    - milt_series(vector, frequency = 12,
+                  start = c(1949, 1))               # from numeric vector
+    Use method dispatch internally. Auto-detect frequency when possible.
+
+STEP 1.4 — Series Manipulation
+─────────────────────────────────
+File: R/series-manipulate.R
+  - `milt_split(series, ratio)` — train/test split by ratio (0.8 = 80% train)
+    Returns: list(train = MiltSeries, test = MiltSeries)
+  - `milt_split_at(series, time)` — split at specific time point
+  - `milt_window(series, start, end)` — subset by time range
+  - `milt_resample(series, period, agg_fn)` — change frequency
+    Example: milt_resample(series, "monthly", sum)
+  - `milt_head(series, n)` / `milt_tail(series, n)` — first/last n observations
+  - `milt_concat(...)` — concatenate series in time
+
+File: R/series-fill.R
+  - `milt_fill_gaps(series, method)` — fill missing time steps
+    Methods: "linear", "spline", "locf" (last obs carried forward),
+             "nocb" (next obs carried backward), "mean", "zero"
+    Must first identify gaps, insert rows, then fill values.
+
+File: R/series-covariates.R
+  - `milt_add_covariates(series, covariates, type)` 
+    type is one of: "past", "future", "static"
+    Validates time alignment for past/future covariates.
+
+STEP 1.5 — Series Diagnostics
+───────────────────────────────
+File: R/series-diagnostics.R
+  - `milt_diagnose(series)` — returns a diagnostic report:
+    - Stationarity test (ADF, KPSS)
+    - Seasonality detection (strength of seasonality)
+    - Gap detection
+    - Outlier detection (basic IQR)
+    - Trend detection
+    - Recommended transformations
+    Returns a MiltDiagnosis object with print/summary/plot methods.
+
+STEP 1.6 — Plotting
+─────────────────────
+File: R/series-plot.R
+  - `plot.MiltSeries(x, ...)` — main plot method
+    - Single series: line plot with ggplot2
+    - Multi-series: faceted line plots
+    - Multivariate: multiple lines colored by component
+  - `autoplot.MiltSeries(object, ...)` — ggplot2 autoplot method
+  - `plot.MiltForecast(x, ...)` — forecast plot with prediction intervals
+  - `plot.MiltAnomalies(x, ...)` — series plot with anomalies highlighted
+
+  All plots must:
+    - Use ggplot2 with a clean, minimal theme
+    - Be customizable (users can add + ggplot2 layers)
+    - Use colorblind-friendly palettes
+    - Have sensible axis labels and titles
+
+STEP 1.7 — Metrics Engine
+───────────────────────────
+File: R/metrics.R
+
+Implement ALL of these metric functions:
+
+Point forecast metrics:
+  - `milt_mae(actual, predicted)`      # Mean Absolute Error
+  - `milt_mse(actual, predicted)`      # Mean Squared Error
+  - `milt_rmse(actual, predicted)`     # Root Mean Squared Error
+  - `milt_mape(actual, predicted)`     # Mean Absolute Percentage Error
+  - `milt_smape(actual, predicted)`    # Symmetric MAPE
+  - `milt_mase(actual, predicted, training_series, season)`  # Mean Absolute Scaled Error
+  - `milt_rmsse(actual, predicted, training_series, season)` # Root Mean Squared Scaled Error
+  - `milt_mrae(actual, predicted, benchmark)` # Mean Relative Absolute Error
+  - `milt_r_squared(actual, predicted)`
+
+Probabilistic forecast metrics:
+  - `milt_crps(actual, forecast_dist)`     # Continuous Ranked Probability Score
+  - `milt_coverage(actual, lower, upper)`  # Prediction interval coverage
+  - `milt_pinball(actual, quantiles, taus)` # Pinball loss (quantile score)
+  - `milt_winkler(actual, lower, upper, alpha)` # Winkler score
+
+Convenience wrapper:
+  - `milt_accuracy(forecast, test_series, metrics = "auto")`
+    Returns a tibble with all relevant metrics computed.
+    "auto" selects metrics based on whether forecast is point or probabilistic.
+
+STEP 1.8 — Model Framework
+────────────────────────────
+File: R/model-registry.R
+  Internal model registration system. Each backend registers itself.
+
+  - `.milt_model_registry` — internal environment storing registered models
+  - `register_milt_model(name, class, description, supports)` — called by backends
+  - `list_milt_models()` — returns tibble of available models
+  - `get_milt_model_class(name)` — retrieves the R6 class for a model
+
+File: R/model-interface.R
+  - `milt_model(name, ...)` — initialize a model by name
+    Example: milt_model("auto_arima")
+    Example: milt_model("xgboost", lags = 12, max_depth = 6)
+    Returns: an unfitted MiltModel object
+
+  - `milt_fit(model, series, ...)` — fit a model to a MiltSeries
+    Returns: the fitted MiltModel (mutated in place via R6, but also returned
+             for pipe compatibility)
+
+  - `milt_forecast(model, horizon, ...)` — generate forecasts
+    Arguments:
+      horizon: integer, number of steps ahead
+      num_samples: integer or NULL, for probabilistic forecasts
+      future_covariates: MiltSeries or NULL
+    Returns: MiltForecast object
+
+  - `milt_refit(model, series)` — refit on new data without re-tuning
+
+MiltModel base R6 class:
+  Private fields:
+    - .name              # model name string
+    - .params            # list of hyperparameters
+    - .fitted            # logical: has the model been fitted?
+    - .training_series   # MiltSeries used for training
+    - .backend_model     # the actual model object from the backend package
+    - .fit_time          # time taken to fit (difftime)
+
+  Public methods (to be overridden by backends):
+    - initialize(...)
+    - fit(series)
+    - forecast(horizon, ...)
+    - predict(series)      # in-sample predictions
+    - residuals()
+    - is_fitted()
+    - get_params()
+    - summary()
+
+File: R/MiltForecast.R
+  R6 class + S3 methods for forecast results.
+
+  Private fields:
+    - .point_forecast    # tibble: time + predicted values
+    - .lower             # list of tibbles by confidence level
+    - .upper             # list of tibbles by confidence level
+    - .samples           # matrix of sample paths (if probabilistic)
+    - .model_name        # which model produced this
+    - .horizon           # forecast horizon
+    - .training_end      # end time of training data
+
+  S3 methods:
+    - print.MiltForecast — show point forecasts and intervals
+    - plot.MiltForecast  — ggplot2 forecast fan chart
+    - as_tibble.MiltForecast — tidy long-format output
+    - summary.MiltForecast
+
+STEP 1.9 — Classical Model Backends
+─────────────────────────────────────
+Each backend file follows the EXACT same pattern:
+
+```r
+# FILE: R/backend-arima.R
+
+MiltAutoArima <- R6::R6Class(
+  "MiltAutoArima",
+  inherit = MiltModelBase,
+  
+  public = list(
+    initialize = function(...) {
+      # Store hyperparameters
+      super$initialize(name = "auto_arima", ...)
+    },
+    
+    fit = function(series) {
+      check_installed_backend("forecast", "auto_arima")
+      # Convert MiltSeries to appropriate format
+      # Fit using forecast::auto.arima()
+      # Store result in private$.backend_model
+      private$.fitted <- TRUE
+      invisible(self)
+    },
+    
+    forecast = function(horizon, level = c(80, 95), ...) {
+      # Use forecast::forecast() on the backend model
+      # Convert result to MiltForecast object
+      # Return MiltForecast
+    },
+    
+    predict = function(series = NULL) {
+      # Return in-sample fitted values as MiltSeries
+    },
+    
+    residuals = function() {
+      # Return residuals as MiltSeries
+    }
+  )
+)
+
+# Register at load time
+.onLoad_auto_arima <- function() {
+  register_milt_model(
+    name = "auto_arima",
+    class = MiltAutoArima,
+    description = "Automatic ARIMA model selection via forecast::auto.arima()",
+    supports = list(
+      multivariate = FALSE,
+      probabilistic = TRUE,
+      covariates = TRUE,
+      multi_series = FALSE
+    )
+  )
+}
+```
+
+IMPLEMENT THESE BACKENDS IN PHASE 1:
+  1. backend-naive.R     — Naive, Seasonal Naive, Drift (NO external deps)
+  2. backend-arima.R     — Auto-ARIMA (forecast package)
+  3. backend-ets.R       — ETS (forecast package)
+  4. backend-theta.R     — Theta method (forecast package)
+  5. backend-stl.R       — STL + ETS/ARIMA decomposition (forecast + stats)
+
+Each backend MUST:
+  - Inherit from MiltModelBase
+  - Implement fit(), forecast(), predict(), residuals()
+  - Register itself via register_milt_model()
+  - Check for backend package installation with helpful errors
+  - Handle both univariate and multivariate where appropriate
+  - Return MiltForecast objects from forecast()
+
+STEP 1.10 — Basic Backtesting
+───────────────────────────────
+File: R/backtest.R
+  - `milt_backtest(model, series, horizon, stride, method, metrics)`
+    method: "expanding" or "sliding"
+    Returns: MiltBacktest object with metrics per fold + summary
+
+STEP 1.11 — Package Data
+──────────────────────────
+File: data-raw/prepare_datasets.R
+  Include 2-3 sample datasets:
+  - `milt_air` — AirPassengers as a MiltSeries-ready tibble
+  - `milt_retail` — multi-series retail sales data (synthetic if needed)
+  - `milt_energy` — hourly energy consumption with covariates
+
+================================================================================
+5. PHASE 2: ML & EVALUATION (Build after Phase 1 is complete and tested)
+================================================================================
+
+STEP 2.1 — Feature Engineering
+  - R/features-lags.R:    milt_step_lag(lags = 1:12)
+  - R/features-rolling.R: milt_step_rolling(windows = c(7, 14, 30), fns = c("mean", "sd"))
+  - R/features-fourier.R: milt_step_fourier(period = 12, K = 4)
+  - R/features-calendar.R: milt_step_calendar() — day of week, month, quarter, holiday
+
+  All feature functions:
+    - Take a MiltSeries and return an augmented MiltSeries
+    - Are invertible where applicable (for scaling)
+    - Store their parameters for re-application on new data
+
+STEP 2.2 — ML Model Backends
+  Same pattern as classical, but with feature engineering built in:
+  - backend-xgboost.R    — XGBoost with auto lag features
+  - backend-lightgbm.R   — LightGBM with auto lag features
+  - backend-random-forest.R — ranger with auto lag features
+  - backend-elastic-net.R — glmnet with auto lag features
+  - backend-svm.R        — e1071 SVM regression
+  - backend-knn.R        — KNN regression
+
+  ML backends must:
+    - Auto-generate features from lags if user doesn't specify
+    - Support covariates (added as extra features)
+    - Support multi-step forecasting (recursive or direct)
+
+STEP 2.3 — Model Comparison
+  File: R/compare.R
+  - `milt_compare(models, series, horizon, metrics, method)`
+    Runs milt_backtest on each model, collects results.
+    Returns: MiltComparison object
+    - print: ranked table of models by metric
+    - plot: faceted metric comparison chart
+
+STEP 2.4 — Ensemble Models
+  File: R/model-ensemble.R
+  - `milt_ensemble(models, method)` — combine fitted models
+    method: "mean", "median", "weighted", "stacking"
+    For stacking: uses cross-validated predictions as meta-features
+    Returns: a MiltModel that can be used like any other model
+
+STEP 2.5 — Cross-Validation
+  File: R/crossval.R
+  - `milt_cv(model, series, folds, horizon)` 
+    Time series aware CV (no future data leakage)
+
+STEP 2.6 — Multi-Series Support
+  All model functions must handle multi-series MiltSeries objects:
+  - Option 1: Global model (train on all series at once)
+  - Option 2: Local models (train one model per series, via furrr parallel)
+  - milt_fit() detects multi-series and asks/infers the strategy
+
+================================================================================
+6. PHASE 3: DEEP LEARNING (Build after Phase 2 is complete)
+================================================================================
+
+STRATEGY:
+  Primary: Use `torch` for R (native, no Python dependency)
+  Fallback: Use `reticulate` to call Python Darts for models not yet ported
+
+STEP 3.1 — Torch Infrastructure
+  - R/dl-utils.R: shared torch utilities
+    - MiltDataset: torch dataset class for time series
+    - MiltDataLoader: batched data loading with windowing
+    - Training loop: fit_torch_model() with early stopping, LR scheduling
+    - GPU detection and device management
+
+STEP 3.2 — Deep Learning Backends
+  Each follows the same MiltModel interface:
+  - backend-nbeats.R   — N-BEATS architecture
+  - backend-nhits.R    — N-HiTS architecture
+  - backend-tft.R      — Temporal Fusion Transformer
+  - backend-deepar.R   — DeepAR (probabilistic)
+  - backend-tcn.R      — Temporal Convolutional Network
+  - backend-patch-tst.R — PatchTST
+
+  Each DL backend must:
+    - Accept standard hyperparameters (hidden_size, n_layers, etc.)
+    - Support early stopping and validation splitting
+    - Return probabilistic forecasts (samples-based)
+    - Work on GPU if available, CPU otherwise
+    - Print training progress with cli progress bars
+
+STEP 3.3 — Reticulate Fallback
+  - R/dl-reticulate.R: bridge to Python Darts
+    - For any model not yet implemented in torch-for-R
+    - Auto-setup: check for Python, install darts if needed
+    - Transparent to user: same milt_model() API
+
+================================================================================
+7. PHASE 4: ADVANCED FEATURES
+================================================================================
+
+STEP 4.1 — Anomaly Detection Module
+  File: R/detect-interface.R
+    - `milt_detector(method, ...)` — initialize detector
+    - `milt_detect(detector, series)` — run detection
+    Returns: MiltAnomalies object (series + anomaly labels + scores)
+
+  File: R/MiltAnomalies.R
+    R6 class with:
+    - .series: original series
+    - .is_anomaly: logical vector
+    - .anomaly_score: numeric vector (higher = more anomalous)
+    - .method: which method was used
+    S3: print, plot (highlights anomalies on series plot), as_tibble
+
+  Backends (each in separate file):
+    - detect-stl.R:         STL decomposition + IQR on remainder
+    - detect-iqr.R:         Direct IQR-based detection
+    - detect-gesd.R:        Generalized ESD test
+    - detect-grubbs.R:      Grubbs test
+    - detect-iforest.R:     Isolation Forest (isotree package)
+    - detect-lof.R:         Local Outlier Factor (dbscan package)
+    - detect-autoencoder.R: Autoencoder reconstruction error (torch)
+    - detect-ensemble.R:    Combine multiple detectors (majority vote, weighted)
+
+STEP 4.2 — Changepoint Detection
+  File: R/changepoint.R
+    - `milt_changepoints(series, method, ...)`
+      method: "pelt", "binseg", "amoc" (from changepoint package)
+      Returns: MiltChangepoints with print/plot/as_tibble
+
+STEP 4.3 — Hierarchical Reconciliation
+  File: R/hierarchical.R
+    - `milt_reconcile(forecasts, hierarchy, method)`
+      method: "bottom_up", "top_down", "mint_shrink", "erm"
+      Wraps fable's reconciliation methods
+
+STEP 4.4 — Causal Impact
+  File: R/causal-impact.R
+    - `milt_causal_impact(series, intervention_time, ...)`
+      Wraps Google's CausalImpact package
+      Returns: MiltCausalImpact with print/plot/summary
+
+STEP 4.5 — Explainability
+  File: R/explain.R
+    - `milt_explain(fitted_model, series)` 
+      For ML models: SHAP values, feature importance
+      For DL models: attention weights, gradient-based attribution
+      Returns: MiltExplanation with plot methods:
+        plot_shap(), plot_feature_importance(), plot_attention()
+
+================================================================================
+8. PHASE 5: ECOSYSTEM & SCALE
+================================================================================
+
+STEP 5.1 — Time Series Clustering
+  File: R/cluster.R
+    - `milt_cluster(multi_series, method, k, ...)`
+      method: "dtw_kmeans", "kshape", "kernel", "feature_based"
+      Returns: MiltClusters with print/plot/as_tibble
+      plot: shows series colored by cluster
+
+STEP 5.2 — Time Series Classification
+  File: R/classify.R
+    - `milt_classifier(method, ...)` — initialize classifier
+    - Methods: "rocket", "minirocket", "catch22", "tsforest"
+    - Same fit/predict interface as models
+    Returns: class labels + probabilities
+
+STEP 5.3 — Auto-EDA
+  File: R/eda.R
+    - `milt_eda(series)` — generates interactive EDA
+      Output: prints summary statistics, plots decomposition,
+              ACF/PACF, distribution, and diagnostics
+
+STEP 5.4 — Report Generation
+  File: R/report.R
+    - `milt_report(series, models, output_format)` 
+      output_format: "html", "pdf" (via Quarto/Rmd template)
+      Generates complete analysis report
+
+STEP 5.5 — Deployment
+  File: R/save-load.R
+    - `milt_save(object, path)` — serialize model/pipeline to .milt file
+    - `milt_load(path)` — deserialize
+
+  File: R/serve.R
+    - `milt_serve(model, host, port)` — deploy as Plumber API
+      Auto-generates endpoints: /forecast, /detect, /health
+
+  File: R/dashboard.R
+    - `milt_dashboard(model, series)` — launch Shiny monitoring dashboard
+
+================================================================================
+9. PHASE 6: POLISH & COMMUNITY
+================================================================================
+
+- Performance benchmarking vs Darts/sktime (vignette)
+- 10+ vignettes covering all major features
+- pkgdown site with articles grouped by topic
+- CRAN submission (R CMD check with 0 errors, 0 warnings, 0 notes)
+- NEWS.md with changelog
+- CONTRIBUTING.md
+- CODE_OF_CONDUCT.md
+- GitHub issue templates
+- Conference presentation materials
+
+================================================================================
+10. CODING STANDARDS & CONVENTIONS
+================================================================================
+
+NAMING:
+  - Exported functions: milt_verb_noun() — snake_case, milt_ prefix
+    Examples: milt_series(), milt_fit(), milt_forecast(), milt_detect()
+  - Internal functions: .milt_verb_noun() — dot prefix for truly internal
+  - R6 classes: MiltPascalCase — e.g., MiltSeries, MiltModelBase
+  - S3 classes: MiltSeries (same as R6, used for method dispatch)
+  - Constants: MILT_UPPER_CASE
+  - File names: match the primary function/class they contain
+
+STYLE:
+  - Follow tidyverse style guide (https://style.tidyverse.org/)
+  - Max line length: 80 characters
+  - Use <- for assignment, never =
+  - Use TRUE/FALSE, never T/F
+  - Explicit return() only when returning early; otherwise rely on last expression
+  - Use rlang::.data pronoun in dplyr pipelines to avoid R CMD check notes
+  - Quote all variable names in aes() calls
+
+ERROR HANDLING:
+  - Use rlang::abort() (via milt_abort wrapper) for errors
+  - Use rlang::warn() (via milt_warn wrapper) for warnings
+  - Use rlang::inform() (via milt_info wrapper) for messages
+  - NEVER use stop(), warning(), message() directly
+  - Every error must have a class for programmatic handling:
+    milt_abort("msg", class = "milt_error_invalid_series")
+  - Validate inputs at the TOP of every exported function
+
+DOCUMENTATION:
+  - Every exported function needs complete roxygen2 docs
+  - Include @param for ALL parameters
+  - Include @return describing what is returned
+  - Include @examples with runnable code (use \donttest{} for slow examples)
+  - Include @seealso cross-references to related functions
+  - Include @family tags to group related functions
+  - Use markdown in roxygen2 (enabled in DESCRIPTION)
+
+================================================================================
+11. TESTING REQUIREMENTS
+================================================================================
+
+FRAMEWORK: testthat 3e (third edition)
+
+COVERAGE TARGET: 80%+ line coverage
+
+TESTING RULES:
+  - One test file per R source file (test-{filename}.R)
+  - Every exported function must have tests
+  - Test happy path AND error conditions
+  - Use snapshot tests for print/plot output
+  - Use skip_if_not_installed() for tests requiring Suggests packages
+  - Test with the included package datasets (no external data downloads)
+
+REQUIRED TESTS PER COMPONENT:
+  MiltSeries:
+    - Creation from every supported input type (ts, xts, zoo, tsibble, df, tibble, vector)
+    - Correct frequency detection
+    - Correct handling of multi-series
+    - print/summary/plot don't error
+    - Subsetting works correctly
+    - Conversion methods round-trip correctly
+
+  Models:
+    - Each backend: fit + forecast produces valid MiltForecast
+    - Forecast horizon matches requested horizon
+    - Prediction intervals are valid (lower < point < upper)
+    - Residuals have correct length
+    - Error on unfitted model
+    - Error on wrong input type
+
+  Metrics:
+    - Known-value tests (compute metric by hand, verify)
+    - Edge cases: zero values for MAPE, constant series for MASE
+    - milt_accuracy returns correct shape
+
+  Backtest:
+    - Correct number of folds
+    - No data leakage (training end < test start in every fold)
+    - Expanding vs sliding window behave differently
+
+================================================================================
+12. DOCUMENTATION REQUIREMENTS
+================================================================================
+
+VIGNETTES (in order of priority):
+  1. "Getting Started with milt" — installation, milt_series, first forecast
+  2. "Forecasting with milt" — model zoo, comparison, ensembles
+  3. "Anomaly Detection" — detector API, methods, ensemble detection
+  4. "Building Pipelines" — feature engineering, pipeline construction
+  5. "Deep Learning Models" — torch setup, DL model usage
+  6. "Working with Multiple Series" — multi-series API, parallel processing
+  7. "Deploying Models" — save/load, Plumber API, Shiny dashboard
+
+PKGDOWN SITE:
+  - Landing page with quick example
+  - Reference organized by topic (Data, Models, Evaluation, etc.)
+  - Articles section with all vignettes
+  - Changelog
+
+README.md must contain:
+  - One-sentence description
+  - Installation instructions
+  - Quick example (< 10 lines): create series → fit → forecast → plot
+  - Feature overview with badges
+  - Link to pkgdown site
+
+================================================================================
+13. CI/CD & INFRASTRUCTURE
+================================================================================
+
+GITHUB ACTIONS:
+  - R CMD check on: ubuntu-latest, macOS-latest, windows-latest
+  - R versions: release, devel, oldrel
+  - Code coverage via covr → Codecov
+  - pkgdown site deployment on main branch pushes
+  - Lint check via lintr
+
+FILES:
+  - .github/workflows/R-CMD-check.yaml
+  - .github/workflows/pkgdown.yaml
+  - .github/workflows/test-coverage.yaml
+  - .github/ISSUE_TEMPLATE/bug_report.md
+  - .github/ISSUE_TEMPLATE/feature_request.md
+
+================================================================================
+14. DEPENDENCY MANAGEMENT
+================================================================================
+
+HARD IMPORTS (always available):
+  R6, rlang, cli, glue, vctrs, tibble, dplyr, tidyr,
+  lubridate, tsibble, ggplot2, data.table
+
+SOFT DEPENDENCIES (in Suggests, loaded on demand):
+  - Classical models: forecast, fable, fabletools, feasts, prophet
+  - ML models: xgboost, lightgbm, ranger, glmnet, e1071
+  - Deep learning: torch, reticulate
+  - Anomaly detection: isotree, dbscan
+  - Changepoints: changepoint
+  - Causal: CausalImpact
+  - Parallel: furrr, future
+  - Big data: arrow
+  - Deployment: shiny, plumber
+  - Docs: knitr, rmarkdown, pkgdown
+
+EVERY soft dependency must be checked before use:
+```r
+check_installed_backend <- function(pkg, feature) {
+  rlang::check_installed(
+    pkg,
+    reason = glue::glue("to use the '{feature}' feature in milt.")
+  )
+}
+```
+
+================================================================================
+15. PERFORMANCE REQUIREMENTS
+================================================================================
+
+- milt_series() creation: < 100ms for 1M row data.frame
+- milt_fit() for ARIMA on 1000 obs: < 5 seconds
+- milt_backtest() with 10 folds: < 60 seconds for classical models
+- Multi-series with 100 series: use furrr parallel processing
+- Memory: MiltSeries should add < 20% overhead vs raw tibble
+- Use data.table internally for any operation on > 100K rows
+- Use Rcpp for hot-path computations (DTW distance, rolling stats)
+
+================================================================================
+16. CRAN COMPLIANCE RULES
+================================================================================
+
+Follow these STRICTLY to pass R CMD check with 0 errors, 0 warnings, 0 notes:
+
+- No <<- global assignment
+- No library() or require() calls inside package code
+- Use @importFrom for specific imports, or pkg::fn() syntax
+- No Sys.setenv() or Sys.setlocale() side effects
+- All examples must run in < 5 seconds or use \donttest{}
+- DESCRIPTION: no trailing whitespace, no empty lines at end
+- Package title: Title Case, no period at end
+- Package description: full sentence(s) with period at end
+- No installed.packages() calls (use requireNamespace)
+- Vignettes must build without errors
+- No files > 5MB in inst/
+- Use person() in Authors@R field
+
+================================================================================
+17. API REFERENCE (COMPLETE FUNCTION LIST)
+================================================================================
+
+TIER 1 — Core (Phase 1):
+  milt_series()           # Create MiltSeries from various inputs
+  milt_split()            # Train/test split
+  milt_split_at()         # Split at specific time
+  milt_window()           # Time range subsetting
+  milt_resample()         # Change frequency
+  milt_fill_gaps()        # Handle missing values
+  milt_add_covariates()   # Attach covariates
+  milt_diagnose()         # Series diagnostics
+  milt_model()            # Initialize a model
+  milt_fit()              # Fit model to data
+  milt_forecast()         # Generate forecasts
+  milt_predict()          # In-sample predictions
+  milt_residuals()        # Model residuals
+  milt_accuracy()         # Compute forecast metrics
+  milt_backtest()         # Walk-forward evaluation
+  milt_mae()              # Mean Absolute Error
+  milt_mse()              # Mean Squared Error
+  milt_rmse()             # Root Mean Squared Error
+  milt_mape()             # Mean Absolute Percentage Error
+  milt_smape()            # Symmetric MAPE
+  milt_mase()             # Mean Absolute Scaled Error
+  milt_rmsse()            # Root Mean Squared Scaled Error
+
+TIER 2 — ML & Evaluation (Phase 2):
+  milt_step_lag()         # Lag feature engineering
+  milt_step_rolling()     # Rolling statistics
+  milt_step_fourier()     # Fourier terms
+  milt_step_calendar()    # Calendar features
+  milt_step_scale()       # Scale/normalize
+  milt_compare()          # Multi-model comparison
+  milt_ensemble()         # Model ensembling
+  milt_cv()               # Cross-validation
+
+TIER 3 — Deep Learning (Phase 3):
+  (No new user functions — just new model names in milt_model())
+
+TIER 4 — Advanced (Phase 4):
+  milt_detector()         # Initialize anomaly detector
+  milt_detect()           # Run anomaly detection
+  milt_changepoints()     # Detect changepoints
+  milt_reconcile()        # Hierarchical reconciliation
+  milt_causal_impact()    # Causal impact analysis
+  milt_explain()          # Model explainability
+
+TIER 5 — Ecosystem (Phase 5):
+  milt_cluster()          # Time series clustering
+  milt_classifier()       # Time series classification
+  milt_pipeline()         # Build processing pipeline
+  milt_eda()              # Auto-EDA
+  milt_report()           # Report generation
+  milt_save()             # Serialize model/pipeline
+  milt_load()             # Deserialize model/pipeline
+  milt_serve()            # Deploy as API
+  milt_dashboard()        # Launch monitoring dashboard
+
+================================================================================
+18. BUILD ORDER (EXACT SEQUENCE FOR THE AGENT)
+================================================================================
+
+Follow this order EXACTLY. Do not skip ahead. Each step depends on the
+previous ones being complete and tested.
+
+ROUND 1 — Package Skeleton:
+  1.  Create DESCRIPTION
+  2.  Create NAMESPACE (empty, will be generated)
+  3.  Create LICENSE + LICENSE.md
+  4.  Create .Rbuildignore
+  5.  Create .gitignore
+  6.  Create R/milt-package.R (package docs, global imports)
+  7.  Create R/zzz.R (.onLoad, .onAttach)
+  8.  Create tests/testthat.R
+
+ROUND 2 — Utilities:
+  9.  Create R/utils.R
+  10. Create R/utils-checks.R
+  11. Create R/utils-cli.R
+  12. Create R/utils-conversions.R
+  13. Create tests for all utility functions
+
+ROUND 3 — MiltSeries:
+  14. Create R/MiltSeries.R (R6 class)
+  15. Create R/series-create.R (milt_series constructor)
+  16. Create tests/testthat/test-MiltSeries.R
+  17. Create tests/testthat/test-series-create.R
+  18. Verify: MiltSeries can be created from ts, data.frame, tibble, vector
+
+ROUND 4 — Series Operations:
+  19. Create R/series-manipulate.R
+  20. Create R/series-fill.R
+  21. Create R/series-covariates.R
+  22. Create R/series-diagnostics.R
+  23. Create R/series-plot.R
+  24. Create tests for all series operations
+
+ROUND 5 — Metrics:
+  25. Create R/metrics.R (all metric functions)
+  26. Create tests/testthat/test-metrics.R
+
+ROUND 6 — Model Framework:
+  27. Create R/model-registry.R
+  28. Create R/model-interface.R (MiltModelBase R6 class)
+  29. Create R/MiltForecast.R
+  30. Create tests for model framework
+
+ROUND 7 — First Models:
+  31. Create R/backend-naive.R (Naive, SNaive, Drift)
+  32. Create tests for naive models
+  33. VERIFY END-TO-END: milt_series(AirPassengers) |> ... |> milt_forecast(12)
+  34. Create R/backend-arima.R
+  35. Create R/backend-ets.R
+  36. Create R/backend-theta.R
+  37. Create R/backend-stl.R
+  38. Create tests for each model backend
+
+ROUND 8 — Backtesting:
+  39. Create R/backtest.R
+  40. Create tests for backtesting
+
+ROUND 9 — Documentation & Data:
+  41. Create data-raw/prepare_datasets.R
+  42. Create package datasets
+  43. Create README.md
+  44. Create vignettes/milt-getting-started.Rmd
+  45. Run R CMD check — fix ALL issues
+
+ROUND 10 — Phase 2 onwards:
+  46. Follow Phase 2-6 in the order specified above
+  47. Run R CMD check after EVERY new file added
+  48. Maintain 80%+ test coverage at all times
+
+================================================================================
+END OF PROJECT REQUIREMENTS
+================================================================================
+
+INSTRUCTIONS FOR THE AGENT:
+- Read this entire document before writing any code.
+- Follow the BUILD ORDER in Section 18 exactly.
+- After creating each file, mentally verify it against the design principles
+  in Section 2.
+- When in doubt about an API design choice, prefer consistency with the
+  patterns already established.
+- Every file you create must be complete — no placeholder comments like
+  "TODO: implement later". If a feature isn't ready, don't create the file.
+- Test as you go. Never move to the next Round until the current Round's
+  tests all pass.
+- If you encounter a design conflict, resolve it in favor of the user
+  experience (simpler API > simpler implementation).
+================================================================================
