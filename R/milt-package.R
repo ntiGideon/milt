@@ -10,7 +10,7 @@
 #' @importFrom vctrs vec_assert
 #' @importFrom tibble tibble as_tibble is_tibble
 #' @importFrom dplyr mutate filter select arrange group_by summarise
-#'   left_join bind_rows pull rename
+#'   left_join bind_rows pull rename all_of
 #' @importFrom tidyr pivot_longer pivot_wider fill
 #' @importFrom lubridate is.Date is.POSIXct as_date floor_date ceiling_date
 #'   ymd ymd_hms

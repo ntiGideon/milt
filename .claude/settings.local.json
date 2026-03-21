@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/features-*.R C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/backend-*.R)"
+    ]
+  }
+}

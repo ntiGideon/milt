@@ -20,10 +20,15 @@
 # Called by .onLoad — registers all built-in backends.
 # Add one line here each time a new backend file is created.
 .milt_register_builtins <- function() {
-  # Round 7 backends
+  # Classical backends (Round 7)
   .onLoad_naive()
   .onLoad_arima()
   .onLoad_ets()
   .onLoad_theta()
   .onLoad_stl()
+  # ML backends (Round 10)
+  .onLoad_xgboost()
+  .onLoad_lightgbm()
+  .onLoad_random_forest()
+  .onLoad_elastic_net()
 }

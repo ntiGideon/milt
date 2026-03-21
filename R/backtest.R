@@ -321,19 +321,18 @@ milt_backtest <- function(model,
     train_series <- series$clone_with(train_tbl)
     test_series  <- series$clone_with(test_tbl)
 
-    row <- tibble::tibble(
-      .fold    = k,
-      .train_n = as.integer(train_end - train_start + 1L),
-      .test_n  = as.integer(actual_h)
-    )
-
-    tryCatch({
+    results[[k]] <- tryCatch({
       m <- model$clone()
       m$fit(train_series)
       fct      <- m$forecast(actual_h)
       fct_vals <- fct$as_tibble()$.mean
       act_vals <- test_series$values()
 
+      row <- tibble::tibble(
+        .fold    = k,
+        .train_n = as.integer(train_end - train_start + 1L),
+        .test_n  = as.integer(actual_h)
+      )
       for (met in metrics) {
         row[[paste0(".", met)]] <- switch(met,
           MAE   = milt_mae(act_vals, fct_vals),
@@ -343,13 +342,18 @@ milt_backtest <- function(model,
           SMAPE = milt_smape(act_vals, fct_vals)
         )
       }
+      row
 
     }, error = function(e) {
       milt_warn("Fold {k} failed: {conditionMessage(e)}")
-      for (met in metrics) row[[paste0(".", met)]] <<- NA_real_
+      row <- tibble::tibble(
+        .fold    = k,
+        .train_n = as.integer(train_end - train_start + 1L),
+        .test_n  = as.integer(actual_h)
+      )
+      for (met in metrics) row[[paste0(".", met)]] <- NA_real_
+      row
     })
-
-    results[[k]] <- row
   }
 
   fold_tbl <- do.call(rbind, results)

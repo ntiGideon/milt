@@ -1,0 +1,215 @@
+---
+title: "Getting Started with milt"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with milt}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+```{r setup}
+library(milt)
+```
+
+## Overview
+
+**milt** (Modern Integrated Library for Timeseries) provides a single,
+consistent API for every time series task: forecasting, anomaly detection,
+classification, and clustering. Every model follows the same three-step pipe:
+
+```r
+milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon)
+```
+
+This vignette walks through the core workflow using the built-in
+`AirPassengers` dataset.
+
+---
+
+## 1. Creating a MiltSeries
+
+`milt_series()` accepts virtually any R time series object: a `ts`, a
+`data.frame`, a `tibble`, an `xts`, a `tsibble`, or a plain numeric vector.
+
+```{r create-series}
+# From a base-R ts object
+air <- milt_series(AirPassengers)
+print(air)
+```
+
+You can also build a series from a tibble and control every option:
+
+```{r create-from-tibble, eval = FALSE}
+data(milt_air)
+air2 <- milt_series(
+  milt_air,
+  time_col  = "date",
+  value_cols = "value",
+  frequency = "monthly"
+)
+```
+
+Key accessors on a `MiltSeries`:
+
+```{r accessors}
+air$n_timesteps()   # number of observations
+air$freq()          # detected frequency label
+air$start_time()    # first time index
+air$end_time()      # last time index
+air$values()        # numeric vector of the target variable
+```
+
+---
+
+## 2. Diagnosing a series
+
+`milt_diagnose()` runs a quick statistical battery: trend test, stationarity
+check, seasonality strength, and outlier count.
+
+```{r diagnose}
+dx <- milt_diagnose(air)
+print(dx)
+```
+
+---
+
+## 3. Fitting and forecasting
+
+Use `milt_model()` to select a model by name, `milt_fit()` to train it, and
+`milt_forecast()` to produce point forecasts plus 80% and 95% prediction
+intervals.
+
+```{r fit-forecast}
+fct <- milt_model("naive") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 24)
+
+print(fct)
+```
+
+The result is a `MiltForecast` object. Convert it to a tibble for downstream
+work:
+
+```{r as-tibble}
+head(fct$as_tibble())
+```
+
+Plot the forecast with history:
+
+```{r plot-forecast}
+plot(fct)
+```
+
+### Choosing a model
+
+```{r list-models}
+list_milt_models()
+```
+
+Swap `"naive"` for any registered key.  Models backed by the `forecast`
+package (ETS, ARIMA, Theta, STL) are loaded lazily and only require the
+`forecast` package to be installed.
+
+```{r ets-forecast, eval = requireNamespace("forecast", quietly = TRUE)}
+fct_ets <- milt_model("ets") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 24)
+
+plot(fct_ets)
+```
+
+---
+
+## 4. Evaluating accuracy
+
+Split the series into training and test sets, forecast over the test horizon,
+and compute accuracy metrics:
+
+```{r accuracy}
+spl <- milt_split(air, ratio = 0.8)   # 80 % train, 20 % test
+
+fct_test <- milt_model("naive") |>
+  milt_fit(spl$train) |>
+  milt_forecast(spl$test$n_timesteps())
+
+acc <- milt_accuracy(
+  actual    = spl$test$values(),
+  predicted = fct_test$as_tibble()$.mean
+)
+print(acc)
+```
+
+---
+
+## 5. Walk-forward backtesting
+
+`milt_backtest()` performs time series cross-validation without data leakage.
+Two strategies are supported:
+
+- **expanding** (default) — the training window grows fold by fold.
+- **sliding** — a fixed-size training window advances by `stride` steps.
+
+```{r backtest}
+bt <- milt_backtest(
+  model          = milt_model("naive"),
+  series         = air,
+  horizon        = 12,
+  initial_window = 108L,
+  stride         = 12L,
+  metrics        = c("MAE", "RMSE")
+)
+
+print(bt)
+plot(bt)
+```
+
+Retrieve per-fold results as a tibble:
+
+```{r backtest-tibble}
+as_tibble(bt)
+```
+
+---
+
+## 6. Handling gaps and missing data
+
+```{r fill-gaps, eval = FALSE}
+# Detect and fill gaps with linear interpolation
+air_gapped <- air   # hypothetical series with missing values
+air_filled <- milt_fill_gaps(air_gapped, method = "linear")
+```
+
+Other imputation methods: `"spline"`, `"locf"`, `"nocb"`, `"mean"`, `"zero"`.
+
+---
+
+## 7. Series manipulation
+
+```{r manipulate}
+# Subset to 1955-1960
+air_55 <- milt_window(air,
+                      start = as.Date("1955-01-01"),
+                      end   = as.Date("1960-12-01"))
+air_55$n_timesteps()
+
+# Head / tail
+milt_head(air, 12)$n_timesteps()
+milt_tail(air, 12)$n_timesteps()
+```
+
+---
+
+## Next steps
+
+- See `vignette("milt-backends")` for a complete model catalogue (coming soon).
+- See `vignette("milt-covariates")` for covariate-aware forecasting.
+- Visit <https://github.com/ntiGideon/milt> to follow development or open an issue.
