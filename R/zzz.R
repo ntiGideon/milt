@@ -1,10 +1,12 @@
+# Package-level mutable state — avoids <<- (CRAN compliant)
+.milt_env <- new.env(parent = emptyenv())
+
 .onLoad <- function(libname, pkgname) {
-  # Initialize the model registry environment
+  # Initialise the model registry
   .milt_env$registry <- new.env(parent = emptyenv())
 
-  # Register built-in model backends
-  # These are called after all R files are sourced, so backends are available
-  .onLoad_naive()
+  # Register built-in backends (functions added as backends are implemented)
+  .milt_register_builtins()
 }
 
 .onAttach <- function(libname, pkgname) {
@@ -15,5 +17,13 @@
   )
 }
 
-# Package-level environment for mutable state (avoids <<-)
-.milt_env <- new.env(parent = emptyenv())
+# Called by .onLoad — registers all built-in backends.
+# Add one line here each time a new backend file is created.
+.milt_register_builtins <- function() {
+  # Round 7 backends
+  .onLoad_naive()
+  .onLoad_arima()
+  .onLoad_ets()
+  .onLoad_theta()
+  .onLoad_stl()
+}
