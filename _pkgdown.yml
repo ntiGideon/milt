@@ -54,7 +54,7 @@ reference:
       - milt_to_tibble
       - milt_to_ts
       - milt_to_tsibble
-      - sub-.MiltSeries
+      - "`[.MiltSeries`"
 
   - title: "Models"
     desc: "Train and forecast with time series models"
