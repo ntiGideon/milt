@@ -5,7 +5,7 @@ template:
   bootswatch: flatly
 
 home:
-  title: "milt — Modern Integrated Library for Timeseries"
+  title: "milt - Modern Integrated Library for Timeseries"
   description: >
     A unified R API for time series forecasting, anomaly detection,
     classification, and clustering. Think Python's Darts/sktime, but
@@ -13,7 +13,7 @@ home:
 
 navbar:
   structure:
-    left:  [intro, reference, articles, news]
+    left: [intro, reference, articles, news]
     right: [github]
   components:
     github:
@@ -43,28 +43,48 @@ reference:
     desc: "Create and manipulate MiltSeries objects"
     contents:
       - milt_series
+      - milt_head
+      - milt_tail
       - milt_window
       - milt_split
+      - milt_split_at
       - milt_concat
       - milt_resample
       - milt_fill_gaps
+      - milt_to_tibble
+      - milt_to_ts
+      - milt_to_tsibble
+      - sub-.MiltSeries
 
   - title: "Models"
     desc: "Train and forecast with time series models"
     contents:
+      - list_milt_models
       - milt_model
       - milt_fit
       - milt_forecast
+      - milt_predict
+      - milt_residuals
       - milt_refit
       - milt_backtest
+      - milt_cv
       - milt_compare
       - milt_ensemble
       - milt_local_model
 
   - title: "Feature Engineering"
-    desc: "Build lag, rolling, and calendar features for ML models"
+    desc: "Build lag, rolling, calendar, and pipeline features"
     contents:
       - milt_pipeline
+      - milt_pipeline_fit
+      - milt_pipeline_forecast
+      - milt_pipeline_transform
+      - milt_pipe_step_lag
+      - milt_pipe_step_rolling
+      - milt_pipe_step_fourier
+      - milt_pipe_step_calendar
+      - milt_pipe_step_scale
+      - milt_pipe_model
       - milt_step_lag
       - milt_step_rolling
       - milt_step_fourier
@@ -79,7 +99,7 @@ reference:
       - milt_detect
       - milt_changepoints
 
-  - title: "Multi-Series & Forecasting Hierarchy"
+  - title: "Multi-Series And Hierarchies"
     desc: "Clustering, classification, and reconciliation"
     contents:
       - milt_cluster
@@ -89,9 +109,12 @@ reference:
       - milt_reconcile
 
   - title: "Analysis"
-    desc: "Exploratory data analysis and model explainability"
+    desc: "EDA, diagnostics, explainability, and causal analysis"
     contents:
       - milt_eda
+      - milt_diagnose
+      - milt_plot_acf
+      - milt_plot_decomp
       - milt_explain
       - milt_causal_impact
 
@@ -105,22 +128,59 @@ reference:
       - milt_report
 
   - title: "Deep Learning"
-    desc: "Neural network backends (requires torch / reticulate + Darts)"
+    desc: "Neural network backends and setup helpers"
     contents:
       - milt_setup_darts
+      - milt_torch_device
+
+  - title: "Metrics"
+    desc: "Forecast accuracy and probabilistic scoring metrics"
+    contents:
+      - milt_accuracy
+      - milt_mae
+      - milt_mse
+      - milt_rmse
+      - milt_mape
+      - milt_smape
+      - milt_mase
+      - milt_rmsse
+      - milt_mrae
+      - milt_r_squared
+      - milt_coverage
+      - milt_crps
+      - milt_pinball
+      - milt_winkler
+
+  - title: "Data"
+    desc: "Built-in example datasets"
+    contents:
+      - milt_air
+      - milt_retail
+      - milt_energy
+
+  - title: "Registry And Utilities"
+    desc: "Model registry helpers and other exported utilities"
+    contents:
+      - get_milt_model_class
+      - is_registered_model
+      - register_milt_model
+      - milt_add_covariates
+      - milt_get_covariates
+      - hello
 
   - title: "Classes"
-    desc: "S3 classes returned by milt functions"
+    desc: "Result objects and class constructors"
     contents:
-      - starts_with("MiltSeries")
-      - starts_with("MiltForecast")
-      - starts_with("MiltAnomal")
-      - starts_with("MiltDetector")
-      - starts_with("MiltChangepoint")
-      - starts_with("MiltCluster")
-      - starts_with("MiltClassifier")
-      - starts_with("MiltEDA")
-      - starts_with("MiltExplanation")
-      - starts_with("MiltReconciliation")
-      - starts_with("MiltCausalImpact")
-      - starts_with("MiltScaleStep")
+      - MiltBacktestR6
+      - MiltComparisonR6
+      - MiltForecastR6
+      - MiltModelBase
+      - MiltSeriesR6
+
+  - title: "Methods"
+    desc: "Documented S3 methods for printed, plotted, and summary outputs"
+    contents:
+      - starts_with("as_tibble.")
+      - starts_with("plot.")
+      - starts_with("print.")
+      - starts_with("summary.")
