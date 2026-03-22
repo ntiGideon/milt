@@ -46,7 +46,7 @@ comparison table.
 }
 \examples{
 \donttest{
-s   <- milt_series(AirPassengers)
+s <- milt_series(AirPassengers)
 cmp <- milt_compare(
   models = list(naive = milt_model("naive"), drift = milt_model("drift")),
   series = s, horizon = 12,

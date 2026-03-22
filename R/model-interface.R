@@ -190,6 +190,7 @@ milt_fit <- function(model, series, ...) {
   elapsed <- proc.time()[["elapsed"]] - t0
 
   # Record fit metadata in private fields (R6 reference semantics)
+  model$.__enclos_env__$private$.fitted          <- TRUE
   model$.__enclos_env__$private$.fit_time        <- as.difftime(elapsed, units = "secs")
   model$.__enclos_env__$private$.training_series <- series
 

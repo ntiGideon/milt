@@ -60,16 +60,9 @@ milt_series <- function(x,
   if (!is.null(value_col) && is.null(value_cols)) value_cols <- value_col
 
   # Dispatch to as_milt_series() S3 methods in utils-conversions.R
-  if (is.numeric(x) && is.null(dim(x))) {
-    # Numeric vector path — needs frequency and start
-    as_milt_series.numeric(
-      x,
-      frequency = frequency,
-      start     = start,
-      value_col = value_cols %||% "value",
-      ...
-    )
-  } else if (inherits(x, "tbl_ts")) {
+  # Important: base `ts` objects are also numeric vectors, so the numeric
+  # fallback must come after structured time-series dispatch.
+  if (inherits(x, "tbl_ts")) {
     # tsibble
     as_milt_series.tbl_ts(
       x,
@@ -87,8 +80,17 @@ milt_series <- function(x,
       frequency  = frequency,
       ...
     )
+  } else if (is.numeric(x) && is.null(dim(x)) && !stats::is.ts(x)) {
+    # Plain numeric vector path — needs frequency and start
+    as_milt_series.numeric(
+      x,
+      frequency = frequency,
+      start     = start,
+      value_col = value_cols %||% "value",
+      ...
+    )
   } else {
     # ts, mts, xts, zoo, MiltSeries — dispatch on class
-    as_milt_series(x, value_col = value_cols %||% value_col, ...)
+    as_milt_series(x, value_col = value_cols %||% value_col %||% "value", ...)
   }
 }

@@ -7,6 +7,8 @@
 
 # ── Base detector class ───────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltDetectorBase <- R6::R6Class(
   classname = "MiltDetector",
   cloneable = TRUE,
@@ -23,7 +25,7 @@ MiltDetectorBase <- R6::R6Class(
       private$.params <- list(...)
     },
 
-    #' Run detection on a MiltSeries. Override in each backend.
+    # Run detection on a MiltSeries. Override in each backend.
     detect = function(series, ...) {
       milt_abort(
         "Backend {.cls {class(self)[[1L]]}} must implement {.fn detect}.",
@@ -31,10 +33,10 @@ MiltDetectorBase <- R6::R6Class(
       )
     },
 
-    #' @return The detector name string.
+    # Return the detector name string.
     name = function() private$.name,
 
-    #' @return The hyperparameter list.
+    # Return the detector hyperparameter list.
     get_params = function() private$.params
   )
 )
@@ -60,7 +62,7 @@ print.MiltDetector <- function(x, ...) {
 #' Create an anomaly detector
 #'
 #' Returns an unfitted detector object.  Pass it to [milt_detect()] along
-#' with a [MiltSeries] to run detection.
+#' with a `MiltSeries` to run detection.
 #'
 #' @param name Character. Detector name: `"stl"`, `"iqr"`, `"gesd"`,
 #'   `"grubbs"`, `"iforest"`, `"lof"`, `"autoencoder"`, or `"ensemble"`.
@@ -101,11 +103,11 @@ milt_detector <- function(name, ...) {
 
 #' Detect anomalies in a time series
 #'
-#' Runs the detector's algorithm on `series` and returns a [MiltAnomalies]
+#' Runs the detector's algorithm on `series` and returns a `MiltAnomalies`
 #' object containing binary labels and continuous anomaly scores.
 #'
 #' @param detector A `MiltDetector` created by [milt_detector()].
-#' @param series A [MiltSeries] object (univariate).
+#' @param series A `MiltSeries` object (univariate).
 #' @param ... Additional arguments forwarded to the detector's `detect()`
 #'   method.
 #' @return A `MiltAnomalies` object.

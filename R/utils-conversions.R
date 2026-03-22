@@ -4,14 +4,19 @@
 
 # Dispatches on the class of `x` to build a MiltSeriesR6 object.
 # Called internally by milt_series(); not exported directly.
+#' @keywords internal
 as_milt_series <- function(x, ...) {
   UseMethod("as_milt_series")
 }
 
 # ── as_milt_series methods ────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.MiltSeries <- function(x, ...) x
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.ts <- function(x, value_col = "value", ...) {
   freq <- stats::frequency(x)
   start_year <- stats::start(x)[1L]
@@ -30,6 +35,8 @@ as_milt_series.ts <- function(x, value_col = "value", ...) {
   )
 }
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.mts <- function(x, ...) {
   freq <- stats::frequency(x)
   start_year <- stats::start(x)[1L]
@@ -52,6 +59,8 @@ as_milt_series.mts <- function(x, ...) {
   )
 }
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.xts <- function(x, value_col = NULL, ...) {
   check_installed_backend("xts", "xts input")
   times <- zoo::index(x)
@@ -71,6 +80,8 @@ as_milt_series.xts <- function(x, value_col = NULL, ...) {
   )
 }
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.zoo <- function(x, value_col = NULL, ...) {
   check_installed_backend("zoo", "zoo input")
   times <- zoo::index(x)
@@ -90,6 +101,8 @@ as_milt_series.zoo <- function(x, value_col = NULL, ...) {
   )
 }
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.tbl_ts <- function(x, value_cols = NULL, group_col = NULL, ...) {
   # tbl_ts = tsibble class
   key_vars  <- tsibble::key_vars(x)
@@ -115,6 +128,8 @@ as_milt_series.tbl_ts <- function(x, value_cols = NULL, group_col = NULL, ...) {
   )
 }
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.data.frame <- function(x,
                                        time_col   = NULL,
                                        value_cols = NULL,
@@ -125,8 +140,12 @@ as_milt_series.data.frame <- function(x,
   .build_miltseries_from_tibble(tbl, time_col, value_cols, group_col, frequency)
 }
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.tbl_df <- as_milt_series.data.frame
 
+#' @keywords internal
+#' @exportS3Method
 as_milt_series.numeric <- function(x,
                                     frequency = NULL,
                                     start     = c(1L, 1L),

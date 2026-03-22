@@ -44,7 +44,7 @@ test_that("load: round-trips a MiltSeries", {
 
 test_that("load: round-trips a fitted MiltModel", {
   skip_if_not_installed("forecast")
-  m   <- milt_model("arima") |> milt_fit(air)
+  m   <- milt_model("auto_arima") |> milt_fit(air)
   tmp <- tempfile(fileext = ".milt")
   milt_save(m, tmp)
   m2  <- milt_load(tmp)

@@ -4,6 +4,8 @@
 # Anomaly scores are the isolation forest outlier scores in [0, 1]; higher
 # values indicate more anomalous observations.
 
+#' @keywords internal
+#' @noRd
 MiltDetectorIForest <- R6::R6Class(
   classname = "MiltDetectorIForest",
   inherit   = MiltDetectorBase,

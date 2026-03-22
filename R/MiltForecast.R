@@ -198,12 +198,18 @@ plot.MiltForecast <- function(x, history = 50L, title = NULL, ...) {
   plt_title <- title %||%
     glue::glue("Forecast: {p$.model_name} (h = {p$.horizon})")
 
-  # Start building ggplot
   plt <- ggplot2::ggplot() +
-    ggplot2::labs(x = NULL, y = NULL, title = plt_title) +
-    ggplot2::theme_minimal(base_size = 11)
+    ggplot2::labs(
+      x = NULL,
+      y = NULL,
+      title = plt_title,
+      subtitle = "Actual values and forecast horizon"
+    ) +
+    .milt_plot_theme()
 
   # ── Historical series (if stored) ─────────────────────────────────────────
+  line_parts <- list()
+
   if (!is.null(p$.training_series)) {
     hist_tbl <- p$.training_series$as_tibble()
     hist_tc  <- p$.training_series$.__enclos_env__$private$.time_col
@@ -213,46 +219,86 @@ plot.MiltForecast <- function(x, history = 50L, title = NULL, ...) {
       hist_tbl <- utils::tail(hist_tbl, history)
     }
 
-    plt <- plt +
-      ggplot2::geom_line(
-        data    = hist_tbl,
-        mapping = ggplot2::aes(x = .data[[hist_tc]], y = .data[[hist_vc]]),
-        colour  = "#555555",
-        linewidth = 0.7
-      )
+    line_parts[[length(line_parts) + 1L]] <- tibble::tibble(
+      time = hist_tbl[[hist_tc]],
+      value = hist_tbl[[hist_vc]],
+      series = "Actual"
+    )
   }
 
   # ── Prediction interval ribbons (widest → narrowest = darkest) ────────────
   lvls <- sort(as.numeric(names(p$.lower)), decreasing = TRUE)
-  alpha_steps <- if (length(lvls) > 0L) seq(0.15, 0.35, length.out = length(lvls)) else NULL
+  alpha_steps <- if (length(lvls) > 0L) seq(0.14, 0.28, length.out = length(lvls)) else NULL
 
   for (i in seq_along(lvls)) {
     lvl <- as.character(lvls[[i]])
     ribbon_df <- tibble::tibble(
       time  = p$.lower[[lvl]][["time"]],
       lower = p$.lower[[lvl]][["value"]],
-      upper = p$.upper[[lvl]][["value"]]
+      upper = p$.upper[[lvl]][["value"]],
+      interval = paste0(lvl, "% interval")
     )
     plt <- plt +
       ggplot2::geom_ribbon(
         data    = ribbon_df,
         mapping = ggplot2::aes(x = .data[["time"]],
                                ymin = .data[["lower"]],
-                               ymax = .data[["upper"]]),
-        fill    = "#2166AC",
+                               ymax = .data[["upper"]],
+                               fill = .data[["interval"]]),
         alpha   = alpha_steps[[i]]
       )
   }
 
   # ── Point forecast line ───────────────────────────────────────────────────
+  line_parts[[length(line_parts) + 1L]] <- tibble::tibble(
+    time = tbl[[tc]],
+    value = tbl[[".mean"]],
+    series = "Forecast"
+  )
+  line_tbl <- dplyr::bind_rows(line_parts)
+
   plt <- plt +
     ggplot2::geom_line(
-      data    = tbl,
-      mapping = ggplot2::aes(x = .data[[tc]], y = .data[[".mean"]]),
-      colour  = "#2166AC",
-      linewidth = 0.9,
-      linetype  = "dashed"
+      data = line_tbl,
+      mapping = ggplot2::aes(
+        x = .data[["time"]],
+        y = .data[["value"]],
+        color = .data[["series"]],
+        linetype = .data[["series"]]
+      ),
+      linewidth = 0.95,
+      lineend = "round"
+    ) +
+    ggplot2::scale_color_manual(
+      values = c(Actual = "#1F2933", Forecast = "#1D70A2"),
+      name = NULL
+    ) +
+    ggplot2::scale_linetype_manual(
+      values = c(Actual = "solid", Forecast = "longdash"),
+      name = NULL
     )
+
+  if (length(lvls) > 0L) {
+    fill_vals <- stats::setNames(
+      c("#9ECAE1", "#6BAED6", "#3182BD")[seq_along(lvls)],
+      paste0(as.character(lvls), "% interval")
+    )
+    plt <- plt + ggplot2::scale_fill_manual(values = fill_vals, name = NULL)
+  }
+
+  if (!is.null(p$.training_series)) {
+    last_hist_tbl <- utils::tail(hist_tbl, 1L)
+    plt <- plt +
+      ggplot2::geom_point(
+        data = tibble::tibble(
+          time = last_hist_tbl[[hist_tc]],
+          value = last_hist_tbl[[hist_vc]]
+        ),
+        mapping = ggplot2::aes(x = .data[["time"]], y = .data[["value"]]),
+        color = "#1F2933",
+        size = 2.2
+      )
+  }
 
   print(plt)
   invisible(plt)

@@ -9,8 +9,8 @@
 #' Serialises `object` together with version metadata to `path`.  The file is
 #' a standard RDS file with the `.milt` extension (by convention).
 #'
-#' @param object Any milt object: [MiltSeries], a fitted [MiltModel],
-#'   [MiltForecast], `MiltDetector`, etc.
+#' @param object Any milt object: `MiltSeries`, a fitted `MiltModel`,
+#'   `MiltForecast`, `MiltDetector`, etc.
 #' @param path Character. File path.  The `.milt` extension is appended if
 #'   not already present.
 #' @param compress Logical or character. Compression type passed to

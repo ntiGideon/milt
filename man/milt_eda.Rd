@@ -7,7 +7,7 @@
 milt_eda(series, ...)
 }
 \arguments{
-\item{series}{A \link{MiltSeries} object (univariate).}
+\item{series}{A \code{MiltSeries} object (univariate).}
 
 \item{...}{Additional arguments (unused).}
 }
@@ -16,7 +16,7 @@ A \code{MiltEDA} object.
 }
 \description{
 Computes descriptive statistics, stationarity tests, and seasonality
-metrics for a \link{MiltSeries}.  Results are printed in a structured report.
+metrics for a \code{MiltSeries}. Results are printed in a structured report.
 }
 \examples{
 s <- milt_series(AirPassengers)

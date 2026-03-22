@@ -24,6 +24,7 @@ articles:
   - title: "Get started"
     navbar: ~
     contents:
+      - milt-getting-started
       - milt-forecasting
   - title: "Core workflows"
     navbar: "Core workflows"
@@ -63,8 +64,9 @@ reference:
   - title: "Feature Engineering"
     desc: "Build lag, rolling, and calendar features for ML models"
     contents:
+      - milt_pipeline
       - milt_step_lag
-      - milt_step_roll
+      - milt_step_rolling
       - milt_step_fourier
       - milt_step_calendar
       - milt_step_scale

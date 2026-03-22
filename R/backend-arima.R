@@ -39,6 +39,8 @@
 
 # ── Auto-ARIMA ────────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltAutoArima <- R6::R6Class(
   classname = "MiltAutoArima",
   inherit   = MiltModelBase,

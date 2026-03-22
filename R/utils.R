@@ -72,7 +72,7 @@ assert_non_negative_integer <- function(x, arg = "n") {
   invisible(x)
 }
 
-#' Assert that a value is a number in [0, 1]
+#' Assert that a value is a number in the interval `[0, 1]`
 #'
 #' @param x Value to check.
 #' @param arg Name of the argument (for error messages).
@@ -121,8 +121,8 @@ assert_proportion <- function(x, arg = "ratio") {
   # Map median gap to a named frequency
   if (med_diff < 90) return("secondly")          # < 1.5 min
   if (med_diff < 5400) return("minutely")        # < 1.5 hr
-  if (med_diff < 86400 * 1.5) return("hourly")  # ~1 day
-  if (med_diff < 86400 * 5) return("daily")      # ~1-5 days
+  if (med_diff < 43200) return("hourly")         # < 12 hr
+  if (med_diff < 86400 * 3) return("daily")      # ~1-3 days
   if (med_diff < 86400 * 10) return("weekly")    # ~1 week
   if (med_diff < 86400 * 45) return("monthly")   # ~1 month
   if (med_diff < 86400 * 120) return("quarterly")

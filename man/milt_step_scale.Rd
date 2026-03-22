@@ -7,25 +7,25 @@
 milt_step_scale(series, method = "zscore")
 }
 \arguments{
-\item{series}{A \link{MiltSeries} object.}
+\item{series}{A \code{MiltSeries} object.}
 
 \item{method}{Character. Scaling method:
 \itemize{
 \item \code{"zscore"} (default): subtract mean, divide by SD.
-\item \code{"minmax"}: scale to \verb{[0, 1]}.
+\item \code{"minmax"}: scale to the interval \verb{[0, 1]}.
 \item \code{"robust"}: subtract median, divide by IQR.
 }}
 }
 \value{
 A named list:
 \itemize{
-\item \verb{$series} — the scaled \link{MiltSeries}.
+\item \verb{$series} — the scaled \code{MiltSeries}.
 \item \verb{$step}   — a \code{MiltScaleStep} object for inverting the transform.
 }
 }
 \description{
-Normalises the value column(s) of a \link{MiltSeries} and returns both the
-scaled series and a \link{MiltScaleStep} object that can be used to invert the
+Normalises the value column(s) of a \code{MiltSeries} and returns both the
+scaled series and a \code{MiltScaleStep} object that can be used to invert the
 transformation.
 }
 \examples{

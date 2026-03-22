@@ -6,10 +6,13 @@
 #' @param feature Human-readable feature/model name for the error message.
 #' @noRd
 check_installed_backend <- function(pkg, feature) {
-  rlang::check_installed(
-    pkg,
-    reason = glue::glue("to use the '{feature}' feature in milt.")
-  )
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    milt_abort(
+      "The package {.pkg {pkg}} is required to use the {.val {feature}} feature in milt.",
+      class = "milt_error_missing_package"
+    )
+  }
+  invisible(TRUE)
 }
 
 #' Check that a MiltSeries has no time gaps

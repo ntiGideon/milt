@@ -1,5 +1,17 @@
 # Plotting S3 methods for MiltSeries (and stubs for future result classes)
 
+.milt_plot_theme <- function(base_size = 11) {
+  ggplot2::theme_minimal(base_size = base_size) +
+    ggplot2::theme(
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      plot.title = ggplot2::element_text(face = "bold"),
+      plot.subtitle = ggplot2::element_text(color = "#5B6573"),
+      legend.position = "bottom",
+      legend.title = ggplot2::element_text(face = "bold")
+    )
+}
+
 # ── MiltSeries ────────────────────────────────────────────────────────────────
 
 #' Plot a MiltSeries
@@ -32,23 +44,31 @@ plot.MiltSeries <- function(x,
     names_to  = "component",
     values_to = "value"
   )
+  long$series_type <- "Actual"
 
   plt_title <- title %||% glue::glue("MiltSeries [{x$freq()}]")
+  plt_subtitle <- if (!is.null(gc)) {
+    glue::glue("Grouped by {gc}")
+  } else if (!x$is_univariate()) {
+    "Multiple components"
+  } else {
+    "Observed values"
+  }
 
   plt <- ggplot2::ggplot(
     long,
     ggplot2::aes(
       x     = .data[[tc]],
-      y     = .data[["value"]],
-      color = .data[["component"]]
+      y     = .data[["value"]]
     )
   ) +
-    ggplot2::geom_line(linewidth = 0.7, na.rm = TRUE) +
-    ggplot2::labs(x = NULL, y = NULL, color = NULL, title = plt_title) +
-    ggplot2::theme_minimal(base_size = 11) +
-    ggplot2::theme(
-      legend.position = if (x$is_univariate()) "none" else "bottom"
-    )
+    ggplot2::labs(
+      x = NULL,
+      y = NULL,
+      title = plt_title,
+      subtitle = plt_subtitle
+    ) +
+    .milt_plot_theme()
 
   if (!is.null(gc)) {
     plt <- plt +
@@ -56,7 +76,27 @@ plot.MiltSeries <- function(x,
   }
 
   if (x$is_univariate()) {
-    plt <- plt + ggplot2::scale_color_manual(values = color)
+    plt <- plt +
+      ggplot2::geom_line(
+        ggplot2::aes(
+          color = .data[["series_type"]],
+          linetype = .data[["series_type"]]
+        ),
+        linewidth = 0.9,
+        lineend = "round",
+        na.rm = TRUE
+      ) +
+      ggplot2::scale_color_manual(values = c(Actual = color), name = NULL) +
+      ggplot2::scale_linetype_manual(values = c(Actual = "solid"), name = NULL)
+  } else {
+    plt <- plt +
+      ggplot2::geom_line(
+        ggplot2::aes(color = .data[["component"]]),
+        linewidth = 0.85,
+        lineend = "round",
+        na.rm = TRUE
+      ) +
+      ggplot2::labs(color = "Component")
   }
 
   print(plt)

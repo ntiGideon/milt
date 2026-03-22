@@ -1,8 +1,8 @@
 # Model comparison: MiltComparison R6 + milt_compare()
 
-# ── MiltComparison R6 ─────────────────────────────────────────────────────────
+#
 
-#' @title MiltComparison — results of milt_compare()
+#' @title MiltComparison - results of milt_compare()
 #' @description
 #' Stores per-model backtest results and provides a ranked summary table.
 #' Produced by [milt_compare()]. Use `print()`, `plot()`, or `as_tibble()` to
@@ -14,9 +14,9 @@ MiltComparisonR6 <- R6::R6Class(
   cloneable = FALSE,
 
   private = list(
-    .backtests   = NULL,   # named list of MiltBacktest objects
-    .rank_metric = NULL,   # character: metric used for ranking
-    .summary_tbl = NULL    # cached ranked tibble
+    .backtests = NULL,
+    .rank_metric = NULL,
+    .summary_tbl = NULL
   ),
 
   public = list(
@@ -26,11 +26,11 @@ MiltComparisonR6 <- R6::R6Class(
     #' @param rank_metric Character scalar: metric column (without leading `.`)
     #'   used to rank models.
     initialize = function(backtests, rank_metric) {
-      private$.backtests   <- backtests
+      private$.backtests <- backtests
       private$.rank_metric <- rank_metric
     },
 
-    # ── Accessors ──────────────────────────────────────────────────────────────
+    #
 
     #' @description Named list of `MiltBacktest` objects, one per model.
     backtests = function() private$.backtests,
@@ -44,23 +44,25 @@ MiltComparisonR6 <- R6::R6Class(
     #' @description Ranked summary tibble.
     #'   Columns: `model`, one column per metric (mean across folds), `rank`.
     summary_tbl = function() {
-      if (!is.null(private$.summary_tbl)) return(private$.summary_tbl)
+      if (!is.null(private$.summary_tbl)) {
+        return(private$.summary_tbl)
+      }
 
       rows <- lapply(names(private$.backtests), function(nm) {
-        bt   <- private$.backtests[[nm]]
+        bt <- private$.backtests[[nm]]
         smry <- bt$summary_tbl()
-        # Pivot to wide: one column per metric
-        if (is.null(smry) || nrow(smry) == 0L) return(NULL)
+        if (is.null(smry) || nrow(smry) == 0L) {
+          return(NULL)
+        }
         row <- tibble::tibble(model = nm)
         for (i in seq_len(nrow(smry))) {
           row[[smry$metric[[i]]]] <- smry$mean[[i]]
         }
         row
       })
-      rows  <- rows[!vapply(rows, is.null, logical(1L))]
-      tbl   <- do.call(rbind, rows)
+      rows <- rows[!vapply(rows, is.null, logical(1L))]
+      tbl <- do.call(rbind, rows)
 
-      # Rank by rank_metric (lower is better)
       rm_col <- private$.rank_metric
       if (rm_col %in% names(tbl)) {
         tbl[["rank"]] <- rank(tbl[[rm_col]], ties.method = "min")
@@ -76,7 +78,7 @@ MiltComparisonR6 <- R6::R6Class(
   )
 )
 
-# ── S3 methods ────────────────────────────────────────────────────────────────
+#
 
 #' Print a MiltComparison
 #'
@@ -84,7 +86,7 @@ MiltComparisonR6 <- R6::R6Class(
 #' @param ... Ignored.
 #' @export
 print.MiltComparison <- function(x, ...) {
-  cli::cli_h2("MiltComparison — {x$n_models()} model{?s}")
+  cli::cli_h2("MiltComparison - {x$n_models()} model{?s}")
   cli::cli_bullets(c(
     "*" = "Rank metric : {x$rank_metric()}",
     "*" = "Models      : {paste(names(x$backtests()), collapse = ', ')}"
@@ -131,8 +133,7 @@ plot.MiltComparison <- function(x, ...) {
     return(invisible(NULL))
   }
 
-  # Drop the rank column for plotting
-  meta_cols   <- c("model", "rank")
+  meta_cols <- c("model", "rank")
   metric_cols <- setdiff(names(tbl), meta_cols)
 
   if (length(metric_cols) == 0L) {
@@ -142,8 +143,8 @@ plot.MiltComparison <- function(x, ...) {
 
   long <- tidyr::pivot_longer(
     tbl,
-    cols      = dplyr::all_of(metric_cols),
-    names_to  = "metric",
+    cols = dplyr::all_of(metric_cols),
+    names_to = "metric",
     values_to = "value"
   )
 
@@ -155,8 +156,8 @@ plot.MiltComparison <- function(x, ...) {
     ggplot2::facet_wrap(~ .data$metric, scales = "free_y") +
     ggplot2::labs(
       title = "Model Comparison (mean across folds)",
-      x     = NULL,
-      y     = "Mean metric value"
+      x = NULL,
+      y = "Mean metric value"
     ) +
     ggplot2::theme_minimal() +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 30, hjust = 1))
@@ -165,7 +166,7 @@ plot.MiltComparison <- function(x, ...) {
   invisible(p)
 }
 
-# ── milt_compare() ────────────────────────────────────────────────────────────
+#
 
 #' Compare multiple milt models via walk-forward backtesting
 #'
@@ -191,7 +192,7 @@ plot.MiltComparison <- function(x, ...) {
 #' @family model
 #' @examples
 #' \donttest{
-#' s   <- milt_series(AirPassengers)
+#' s <- milt_series(AirPassengers)
 #' cmp <- milt_compare(
 #'   models = list(naive = milt_model("naive"), drift = milt_model("drift")),
 #'   series = s, horizon = 12,
@@ -201,14 +202,14 @@ plot.MiltComparison <- function(x, ...) {
 #' }
 #' @export
 milt_compare <- function(models,
-                          series,
-                          horizon,
-                          initial_window = NULL,
-                          stride         = 1L,
-                          method         = c("expanding", "sliding"),
-                          metrics        = c("MAE", "RMSE", "MAPE"),
-                          rank_metric    = metrics[[1L]]) {
-  # ── Validate ──────────────────────────────────────────────────────────────
+                         series,
+                         horizon,
+                         initial_window = NULL,
+                         stride = 1L,
+                         method = c("expanding", "sliding"),
+                         metrics = c("MAE", "RMSE", "MAPE"),
+                         rank_metric = metrics[[1L]]) {
+  #
   if (!is.list(models) || length(models) == 0L) {
     milt_abort("{.arg models} must be a non-empty named list of MiltModel objects.",
                class = "milt_error_invalid_arg")
@@ -232,28 +233,28 @@ milt_compare <- function(models,
     )
   }
 
-  # ── Run backtest per model ────────────────────────────────────────────────
-  n_models  <- length(models)
+  #
+  n_models <- length(models)
   backtests <- vector("list", n_models)
   names(backtests) <- names(models)
 
   milt_info("Comparing {n_models} model{?s}: {paste(names(models), collapse = ', ')}")
 
   for (nm in names(models)) {
-    milt_info("  Running backtest for {.val {nm}}\u2026")
+    milt_info("  Running backtest for {.val {nm}}...")
     backtests[[nm]] <- milt_backtest(
-      model          = models[[nm]],
-      series         = series,
-      horizon        = horizon,
+      model = models[[nm]],
+      series = series,
+      horizon = horizon,
       initial_window = initial_window,
-      stride         = as.integer(stride),
-      method         = method,
-      metrics        = metrics
+      stride = as.integer(stride),
+      method = method,
+      metrics = metrics
     )
   }
 
   MiltComparisonR6$new(
-    backtests   = backtests,
+    backtests = backtests,
     rank_metric = rank_metric
   )
 }

@@ -4,6 +4,8 @@
 # (value, time-index) feature space.  Scores substantially > 1 indicate
 # local density anomalies.
 
+#' @keywords internal
+#' @noRd
 MiltDetectorLOF <- R6::R6Class(
   classname = "MiltDetectorLOF",
   inherit   = MiltDetectorBase,

@@ -81,6 +81,8 @@
 
 # ── MiltTFT R6 backend ────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltTFT <- R6::R6Class(
   classname = "MiltTFT",
   inherit   = MiltModelBase,

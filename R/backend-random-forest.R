@@ -1,5 +1,7 @@
 # Random Forest backend (requires ranger package)
 
+#' @keywords internal
+#' @noRd
 MiltRandomForest <- R6::R6Class(
   classname = "MiltRandomForest",
   inherit   = MiltModelBase,
@@ -19,7 +21,7 @@ MiltRandomForest <- R6::R6Class(
     #'   `NULL` uses ranger's default (`floor(sqrt(p))`).
     #' @param min.node.size Integer. Minimum node size. Default `5L`.
     #' @param num.threads Integer. Number of threads. Default `1L`.
-    #' @param ... Additional arguments forwarded to [ranger::ranger()].
+    #' @param ... Additional arguments forwarded to `ranger::ranger()`.
     initialize = function(lags          = 1:12,
                           num.trees     = 500L,
                           mtry          = NULL,

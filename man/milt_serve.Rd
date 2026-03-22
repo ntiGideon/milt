@@ -7,7 +7,7 @@
 milt_serve(model, host = "127.0.0.1", port = 8000L, launch = TRUE)
 }
 \arguments{
-\item{model}{A fitted \link{MiltModel}.}
+\item{model}{A fitted \code{MiltModel}.}
 
 \item{host}{Character. Bind address. Default \code{"127.0.0.1"}.}
 

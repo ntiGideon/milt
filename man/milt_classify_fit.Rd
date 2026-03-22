@@ -9,7 +9,7 @@ milt_classify_fit(classifier, series_list, labels)
 \arguments{
 \item{classifier}{A \code{MiltClassifier} from \code{\link[=milt_classifier]{milt_classifier()}}.}
 
-\item{series_list}{A list of \link{MiltSeries} objects (training set).}
+\item{series_list}{A list of \code{MiltSeries} objects (training set).}
 
 \item{labels}{Character or factor vector of class labels, one per series.}
 }

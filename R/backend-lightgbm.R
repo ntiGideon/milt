@@ -1,5 +1,7 @@
 # LightGBM backend (requires lightgbm package)
 
+#' @keywords internal
+#' @noRd
 MiltLightGBM <- R6::R6Class(
   classname = "MiltLightGBM",
   inherit   = MiltModelBase,
@@ -17,7 +19,7 @@ MiltLightGBM <- R6::R6Class(
     #' @param learning_rate Numeric. Learning rate. Default `0.1`.
     #' @param num_leaves Integer. Max number of leaves. Default `31L`.
     #' @param num_threads Integer. Number of threads. Default `1L`.
-    #' @param ... Additional parameters forwarded to [lightgbm::lgb.train()].
+    #' @param ... Additional parameters forwarded to `lightgbm::lgb.train()`.
     initialize = function(lags           = 1:12,
                           num_iterations = 100L,
                           learning_rate  = 0.1,

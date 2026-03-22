@@ -4,10 +4,13 @@
 \alias{milt_step_calendar}
 \title{Add calendar features to a MiltSeries}
 \usage{
-milt_step_calendar(series)
+milt_step_calendar(series, features = NULL)
 }
 \arguments{
 \item{series}{A \code{MiltSeries} with \code{Date} or \code{POSIXct} time index.}
+
+\item{features}{Optional character vector of calendar feature names to keep.
+By default, all supported features for the series frequency are added.}
 }
 \value{
 An augmented \code{MiltSeries} with calendar columns appended.
@@ -16,7 +19,7 @@ Attribute \code{"milt_step_calendar"} stores the step specification.
 \description{
 Appends date/time decomposition columns (year, month, quarter, week,
 day-of-week, weekend indicator, and sub-daily components as appropriate).
-No rows are dropped — calendar features are defined for every time step.
+No rows are dropped: calendar features are defined for every time step.
 }
 \details{
 The set of columns added adapts automatically to the series frequency:\tabular{ll}{
@@ -28,7 +31,7 @@ The set of columns added adapts automatically to the series frequency:\tabular{l
 }
 }
 \examples{
-s     <- milt_series(AirPassengers)
+s <- milt_series(AirPassengers)
 s_cal <- milt_step_calendar(s)
 head(s_cal$as_tibble())
 }

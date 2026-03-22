@@ -26,6 +26,8 @@ milt_model("auto_arima") |> milt_fit(series) |> milt_forecast(h = 12)
 pak::pak("ntiGideon/milt")
 ```
 
+Documentation site: <https://gideon-ntiboateng.github.io/milt>
+
 ## Quick start
 
 ```r

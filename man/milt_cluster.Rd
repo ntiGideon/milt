@@ -7,7 +7,7 @@
 milt_cluster(series_list, k, method = "euclidean", max_iter = 100L, ...)
 }
 \arguments{
-\item{series_list}{A list of \link{MiltSeries} objects (each univariate).}
+\item{series_list}{A list of \code{MiltSeries} objects (each univariate).}
 
 \item{k}{Integer. Number of clusters.}
 
@@ -27,7 +27,7 @@ milt_cluster(series_list, k, method = "euclidean", max_iter = 100L, ...)
 A \code{MiltClusters} object.
 }
 \description{
-Partitions a list of \link{MiltSeries} objects into \code{k} groups using one of
+Partitions a list of \code{MiltSeries} objects into \code{k} groups using one of
 four algorithms.
 }
 \examples{
@@ -42,6 +42,6 @@ print(cl)
 }
 }
 \seealso{
-\code{\link[=milt_classify]{milt_classify()}}
+\code{\link[=milt_classifier]{milt_classifier()}}
 }
 \concept{cluster}

@@ -62,7 +62,7 @@ milt_cv <- function(model,
   }
   initial_window <- as.integer(initial_window)
 
-  if (initial_window + horizon > n) {
+  if (initial_window + horizon >= n) {
     milt_abort(
       c(
         "Not enough data for {folds} fold{?s} with horizon {horizon}.",

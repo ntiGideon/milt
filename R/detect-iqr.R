@@ -3,6 +3,8 @@
 # Flags observations below Q1 - k * IQR or above Q3 + k * IQR.
 # Works for any series regardless of frequency.
 
+#' @keywords internal
+#' @noRd
 MiltDetectorIQR <- R6::R6Class(
   classname = "MiltDetectorIQR",
   inherit   = MiltDetectorBase,

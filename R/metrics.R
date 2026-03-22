@@ -1,6 +1,6 @@
-# Forecast accuracy metrics — point, scaled, and probabilistic
+#
 
-# ── Internal validators ───────────────────────────────────────────────────────
+#
 
 .check_numeric_vectors <- function(actual, predicted,
                                    arg_a = "actual",
@@ -53,7 +53,7 @@
   invisible(NULL)
 }
 
-# ── Point forecast metrics ────────────────────────────────────────────────────
+#
 
 #' Mean Absolute Error
 #'
@@ -200,7 +200,7 @@ milt_mrae <- function(actual, predicted, benchmark) {
   mean(abs(actual - predicted) / benchmark_err, na.rm = TRUE)
 }
 
-#' Coefficient of Determination (R²)
+#' Coefficient of Determination (R^2)
 #'
 #' @inheritParams milt_mae
 #' @return A numeric value, typically in `(-Inf, 1]`. A value of 1 is perfect;
@@ -213,13 +213,13 @@ milt_r_squared <- function(actual, predicted) {
   ss_res <- sum((actual - predicted)^2, na.rm = TRUE)
   ss_tot <- sum((actual - mean(actual, na.rm = TRUE))^2, na.rm = TRUE)
   if (ss_tot == 0) {
-    milt_warn("Total sum of squares is zero (constant actual); R² is undefined.")
+    milt_warn("Total sum of squares is zero (constant actual); R^2 is undefined.")
     return(NaN)
   }
   1 - ss_res / ss_tot
 }
 
-# ── Probabilistic forecast metrics ───────────────────────────────────────────
+#
 
 #' Continuous Ranked Probability Score (CRPS)
 #'
@@ -309,7 +309,7 @@ milt_pinball <- function(actual, quantiles, taus) {
                class = "milt_error_invalid_metric_input")
   }
   if (!is.matrix(quantiles) || !is.numeric(quantiles)) {
-    milt_abort("{.arg quantiles} must be a numeric matrix (n rows × length(taus) cols).",
+    milt_abort("{.arg quantiles} must be a numeric matrix (n rows x length(taus) cols).",
                class = "milt_error_invalid_metric_input")
   }
   if (!is.numeric(taus) || any(taus <= 0 | taus >= 1, na.rm = TRUE)) {
@@ -368,7 +368,7 @@ milt_winkler <- function(actual, lower, upper, alpha) {
   mean(interval_width + penalty, na.rm = TRUE)
 }
 
-# ── Convenience wrapper ───────────────────────────────────────────────────────
+#
 
 #' Compute multiple forecast accuracy metrics at once
 #'
@@ -383,9 +383,9 @@ milt_winkler <- function(actual, lower, upper, alpha) {
 #'   RMSSE). Optional for all other metrics.
 #' @param season Seasonal period for MASE/RMSSE. Default `1`.
 #' @param metrics Character vector of metric names to compute, or one of:
-#'   - `"auto"` — all metrics computable from `actual` and `predicted`
-#'   - `"all"`  — same as `"auto"` (alias)
-#'   - `"point"` — point metrics only (excludes MASE/RMSSE if training missing)
+#'   - `"auto"` - all metrics computable from `actual` and `predicted`
+#'   - `"all"`  - same as `"auto"` (alias)
+#'   - `"point"` - point metrics only (excludes MASE/RMSSE if training missing)
 #' @return A tibble with columns `metric` (character) and `value` (numeric).
 #' @seealso [milt_mae()], [milt_rmse()], [milt_mase()]
 #' @family metrics

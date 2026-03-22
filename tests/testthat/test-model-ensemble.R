@@ -59,6 +59,16 @@ test_that("ensemble: returns an unfitted MiltModel", {
   expect_false(ens$is_fitted())
 })
 
+test_that("ensemble: accepts already fitted member models", {
+  fitted_models <- list(
+    naive = milt_model("naive") |> milt_fit(air),
+    drift = milt_model("drift") |> milt_fit(air)
+  )
+  ens <- milt_ensemble(fitted_models, method = "mean")
+  expect_true(ens$is_fitted())
+  expect_s3_class(milt_forecast(ens, 12), "MiltForecast")
+})
+
 # ── Fit ───────────────────────────────────────────────────────────────────────
 
 test_that("ensemble: milt_fit() returns fitted MiltModel", {

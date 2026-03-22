@@ -8,6 +8,8 @@
 # Reference: Rosner (1983) "Percentage Points for a Generalized ESD
 # Many-Outlier Procedure". Technometrics 25(2).
 
+#' @keywords internal
+#' @noRd
 MiltDetectorGESD <- R6::R6Class(
   classname = "MiltDetectorGESD",
   inherit   = MiltDetectorBase,

@@ -13,7 +13,7 @@
 #' * `POST /forecast` — accepts JSON `{"horizon": <int>}`, returns forecast.
 #' * `GET  /series_info` — returns metadata about the training series.
 #'
-#' @param model A fitted [MiltModel].
+#' @param model A fitted `MiltModel`.
 #' @param host Character. Bind address. Default `"127.0.0.1"`.
 #' @param port Integer. TCP port. Default `8000L`.
 #' @param launch Logical. If `TRUE` (default) the server is started
@@ -33,6 +33,7 @@ milt_serve <- function(model,
                         port   = 8000L,
                         launch = TRUE) {
   check_installed_backend("plumber", "milt_serve")
+  check_installed_backend("jsonlite", "milt_serve")
   if (!inherits(model, "MiltModel")) {
     milt_abort("{.arg model} must be a fitted {.cls MiltModel}.",
                class = "milt_error_invalid_arg")

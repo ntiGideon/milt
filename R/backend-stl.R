@@ -1,5 +1,7 @@
 # STL decomposition + ETS/ARIMA remainder model via the forecast package
 
+#' @keywords internal
+#' @noRd
 MiltStl <- R6::R6Class(
   classname = "MiltStl",
   inherit   = MiltModelBase,

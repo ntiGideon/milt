@@ -31,6 +31,8 @@
 
 # ── Result class ──────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltReconciliationR6 <- R6::R6Class(
   classname = "MiltReconciliation",
   cloneable = FALSE,
@@ -108,7 +110,7 @@ as_tibble.MiltReconciliation <- function(x, ...) x$as_tibble()
 #' * `"mint_shrink"` — MinT with shrinkage covariance estimate (requires the
 #'   in-sample residuals supplied via `residuals`).
 #'
-#' @param forecasts A named list of [MiltForecast] objects, one per node
+#' @param forecasts A named list of `MiltForecast` objects, one per node
 #'   (both aggregate and bottom-level).  All must share the same horizon.
 #' @param S Integer/numeric matrix.  Summing matrix with `nrow(S)` equal to the
 #'   total number of series (length of `forecasts`) and `ncol(S)` equal to the

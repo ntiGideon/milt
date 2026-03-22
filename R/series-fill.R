@@ -30,7 +30,7 @@ milt_fill_gaps <- function(series, method = "linear") {
   if (!is_scalar_character(method) || !method %in% valid_methods) {
     milt_abort(
       c(
-        "{.arg method} must be one of {.val {valid_methods}}, not {.val {method}}.",
+        "{.arg method} must be one of {.val {valid_methods}}, not {.val {method}}."
       ),
       class = "milt_error_invalid_method"
     )

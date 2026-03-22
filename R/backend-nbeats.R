@@ -75,6 +75,8 @@
 
 # ── MiltNBeats R6 backend ─────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltNBeats <- R6::R6Class(
   classname = "MiltNBeats",
   inherit   = MiltModelBase,

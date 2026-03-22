@@ -111,9 +111,9 @@ plot.MiltEDA <- function(x, ...) {
 #' Automated exploratory data analysis for a time series
 #'
 #' Computes descriptive statistics, stationarity tests, and seasonality
-#' metrics for a [MiltSeries].  Results are printed in a structured report.
+#' metrics for a `MiltSeries`. Results are printed in a structured report.
 #'
-#' @param series A [MiltSeries] object (univariate).
+#' @param series A `MiltSeries` object (univariate).
 #' @param ... Additional arguments (unused).
 #' @return A `MiltEDA` object.
 #' @seealso [milt_diagnose()]
@@ -175,8 +175,9 @@ milt_eda <- function(series, ...) {
   })
 
   # ── Seasonality ───────────────────────────────────────────────────────────
-  freq   <- series$freq()
-  period <- if (is.numeric(freq) && freq > 1) as.integer(round(freq)) else 1L
+  freq        <- series$freq()
+  freq_num    <- .freq_label_to_numeric(as.character(freq))
+  period      <- if (!is.na(freq_num) && freq_num > 1) as.integer(round(freq_num)) else 1L
 
   strength <- 0
   has_seas <- FALSE

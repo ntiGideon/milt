@@ -9,7 +9,7 @@
 #' Register a model backend with the milt model registry
 #'
 #' Called once per backend file, typically from a `.onLoad_<name>()` function
-#' invoked in [zzz.R]'s `.milt_register_builtins()`.
+#' invoked in `zzz.R`'s `.milt_register_builtins()`.
 #'
 #' @param name Character scalar. The model identifier passed to [milt_model()].
 #' @param class An R6 class generator that inherits from `MiltModelBase`.

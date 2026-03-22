@@ -41,7 +41,7 @@ set.seed(42)
 tbl <- tibble::tibble(
   date  = seq(as.Date("2020-01-01"), by = "month", length.out = 60),
   value = c(rnorm(20, 10, 1), 50, rnorm(19, 10, 1),   # spike at 21
-             rnorm(10, 10, 1), -30, rnorm(8, 10, 1))   # dip at 51
+             rnorm(10, 10, 1), -30, rnorm(9, 10, 1))   # dip at 51
 )
 s <- milt_series(tbl, time_col = "date", value_cols = "value")
 plot(s)

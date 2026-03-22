@@ -5,6 +5,8 @@
 
 # ── R6 class ──────────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltAnomaliesR6 <- R6::R6Class(
   classname = "MiltAnomalies",
   cloneable = FALSE,

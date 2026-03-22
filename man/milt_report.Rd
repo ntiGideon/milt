@@ -15,9 +15,9 @@ milt_report(
 )
 }
 \arguments{
-\item{series}{A \link{MiltSeries} object.}
+\item{series}{A \code{MiltSeries} object.}
 
-\item{models}{Optional named list of fitted \link{MiltModel} objects.  Each
+\item{models}{Optional named list of fitted \code{MiltModel} objects. Each
 model will be forecasted and plotted in the report.}
 
 \item{horizon}{Integer. Forecast horizon shown in the report. Default \code{12L}.}

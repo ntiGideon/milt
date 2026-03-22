@@ -114,7 +114,7 @@ m1 <- milt_model("auto_arima") |> milt_fit(air)
 m2 <- milt_model("ets")        |> milt_fit(air)
 m3 <- milt_model("naive")      |> milt_fit(air)
 
-ens <- milt_ensemble(list(m1, m2, m3), method = "mean")
+ens <- milt_ensemble(list(arima = m1, ets = m2, naive = m3), method = "mean")
 fct_ens <- milt_forecast(ens, 12)
 plot(fct_ens)
 ```

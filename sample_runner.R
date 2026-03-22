@@ -10,7 +10,7 @@ print(tseries)
 # diagnose the time series with recommendation
 milt_diagnose(tseries)
 # fit a model and forecast
-fct = milt_model("auto_arima") |>
+fct = milt_model("stl") |>
     milt_fit(tseries) |>
     milt_forecast(horizon=24)
 
@@ -28,12 +28,11 @@ milt_accuracy(spl$test$values(), fct_cv$as_tibble()$.mean)
 
 # try with UKDeaths
 data = UKDriverDeaths
-help("UKDriverDeaths")
 tseries = milt_series(data, frequency = 12, start=c(1969, 1))
 print(tseries)
 milt_diagnose(tseries)
 
-fit = milt_model("stl") |>
+fit = milt_model("ets") |>
   milt_fit(tseries) |>
   milt_forecast(horizon = 12)
 print(fit)

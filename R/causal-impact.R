@@ -6,6 +6,8 @@
 
 # ── Result class ──────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltCausalImpactR6 <- R6::R6Class(
   classname = "MiltCausalImpact",
   cloneable = FALSE,
@@ -152,7 +154,7 @@ plot.MiltCausalImpact <- function(x, ...) {
 #'
 #' Requires the `CausalImpact` package (>= 1.2.7).
 #'
-#' @param series A [MiltSeries] object (univariate).
+#' @param series A `MiltSeries` object (univariate).
 #' @param event_time The time at which the intervention occurred.  Must be a
 #'   value present in `series$times()`.  The pre-period is everything strictly
 #'   before `event_time`; the post-period is `event_time` onwards.
@@ -161,7 +163,7 @@ plot.MiltCausalImpact <- function(x, ...) {
 #'   to `CausalImpact` as additional columns in the data matrix.
 #' @param n_seasons Integer.  Number of seasons for the seasonal component.
 #'   `0L` (default) disables seasonality.
-#' @param ... Additional arguments forwarded to [CausalImpact::CausalImpact()].
+#' @param ... Additional arguments forwarded to `CausalImpact::CausalImpact()`.
 #' @return A `MiltCausalImpact` object.
 #' @seealso [milt_changepoints()]
 #' @family anomaly

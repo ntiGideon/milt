@@ -4,6 +4,8 @@
 # Anomalies are identified as windows with reconstruction error above a
 # threshold (in terms of z-score of training reconstruction errors).
 
+#' @keywords internal
+#' @noRd
 MiltDetectorAutoencoder <- R6::R6Class(
   classname = "MiltDetectorAutoencoder",
   inherit   = MiltDetectorBase,

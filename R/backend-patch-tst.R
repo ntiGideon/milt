@@ -87,6 +87,8 @@
 
 # ── MiltPatchTST R6 backend ───────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltPatchTST <- R6::R6Class(
   classname = "MiltPatchTST",
   inherit   = MiltModelBase,

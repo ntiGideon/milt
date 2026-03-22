@@ -138,7 +138,7 @@ test_that("compare: print() outputs without error", {
     list(naive = milt_model("naive"), drift = milt_model("drift")),
     air, 12, initial_window = 120L, stride = 12L, metrics = "MAE"
   )
-  expect_output(print(cmp), regexp = "MiltComparison")
+  expect_message(print(cmp), regexp = "MiltComparison")
 })
 
 # ── Three models ──────────────────────────────────────────────────────────────

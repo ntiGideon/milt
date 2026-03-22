@@ -163,6 +163,8 @@ milt_setup_darts <- function(install = FALSE) {
 
 # ── Generic MiltDartsModel base class ─────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltDartsModel <- R6::R6Class(
   classname = "MiltDartsModel",
   inherit   = MiltModelBase,
@@ -314,6 +316,8 @@ MiltDartsModel <- R6::R6Class(
 #'   Must be `> input_chunk_length`. Default `36L`.
 #' @param n_epochs Integer. Training epochs. Default `100L`.
 #' @param ... Further arguments passed to `darts.models.RNNModel`.
+#' @keywords internal
+#' @noRd
 MiltDartsRNN <- R6::R6Class(
   classname = "MiltDartsRNN",
   inherit   = MiltDartsModel,
@@ -354,6 +358,8 @@ MiltDartsRNN <- R6::R6Class(
 #' @param num_decoder_layers Integer. Decoder depth. Default `2L`.
 #' @param n_epochs Integer. Training epochs. Default `100L`.
 #' @param ... Further arguments passed to `darts.models.TransformerModel`.
+#' @keywords internal
+#' @noRd
 MiltDartsTransformer <- R6::R6Class(
   classname = "MiltDartsTransformer",
   inherit   = MiltDartsModel,
@@ -397,6 +403,8 @@ MiltDartsTransformer <- R6::R6Class(
 #' @param layer_widths Integer. FC layer width. Default `256L`.
 #' @param n_epochs Integer. Training epochs. Default `100L`.
 #' @param ... Further arguments passed to `darts.models.NBEATSModel`.
+#' @keywords internal
+#' @noRd
 MiltDartsNBeats <- R6::R6Class(
   classname = "MiltDartsNBeats",
   inherit   = MiltDartsModel,

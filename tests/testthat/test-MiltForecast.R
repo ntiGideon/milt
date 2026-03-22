@@ -197,7 +197,7 @@ test_that("plot.MiltForecast works without intervals", {
 test_that("plot.MiltForecast includes history when training_series is provided", {
   skip_if_not_installed("ggplot2")
   s   <- milt_series(AirPassengers)
-  fct <- milt_model("mock") |> milt_fit(s) |> milt_forecast(horizon = 12)
+  fct <- milt_model("naive") |> milt_fit(s) |> milt_forecast(horizon = 12)
   plt <- plot(fct)
   # When training series is attached there should be 2+ layers (history + forecast)
   expect_true(length(plt$layers) >= 2L)

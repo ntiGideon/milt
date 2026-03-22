@@ -43,6 +43,8 @@
 
 # ── MiltDeepAR R6 backend ─────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltDeepAR <- R6::R6Class(
   classname = "MiltDeepAR",
   inherit   = MiltModelBase,

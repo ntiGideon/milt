@@ -7,9 +7,9 @@
 milt_explain(model, series = NULL, ...)
 }
 \arguments{
-\item{model}{A fitted \link{MiltModel} (must have been fit with \code{\link[=milt_fit]{milt_fit()}}).}
+\item{model}{A fitted \code{MiltModel} (must have been fit with \code{\link[=milt_fit]{milt_fit()}}).}
 
-\item{series}{Optional \link{MiltSeries} object.  When provided, the series is
+\item{series}{Optional \code{MiltSeries} object. When provided, the series is
 used to compute the design matrix for SHAP value calculation (XGBoost
 only).  If omitted the training data stored in the model is used.}
 
@@ -20,7 +20,7 @@ A \code{MiltExplanation} object.
 }
 \description{
 Extracts feature importance (and optionally SHAP values for XGBoost) from
-a fitted ML-backed \link{MiltModel}.  Supported backends: \code{"xgboost"},
+a fitted ML-backed \code{MiltModel}. Supported backends: \code{"xgboost"},
 \code{"random_forest"}, \code{"elastic_net"}, and \code{"lightgbm"}.
 }
 \examples{

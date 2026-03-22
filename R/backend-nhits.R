@@ -96,6 +96,8 @@
 
 # ── MiltNHiTS R6 backend ──────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltNHiTS <- R6::R6Class(
   classname = "MiltNHiTS",
   inherit   = MiltModelBase,

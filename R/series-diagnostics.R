@@ -5,7 +5,8 @@
 #' @title MiltDiagnosis — diagnostic report for a MiltSeries
 #' @description Returned by [milt_diagnose()]. Use `print()`, `summary()`, or
 #'   `plot()` to inspect results.
-#' @export
+#' @keywords internal
+#' @noRd
 MiltDiagnosisR6 <- R6::R6Class(
   classname = "MiltDiagnosis",
   cloneable = FALSE,

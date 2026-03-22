@@ -5,6 +5,8 @@
 
 # ── R6 result class ───────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltChangepointsR6 <- R6::R6Class(
   classname = "MiltChangepoints",
   cloneable = FALSE,
@@ -120,7 +122,7 @@ plot.MiltChangepoints <- function(x, ...) {
 #' Wraps the `changepoint` package to identify structural breaks in the mean,
 #' variance, or both.
 #'
-#' @param series A [MiltSeries] object (univariate).
+#' @param series A `MiltSeries` object (univariate).
 #' @param method Character. Search method: `"pelt"` (default), `"binseg"`, or
 #'   `"amoc"` (at-most-one-changepoint).
 #' @param stat Character. Test statistic: `"mean"` (default), `"variance"`,

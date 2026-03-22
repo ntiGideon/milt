@@ -84,6 +84,8 @@
 
 # ── MiltTCN R6 backend ────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltTCN <- R6::R6Class(
   classname = "MiltTCN",
   inherit   = MiltModelBase,

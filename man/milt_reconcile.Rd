@@ -7,7 +7,7 @@
 milt_reconcile(forecasts, S, method = "ols", residuals = NULL)
 }
 \arguments{
-\item{forecasts}{A named list of \link{MiltForecast} objects, one per node
+\item{forecasts}{A named list of \code{MiltForecast} objects, one per node
 (both aggregate and bottom-level).  All must share the same horizon.}
 
 \item{S}{Integer/numeric matrix.  Summing matrix with \code{nrow(S)} equal to the

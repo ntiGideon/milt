@@ -21,6 +21,6 @@ Invisibly returns \code{name}.
 }
 \description{
 Called once per backend file, typically from a \verb{.onLoad_<name>()} function
-invoked in \link{zzz.R}'s \code{.milt_register_builtins()}.
+invoked in \code{zzz.R}'s \code{.milt_register_builtins()}.
 }
 \keyword{internal}

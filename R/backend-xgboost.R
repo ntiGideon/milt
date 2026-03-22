@@ -82,6 +82,8 @@
 
 # ── XGBoost ───────────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltXGBoost <- R6::R6Class(
   classname = "MiltXGBoost",
   inherit   = MiltModelBase,
@@ -100,7 +102,7 @@ MiltXGBoost <- R6::R6Class(
     #' @param max_depth Integer. Maximum tree depth. Default `6L`.
     #' @param eta Numeric. Learning rate. Default `0.1`.
     #' @param nthread Integer. Number of threads. Default `1L`.
-    #' @param ... Additional arguments forwarded to [xgboost::xgb.train()].
+    #' @param ... Additional arguments forwarded to `xgboost::xgb.train()`.
     initialize = function(lags     = 1:12,
                           nrounds  = 100L,
                           max_depth = 6L,

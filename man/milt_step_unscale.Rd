@@ -9,13 +9,13 @@ milt_step_unscale(step, series)
 \arguments{
 \item{step}{A \code{MiltScaleStep} object returned by \code{\link[=milt_step_scale]{milt_step_scale()}}.}
 
-\item{series}{A \link{MiltSeries} to unscale.}
+\item{series}{A \code{MiltSeries} to unscale.}
 }
 \value{
-The unscaled \link{MiltSeries}.
+The unscaled \code{MiltSeries}.
 }
 \description{
-Convenience wrapper around \link{MiltScaleStep}\verb{$inverse_transform()}.
+Convenience wrapper around \code{MiltScaleStep$inverse_transform()}.
 }
 \seealso{
 \code{\link[=milt_step_scale]{milt_step_scale()}}

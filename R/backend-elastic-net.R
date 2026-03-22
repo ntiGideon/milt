@@ -1,5 +1,7 @@
 # Elastic-net (glmnet) backend
 
+#' @keywords internal
+#' @noRd
 MiltElasticNet <- R6::R6Class(
   classname = "MiltElasticNet",
   inherit   = MiltModelBase,
@@ -18,8 +20,8 @@ MiltElasticNet <- R6::R6Class(
     #'   `0` = ridge, `1` = lasso. Default `0.5`.
     #' @param lambda Numeric or `NULL`. Regularisation strength.
     #'   `NULL` (default) selects via 5-fold cross-validation.
-    #' @param ... Additional arguments forwarded to [glmnet::glmnet()] or
-    #'   [glmnet::cv.glmnet()].
+    #' @param ... Additional arguments forwarded to `glmnet::glmnet()` or
+    #'   `glmnet::cv.glmnet()`.
     initialize = function(lags   = 1:12,
                           alpha  = 0.5,
                           lambda = NULL,

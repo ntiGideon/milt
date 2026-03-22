@@ -1,5 +1,7 @@
 # Theta method backend via the forecast package
 
+#' @keywords internal
+#' @noRd
 MiltTheta <- R6::R6Class(
   classname = "MiltTheta",
   inherit   = MiltModelBase,

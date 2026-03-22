@@ -257,7 +257,7 @@ test_that("milt_crps is small for near-perfect probabilistic forecast", {
   a    <- c(5, 10, 15)
   # Samples tightly centred on actual
   dist <- matrix(rep(a, each = 200) + rnorm(3 * 200, 0, 0.01),
-                 nrow = 3, ncol = 200, byrow = FALSE)
+                 nrow = 3, ncol = 200, byrow = TRUE)
   val  <- milt_crps(a, dist)
   expect_true(val < 0.05)
 })

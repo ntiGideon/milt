@@ -3,6 +3,8 @@
 # Croston's method for intermittent demand forecasting.
 # Separately models inter-arrival times and demand sizes.
 
+#' @keywords internal
+#' @noRd
 MiltCroston <- R6::R6Class(
   classname = "MiltCroston",
   inherit   = MiltModelBase,

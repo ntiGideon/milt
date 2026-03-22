@@ -6,6 +6,8 @@
 
 # ── Internal scale step object ────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltScaleStepR6 <- R6::R6Class(
   classname = "MiltScaleStep",
   cloneable = FALSE,
@@ -28,7 +30,7 @@ MiltScaleStepR6 <- R6::R6Class(
     center  = function() private$.center,
     scale   = function() private$.scale,
 
-    #' Apply the learned scaling to a new series.
+    # Apply the learned scaling to a new series.
     transform = function(series) {
       assert_milt_series(series)
       tbl       <- series$as_tibble()
@@ -44,7 +46,7 @@ MiltScaleStepR6 <- R6::R6Class(
       series$clone_with(tbl)
     },
 
-    #' Reverse the scaling on a series.
+    # Reverse the scaling on a series.
     inverse_transform = function(series) {
       assert_milt_series(series)
       tbl      <- series$as_tibble()
@@ -58,7 +60,7 @@ MiltScaleStepR6 <- R6::R6Class(
       series$clone_with(tbl)
     },
 
-    #' Reverse-scale a numeric vector using the FIRST value column's parameters.
+    # Reverse-scale a numeric vector using the first value column's parameters.
     inverse_transform_vector = function(x, col = NULL) {
       nm <- col %||% names(private$.center)[[1L]]
       x * private$.scale[[nm]] + private$.center[[nm]]
@@ -85,17 +87,17 @@ print.MiltScaleStep <- function(x, ...) {
 
 #' Scale a time series
 #'
-#' Normalises the value column(s) of a [MiltSeries] and returns both the
-#' scaled series and a [MiltScaleStep] object that can be used to invert the
+#' Normalises the value column(s) of a `MiltSeries` and returns both the
+#' scaled series and a `MiltScaleStep` object that can be used to invert the
 #' transformation.
 #'
-#' @param series A [MiltSeries] object.
+#' @param series A `MiltSeries` object.
 #' @param method Character. Scaling method:
 #'   * `"zscore"` (default): subtract mean, divide by SD.
-#'   * `"minmax"`: scale to `[0, 1]`.
+#'   * `"minmax"`: scale to the interval `[0, 1]`.
 #'   * `"robust"`: subtract median, divide by IQR.
 #' @return A named list:
-#'   * `$series` — the scaled [MiltSeries].
+#'   * `$series` — the scaled `MiltSeries`.
 #'   * `$step`   — a `MiltScaleStep` object for inverting the transform.
 #' @seealso [milt_step_lag()], [milt_step_rolling()]
 #' @family features
@@ -142,11 +144,11 @@ milt_step_scale <- function(series, method = "zscore") {
 
 #' Invert a scaling step on a time series
 #'
-#' Convenience wrapper around [MiltScaleStep]`$inverse_transform()`.
+#' Convenience wrapper around `MiltScaleStep$inverse_transform()`.
 #'
 #' @param step A `MiltScaleStep` object returned by [milt_step_scale()].
-#' @param series A [MiltSeries] to unscale.
-#' @return The unscaled [MiltSeries].
+#' @param series A `MiltSeries` to unscale.
+#' @return The unscaled `MiltSeries`.
 #' @seealso [milt_step_scale()]
 #' @family features
 #' @export

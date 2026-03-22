@@ -10,6 +10,8 @@
 
 # ── Result class ──────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltClassifierR6 <- R6::R6Class(
   classname = "MiltClassifier",
   cloneable = TRUE,
@@ -175,7 +177,7 @@ milt_classifier <- function(method    = "feature_based",
 #' Trains the classifier on a labelled set of time series.
 #'
 #' @param classifier A `MiltClassifier` from [milt_classifier()].
-#' @param series_list A list of [MiltSeries] objects (training set).
+#' @param series_list A list of `MiltSeries` objects (training set).
 #' @param labels Character or factor vector of class labels, one per series.
 #' @return The fitted `MiltClassifier` (invisibly, mutated in place).
 #' @seealso [milt_classifier()], [milt_classify_predict()]
@@ -196,10 +198,10 @@ milt_classify_fit <- function(classifier, series_list, labels) {
 
 #' Predict class labels for new time series
 #'
-#' Applies a fitted [MiltClassifier] to a list of new series.
+#' Applies a fitted `MiltClassifier` to a list of new series.
 #'
 #' @param classifier A fitted `MiltClassifier`.
-#' @param series_list A list of [MiltSeries] objects (test set).
+#' @param series_list A list of `MiltSeries` objects (test set).
 #' @return A named list:
 #'   * `$labels` — character vector of predicted class labels.
 #'   * `$probabilities` — matrix of class probabilities (or `NULL`).

@@ -4,7 +4,7 @@
 \alias{milt_window}
 \title{Subset a MiltSeries to a time window}
 \usage{
-milt_window(series, start = NULL, end = NULL)
+milt_window(series, start = NULL, end = NULL, group = NULL)
 }
 \arguments{
 \item{series}{A \code{MiltSeries} object.}
@@ -12,6 +12,9 @@ milt_window(series, start = NULL, end = NULL)
 \item{start}{Start of the window (\code{Date}, \code{POSIXct}, or \code{NULL}).}
 
 \item{end}{End of the window (\code{Date}, \code{POSIXct}, or \code{NULL}).}
+
+\item{group}{Optional group value for grouped series. When supplied, only
+observations from that group are retained before applying the time window.}
 }
 \value{
 A \code{MiltSeries} containing only the windowed observations.

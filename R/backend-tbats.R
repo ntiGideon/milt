@@ -3,6 +3,8 @@
 # TBATS: Trigonometric seasonality, Box-Cox transformation, ARMA errors,
 # Trend, and Seasonal components. Handles multiple/complex seasonality.
 
+#' @keywords internal
+#' @noRd
 MiltTBATS <- R6::R6Class(
   classname = "MiltTBATS",
   inherit   = MiltModelBase,
@@ -72,7 +74,7 @@ MiltTBATS <- R6::R6Class(
     },
 
     residuals = function() {
-      as.numeric(private$.backend_model$residuals)
+      as.numeric(residuals(private$.backend_model))
     }
   )
 )

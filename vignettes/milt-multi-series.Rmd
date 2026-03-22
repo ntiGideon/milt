@@ -78,8 +78,12 @@ plot(fct)
 ## 4. Split and manipulate individual series
 
 ```{r split}
-# Extract one group
-s_A <- milt_window(ms, group = "A")
+# Extract one group by filtering the underlying tibble
+s_A <- milt_series(
+  dplyr::filter(ms$as_tibble(), store == "A"),
+  time_col   = "date",
+  value_cols = "sales"
+)
 
 spl <- milt_split(s_A, ratio = 0.8)
 cat("Train:", spl$train$n_timesteps(), "Test:", spl$test$n_timesteps(), "\n")
