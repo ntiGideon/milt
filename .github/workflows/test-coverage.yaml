@@ -38,6 +38,15 @@ jobs:
           covr::to_cobertura(cov)
         shell: Rscript {0}
 
+      - name: Show test failures
+        if: failure()
+        run: |
+          find $RUNNER_TEMP/package -name "*.Rout.fail" | while read f; do
+            echo "=== $f ==="
+            cat "$f"
+          done
+        shell: bash
+
       - uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
