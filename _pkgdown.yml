@@ -1,4 +1,4 @@
-url: https://gideon-ntiboateng.github.io/milt
+url: https://ntiGideon.github.io/milt
 
 template:
   bootstrap: 5
@@ -18,7 +18,7 @@ navbar:
   components:
     github:
       icon: fab fa-github
-      href: https://github.com/gideon-ntiboateng/milt
+      href: https://github.com/ntiGideon/milt
 
 articles:
   - title: "Get started"
