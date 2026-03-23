@@ -74,6 +74,7 @@ test_that("ts_normalise: handles constant series without error", {
 
 test_that("milt_torch_device: returns a torch_device when torch is installed", {
   skip_if_not_installed("torch")
+  skip_if_not(torch::torch_is_installed(), "torch Lantern backend not installed — run torch::install_torch()")
   dev <- milt_torch_device()
   expect_true(inherits(dev, "torch_device"))
 })
@@ -82,6 +83,7 @@ test_that("milt_torch_device: returns a torch_device when torch is installed", {
 
 test_that("fit_torch_model: trains without error on small dataset", {
   skip_if_not_installed("torch")
+  skip_if_not(torch::torch_is_installed(), "torch Lantern backend not installed — run torch::install_torch()")
 
   # Tiny linear model y = W*x
   net <- torch::nn_module(

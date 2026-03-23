@@ -12,6 +12,15 @@
 #' @export
 milt_torch_device <- function() {
   check_installed_backend("torch", "deep learning")
+  if (!torch::torch_is_installed()) {
+    milt_abort(
+      c(
+        "The torch C++ backend (Lantern) is not installed.",
+        "i" = "Run {.code torch::install_torch()} once to download it."
+      ),
+      class = "milt_error_missing_package"
+    )
+  }
   if (torch::cuda_is_available()) {
     torch::torch_device("cuda")
   } else {

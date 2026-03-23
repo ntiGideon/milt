@@ -1,4 +1,5 @@
 skip_if_not_installed("torch")
+skip_if_not(torch::torch_is_installed(), "torch Lantern backend not installed — run torch::install_torch()")
 
 air <- milt_series(AirPassengers)
 
