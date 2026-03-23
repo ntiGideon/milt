@@ -97,6 +97,9 @@ milt_serve <- function(model,
     plumber::pr_run(pr, host = host, port = as.integer(port))
     invisible(pr)
   } else {
+    if (!inherits(pr, "plumber")) {
+      class(pr) <- c("plumber", class(pr))
+    }
     pr
   }
 }

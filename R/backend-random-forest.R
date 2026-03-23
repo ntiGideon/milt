@@ -21,12 +21,14 @@ MiltRandomForest <- R6::R6Class(
     #'   `NULL` uses ranger's default (`floor(sqrt(p))`).
     #' @param min.node.size Integer. Minimum node size. Default `5L`.
     #' @param num.threads Integer. Number of threads. Default `1L`.
+    #' @param importance Character. Variable-importance mode. Default `"impurity"`.
     #' @param ... Additional arguments forwarded to `ranger::ranger()`.
     initialize = function(lags          = 1:12,
                           num.trees     = 500L,
                           mtry          = NULL,
                           min.node.size = 5L,
                           num.threads   = 1L,
+                          importance    = "impurity",
                           ...) {
       super$initialize(
         name          = "random_forest",
@@ -35,6 +37,7 @@ MiltRandomForest <- R6::R6Class(
         mtry          = mtry,
         min.node.size = as.integer(min.node.size),
         num.threads   = as.integer(num.threads),
+        importance    = importance,
         ...
       )
     },
@@ -60,7 +63,8 @@ MiltRandomForest <- R6::R6Class(
         data         = train_df,
         num.trees    = p$num.trees    %||% 500L,
         min.node.size = p$min.node.size %||% 5L,
-        num.threads  = p$num.threads  %||% 1L
+        num.threads  = p$num.threads  %||% 1L,
+        importance   = p$importance   %||% "impurity"
       )
       if (!is.null(p$mtry)) ranger_args$mtry <- as.integer(p$mtry)
 
@@ -82,9 +86,7 @@ MiltRandomForest <- R6::R6Class(
       forecasts <- numeric(horizon)
 
       for (h in seq_len(horizon)) {
-        x_row <- matrix(.compute_lags(history, lags)[length(history), ],
-                        nrow = 1L)
-        colnames(x_row) <- paste0(".lag_", lags)
+        x_row <- .ml_next_lag_row(history, lags)
         df_row  <- as.data.frame(x_row)
         pt      <- predict(fit, data = df_row)$predictions
         forecasts[h] <- pt

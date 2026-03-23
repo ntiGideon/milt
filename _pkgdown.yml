@@ -24,6 +24,7 @@ articles:
   - title: "Get started"
     navbar: ~
     contents:
+      - milt-overview
       - milt-getting-started
       - milt-forecasting
   - title: "Core workflows"

@@ -157,7 +157,7 @@ milt_changepoints <- function(series,
     )
   }
 
-  method <- match.arg(method, c("pelt", "binseg", "amoc"))
+  method <- match.arg(method, c("pelt", "binseg", "amoc", "segneigh"))
   stat   <- match.arg(stat,   c("mean", "variance", "meanvar"))
 
   vals <- series$values()
@@ -169,8 +169,16 @@ milt_changepoints <- function(series,
     "meanvar" = changepoint::cpt.meanvar
   )
 
-  args <- list(data = vals, method = toupper(method), penalty = penalty, ...)
-  if (method == "binseg" && !is.na(n_cpts)) {
+  cp_method <- switch(
+    method,
+    pelt = "PELT",
+    binseg = "BinSeg",
+    amoc = "AMOC",
+    segneigh = "SegNeigh"
+  )
+
+  args <- list(data = vals, method = cp_method, penalty = penalty, ...)
+  if (method %in% c("binseg", "segneigh") && !is.na(n_cpts)) {
     args$Q <- as.integer(n_cpts)
   }
 

@@ -1,0 +1,343 @@
+---
+title: "milt Package Overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{milt Package Overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+```{r setup}
+library(milt)
+```
+
+## What milt is
+
+`milt` stands for Modern Integrated Library for Timeseries. The package is
+designed to provide a unified R interface for the major families of time series
+work:
+
+- forecasting
+- feature engineering
+- backtesting and model comparison
+- anomaly detection and changepoint analysis
+- multi-series analysis
+- explainability and diagnostics
+- deployment and reporting
+
+The package is intentionally broad. Instead of exposing one API for classical
+models, another for machine learning, and another for deep learning, it uses a
+single workflow pattern across the library.
+
+## Core design principle
+
+The central workflow is:
+
+```r
+milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon = 12)
+```
+
+That same structure applies regardless of model family. This makes it easier
+to:
+
+- swap models without rewriting the rest of the workflow
+- evaluate models under the same backtesting setup
+- build ensembles and comparisons across heterogeneous backends
+- standardize how outputs are printed, plotted, and converted to tibbles
+
+## Main object model
+
+The package is centered on a small set of reusable objects.
+
+### `MiltSeries`
+
+`MiltSeries` is the canonical container for all time series data inside the
+package. Most user-facing functions either consume or return a `MiltSeries`.
+
+Create it from many source types:
+
+```{r create-series}
+air <- milt_series(AirPassengers)
+print(air)
+```
+
+Common accessors:
+
+```{r series-accessors}
+air$n_timesteps()
+air$freq()
+air$start_time()
+air$end_time()
+head(air$values())
+```
+
+### `MiltModel`
+
+`MiltModel` objects represent model specifications before fitting and fitted
+model states after training.
+
+```{r model-example}
+model <- milt_model("naive")
+model
+```
+
+### `MiltForecast`
+
+Forecast results are returned as a `MiltForecast`, which contains point
+forecasts, interval columns, and plotting/printing helpers.
+
+```{r forecast-example}
+fct <- milt_model("naive") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 12)
+
+print(fct)
+head(fct$as_tibble())
+```
+
+### Other result objects
+
+Other workflows return their own result classes, including:
+
+- `MiltBacktest`
+- `MiltComparison`
+- `MiltAnomalies`
+- `MiltExplanation`
+- `MiltCausalImpact`
+- `MiltChangepoints`
+
+## Forecasting workflows
+
+Forecasting is one major pillar of the package.
+
+```{r forecasting}
+fct_ets <- milt_model("ets") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 24)
+
+plot(fct_ets)
+```
+
+The forecasting layer supports several families of models:
+
+- baseline models such as naive, seasonal naive, and drift
+- classical statistical models such as ETS, Auto-ARIMA, Theta, STL, and TBATS
+- machine-learning models such as XGBoost, LightGBM, random forest, elastic net, SVM, and related backends
+- ensemble workflows
+- deep-learning backends through `torch` and `reticulate` integrations
+
+Inspect the available registry:
+
+```{r model-registry}
+list_milt_models()
+```
+
+## Evaluation and backtesting
+
+The package includes multiple levels of evaluation.
+
+### Train/test splits
+
+```{r split}
+spl <- milt_split(air, ratio = 0.8)
+spl$train$n_timesteps()
+spl$test$n_timesteps()
+```
+
+### Accuracy metrics
+
+```{r accuracy}
+fct_test <- milt_model("naive") |>
+  milt_fit(spl$train) |>
+  milt_forecast(spl$test$n_timesteps())
+
+milt_accuracy(
+  actual = spl$test$values(),
+  predicted = fct_test$as_tibble()$.mean
+)
+```
+
+### Rolling-origin backtesting
+
+```{r backtest}
+bt <- milt_backtest(
+  model = milt_model("naive"),
+  series = air,
+  horizon = 12,
+  initial_window = 108L,
+  stride = 12L
+)
+
+print(bt)
+```
+
+### Model comparison
+
+```{r compare}
+cmp <- milt_compare(
+  models = list(
+    naive = milt_model("naive"),
+    drift = milt_model("drift")
+  ),
+  series = air,
+  horizon = 12,
+  initial_window = 108L,
+  stride = 12L
+)
+
+print(cmp)
+```
+
+## Feature engineering and pipelines
+
+`milt` supports direct feature steps and pipeline composition.
+
+### Direct steps
+
+```{r direct-steps}
+air_features <- air |>
+  milt_step_lag(lags = 1:6) |>
+  milt_step_rolling(windows = 3L, fns = "mean") |>
+  milt_step_fourier(period = 12, K = 2)
+
+print(air_features)
+```
+
+Available step families include:
+
+- lag features
+- rolling statistics
+- Fourier seasonality terms
+- calendar features
+- scaling and inverse scaling
+
+### Pipelines
+
+Pipelines let you define repeatable transformations and model application in a
+single object.
+
+```{r pipeline, eval = FALSE}
+pipe <- milt_pipeline() |>
+  milt_pipe_step_lag(lags = 1:12) |>
+  milt_pipe_step_rolling(windows = c(3L, 6L), fns = "mean") |>
+  milt_pipe_model("xgboost")
+
+pipe <- milt_pipeline_fit(pipe, air)
+fct  <- milt_pipeline_forecast(pipe, horizon = 12)
+```
+
+## Diagnostics and analysis
+
+The package includes diagnostics beyond forecasting.
+
+### Series diagnostics
+
+```{r diagnose}
+dx <- milt_diagnose(air)
+print(dx)
+```
+
+### Exploratory analysis
+
+```{r eda}
+eda <- milt_eda(air)
+print(eda)
+```
+
+### Explainability
+
+For supported model types, `milt_explain()` provides feature-importance style
+summaries and plots.
+
+```{r explain, eval = FALSE}
+exp <- milt_explain(fitted_model)
+print(exp)
+plot(exp)
+```
+
+## Anomaly detection and changepoints
+
+`milt` also includes detection workflows for unusual behavior in series.
+
+```{r anomalies}
+detector <- milt_detector("iqr")
+anom <- milt_detect(detector, air)
+print(anom)
+```
+
+Changepoint analysis is exposed separately:
+
+```{r changepoints}
+cp <- milt_changepoints(air)
+print(cp)
+```
+
+## Multi-series workflows
+
+For grouped or panel data, the package includes:
+
+- clustering
+- classification
+- reconciliation
+
+Those workflows are documented further in the dedicated multi-series vignette,
+but they fit into the same object-oriented structure as the rest of the
+package.
+
+## Deployment layer
+
+The package includes several operational helpers:
+
+- `milt_save()` and `milt_load()`
+- `milt_serve()`
+- `milt_dashboard()`
+- `milt_report()`
+
+This makes the package useful beyond experimentation. The intended scope covers
+development, validation, and handoff or delivery workflows as well.
+
+## Built-in datasets
+
+The package ships with example data for demonstrations and tests:
+
+```{r datasets}
+data(milt_air)
+data(milt_retail)
+data(milt_energy)
+```
+
+- `milt_air`: monthly airline passenger data
+- `milt_retail`: synthetic multi-series retail data
+- `milt_energy`: synthetic energy demand data with covariates
+
+## Documentation map
+
+The pkgdown site should be read in layers:
+
+1. Start with this overview.
+2. Read the getting-started guide for the basic workflow.
+3. Use the task-focused vignettes for forecasting, anomaly detection,
+   pipelines, multi-series work, deep learning, and deployment.
+4. Use the reference index for exact function-level documentation.
+
+## Summary
+
+`milt` is not just a small forecasting wrapper. It is structured as a broader
+time series workbench:
+
+- one core series type
+- one model workflow
+- one evaluation pattern
+- multiple interchangeable backends
+- supporting layers for diagnostics, anomaly detection, multi-series tasks, and deployment
+
+That is the main organizing idea behind the package and the website.

@@ -88,9 +88,7 @@ MiltElasticNet <- R6::R6Class(
       forecasts <- numeric(horizon)
 
       for (h in seq_len(horizon)) {
-        x_row <- matrix(.compute_lags(history, lags)[length(history), ],
-                        nrow = 1L)
-        colnames(x_row) <- paste0(".lag_", lags)
+        x_row <- .ml_next_lag_row(history, lags)
         pt    <- as.numeric(predict(fit, newx = x_row, s = lambda))
         forecasts[h] <- pt
         history      <- c(history, pt)
