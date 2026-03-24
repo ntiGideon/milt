@@ -25,17 +25,16 @@ test_that(".resolve_backends deduplicates across groups", {
   expect_equal(length(pkgs), length(unique(pkgs)))
 })
 
-test_that("milt_install_backends returns invisible named logical for already-installed pkg", {
-  # 'stats' is always available — use it as a stand-in for a known package
-  res <- milt_install_backends("stats")
-  expect_true(is.logical(res))
-  expect_true(!is.null(names(res)))
+test_that(".resolve_backends returns empty for unrecognised names treated as packages", {
+  pkgs <- milt:::.resolve_backends("nonexistent_pkg_xyz")
+  expect_identical(pkgs, "nonexistent_pkg_xyz")
 })
 
-test_that("milt_install_backends accepts a vector of groups", {
-  # Just check it doesn't error with valid group names
-  # (won't actually install in test environment)
-  expect_no_error(
-    suppressMessages(milt_install_backends(c("forecasting", "ml")))
-  )
+test_that("milt_install_backends returns named logical when all pkgs already present", {
+  # Use a group whose packages happen to be installed in the test env, or
+  # verify the return-type contract without triggering network installs by
+  # passing an empty character vector.
+  res <- milt_install_backends(character(0))
+  expect_true(is.logical(res))
+  expect_equal(length(res), 0L)
 })

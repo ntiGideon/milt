@@ -13,7 +13,8 @@
       "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::build_vignettes\\(\\)\")",
       "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"tools::buildVignettes\\(dir = ''''.'''', tangle = FALSE\\)\")",
       "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \":*)",
-      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::load_all\\(quiet=TRUE\\); rmarkdown::render\\(''vignettes/milt-anomaly-detection.Rmd'', output_dir=tempdir\\(\\)\\)\")"
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::load_all\\(quiet=TRUE\\); rmarkdown::render\\(''vignettes/milt-anomaly-detection.Rmd'', output_dir=tempdir\\(\\)\\)\")",
+      "Bash(grep:*)"
     ]
   }
 }
