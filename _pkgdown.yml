@@ -131,6 +131,7 @@ reference:
   - title: "Deep Learning"
     desc: "Neural network backends and setup helpers"
     contents:
+      - milt_install_backends
       - milt_setup_darts
       - milt_torch_device
 
