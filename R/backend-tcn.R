@@ -208,13 +208,13 @@ MiltTCN <- R6::R6Class(
         as.numeric(
           torch::with_no_grad({
             X_t <- torch::torch_tensor(X_train,
-                                        dtype = torch::torch_float())$to(device)
+                                        dtype = torch::torch_float())$to(device = device)
             net(X_t)$cpu()$detach()
           })[, ocl]
         ),
         norm$mean, norm$sd
       )
-      y_true_denorm <- vals[(icl + ocl):length(vals)]
+      y_true_denorm <- .ts_denormalise(y_train[, ocl], norm$mean, norm$sd)
       resid_final   <- y_true_denorm - y_hat_denorm
 
       private$.torch_model <- net
@@ -240,7 +240,7 @@ MiltTCN <- R6::R6Class(
       generated <- numeric(0L)
       while (length(generated) < horizon) {
         x_in  <- matrix(utils::tail(c(history, generated), icl), nrow = 1L)
-        x_t   <- torch::torch_tensor(x_in, dtype = torch::torch_float())$to(device)
+        x_t   <- torch::torch_tensor(x_in, dtype = torch::torch_float())$to(device = device)
         y_hat <- as.numeric(
           torch::with_no_grad({ net(x_t) })$cpu()$detach()
         )
@@ -283,7 +283,7 @@ MiltTCN <- R6::R6Class(
       device <- .milt_torch_device()
       net    <- private$.torch_model
       X_t    <- torch::torch_tensor(wins$X,
-                                     dtype = torch::torch_float())$to(device)
+                                     dtype = torch::torch_float())$to(device = device)
       y_hat  <- as.numeric(
         torch::with_no_grad({ net(X_t) })$cpu()$detach()[, ocl]
       )

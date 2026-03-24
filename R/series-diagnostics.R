@@ -200,22 +200,18 @@ milt_diagnose <- function(series,
 
   stationarity <- list(stationary = stationary, cv_ratio = cv_ratio)
 
-  # ── Seasonality: ACF at seasonal lag ─────────────────────────────────────
+  # ── Seasonality: STL-based strength ──────────────────────────────────────
   freq_num <- .freq_label_to_numeric(as.character(series$freq()))
-  if (!is.na(freq_num) && freq_num > 1 && freq_num <= n %/% 2) {
-    acf_vals <- tryCatch(
-      stats::acf(v, lag.max = as.integer(freq_num * 2),
-                 plot = FALSE, na.action = stats::na.pass)$acf,
-      error = function(e) NULL
-    )
-    if (!is.null(acf_vals) && length(acf_vals) > freq_num) {
-      seas_strength <- abs(acf_vals[freq_num + 1L])
-      seasonal      <- seas_strength > seasonality_threshold
-    } else {
-      seas_strength <- 0
-      seasonal      <- FALSE
-    }
-    period <- as.integer(freq_num)
+  if (!is.na(freq_num) && freq_num > 1 && n >= 2L * as.integer(round(freq_num))) {
+    period <- as.integer(round(freq_num))
+    seas_strength <- tryCatch({
+      ts_obj <- series$as_ts()
+      dcmp   <- stats::stl(ts_obj, s.window = "periodic", robust = TRUE)
+      var_s  <- stats::var(dcmp$time.series[, "seasonal"],  na.rm = TRUE)
+      var_r  <- stats::var(dcmp$time.series[, "remainder"], na.rm = TRUE)
+      max(0, 1 - var_r / (var_s + var_r + 1e-10))
+    }, error = function(e) 0)
+    seasonal <- seas_strength > seasonality_threshold
   } else {
     seas_strength <- 0
     seasonal      <- FALSE

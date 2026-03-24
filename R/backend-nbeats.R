@@ -61,7 +61,7 @@
       forecasts <- torch::torch_zeros(
         c(x$shape[1], self$output_size),
         device = x$device,
-        dtype  = x$dtype
+        dtype  = torch::torch_float()
       )
       for (i in seq_len(self$n_blocks)) {
         out       <- self$blocks[[i]](residual)
@@ -199,30 +199,16 @@ MiltNBeats <- R6::R6Class(
         device   = device
       )
 
-      # Compute in-sample residuals on training windows
+      # Compute in-sample residuals on training windows (last forecast step)
       net$eval()
-      resids <- torch::with_no_grad({
-        X_t    <- torch::torch_tensor(X_train, dtype = torch::torch_float())$to(device)
-        y_hat  <- net(X_t)$cpu()$detach()
-        y_true <- torch::torch_tensor(y_train, dtype = torch::torch_float())
-        as.matrix(y_true - y_hat)
-      })
-      # Flatten residuals to a vector (last step per window = single-step residual)
-      resid_vec <- .ts_denormalise(resids[, ocl], norm$mean, norm$sd) -
-                   .ts_denormalise(y_train[, ocl], norm$mean, norm$sd) +
-                   .ts_denormalise(y_train[, ocl], norm$mean, norm$sd) -
-                   vals[(icl + ocl):length(vals)]
-      # Simpler: residual = actual - predicted for last ocl forecast step
-      y_hat_denorm <- .ts_denormalise(
-        as.numeric(
-          torch::with_no_grad({
-            X_t <- torch::torch_tensor(X_train, dtype = torch::torch_float())$to(device)
-            net(X_t)$cpu()$detach()
-          })[, ocl]
-        ),
-        norm$mean, norm$sd
+      y_hat_n <- as.numeric(
+        torch::with_no_grad({
+          X_t <- torch::torch_tensor(X_train, dtype = torch::torch_float())$to(device = device)
+          net(X_t)$cpu()$detach()
+        })[, ocl]
       )
-      y_true_denorm <- vals[(icl + ocl):length(vals)]
+      y_hat_denorm  <- .ts_denormalise(y_hat_n,          norm$mean, norm$sd)
+      y_true_denorm <- .ts_denormalise(y_train[, ocl],   norm$mean, norm$sd)
       resid_final   <- y_true_denorm - y_hat_denorm
 
       private$.torch_model <- net
@@ -250,7 +236,7 @@ MiltNBeats <- R6::R6Class(
       while (length(generated) < horizon) {
         x_in  <- matrix(utils::tail(c(history, generated), icl),
                         nrow = 1L)
-        x_t   <- torch::torch_tensor(x_in, dtype = torch::torch_float())$to(device)
+        x_t   <- torch::torch_tensor(x_in, dtype = torch::torch_float())$to(device = device)
         y_hat <- as.numeric(
           torch::with_no_grad({ net(x_t) })$cpu()$detach()
         )
@@ -293,7 +279,7 @@ MiltNBeats <- R6::R6Class(
       wins   <- .create_ts_windows(.ts_normalise(vals)$norm, icl, ocl)
       device <- .milt_torch_device()
       net    <- private$.torch_model
-      X_t    <- torch::torch_tensor(wins$X, dtype = torch::torch_float())$to(device)
+      X_t    <- torch::torch_tensor(wins$X, dtype = torch::torch_float())$to(device = device)
       y_hat  <- as.numeric(
         torch::with_no_grad({ net(X_t) })$cpu()$detach()[, ocl]
       )

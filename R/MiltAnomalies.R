@@ -43,7 +43,8 @@ MiltAnomaliesR6 <- R6::R6Class(
     n_anomalies = function() sum(private$.is_anomaly, na.rm = TRUE),
 
     #' @return A tibble with columns `time`, `value`, `.is_anomaly`,
-    #'   `.anomaly_score`.
+    #'   `.anomaly_score`, and compatibility aliases `is_anomaly`,
+    #'   `anomaly_score`.
     as_tibble = function() {
       s   <- private$.series
       tbl <- s$as_tibble()
@@ -52,7 +53,9 @@ MiltAnomaliesR6 <- R6::R6Class(
         time           = tbl[[s$.__enclos_env__$private$.time_col]],
         value          = tbl[[val_col]],
         .is_anomaly    = private$.is_anomaly,
-        .anomaly_score = private$.anomaly_score
+        .anomaly_score = private$.anomaly_score,
+        is_anomaly     = private$.is_anomaly,
+        anomaly_score  = private$.anomaly_score
       )
     }
   )
@@ -106,7 +109,8 @@ summary.MiltAnomalies <- function(object, ...) {
 #' @param x A `MiltAnomalies` object.
 #' @param ... Ignored.
 #' @return A [tibble::tibble()] with columns `time`, `value`, `.is_anomaly`,
-#'   `.anomaly_score`.
+#'   `.anomaly_score`, and compatibility aliases `is_anomaly`,
+#'   `anomaly_score`.
 #' @export
 as_tibble.MiltAnomalies <- function(x, ...) {
   x$as_tibble()

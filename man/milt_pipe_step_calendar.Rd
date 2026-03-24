@@ -6,7 +6,7 @@
 \usage{
 milt_pipe_step_calendar(
   pipeline,
-  features = c("dow", "month", "quarter", "year", "week")
+  features = c("day_of_week", "month", "quarter", "year", "week")
 )
 }
 \arguments{

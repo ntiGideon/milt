@@ -37,12 +37,28 @@ Documentation site: <https://ntigideon.github.io/milt>
 pak::pak("ntiGideon/milt")
 ```
 
-Some model families require optional packages. For example:
+milt keeps heavy backend dependencies optional so the core package installs
+quickly and reliably. Use `milt_install_backends()` to install what you need:
 
-- classical forecasting models rely on `forecast`
-- gradient-boosted and tree-based models may require `xgboost`, `lightgbm`, or `ranger`
-- deep-learning integrations may require `torch` or `reticulate`
-- deployment helpers may require `shiny` or `plumber`
+```r
+library(milt)
+
+milt_install_backends()                        # everything
+milt_install_backends("forecasting")           # forecast + prophet
+milt_install_backends("ml")                    # xgboost, lightgbm, glmnet, ranger, e1071
+milt_install_backends("deep_learning")         # torch  (then run torch::install_torch())
+milt_install_backends("extras")                # anomaly, clustering, causal impact
+milt_install_backends("reporting")             # rmarkdown, shiny, plumber
+milt_install_backends("prophet")               # a single package by name
+```
+
+| Group | Packages |
+|---|---|
+| `"forecasting"` | forecast, prophet |
+| `"ml"` | xgboost, lightgbm, glmnet, ranger, e1071 |
+| `"deep_learning"` | torch |
+| `"extras"` | isotree, dbscan, dtw, CausalImpact, changepoint |
+| `"reporting"` | rmarkdown, shiny, plumber, jsonlite |
 
 ## Core workflow
 

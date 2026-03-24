@@ -223,8 +223,8 @@ milt_pipe_step_fourier <- function(pipeline, period = 12, K = 4L) {
 #' pipe <- milt_pipeline() |> milt_pipe_step_calendar()
 #' @export
 milt_pipe_step_calendar <- function(pipeline,
-                                    features = c("dow", "month", "quarter",
-                                                 "year", "week")) {
+                                    features = c("day_of_week", "month",
+                                                 "quarter", "year", "week")) {
   .assert_milt_pipeline(pipeline)
   pipeline$add_step(list(
     type   = "calendar",

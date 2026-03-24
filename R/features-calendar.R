@@ -81,7 +81,7 @@ milt_step_calendar <- function(series, features = NULL) {
     if (length(missing_features) > 0L) {
       milt_abort(
         c(
-          "{.arg features} contains unsupported calendar feature name{?s}.",
+          "{.arg features} contains {length(missing_features)} unsupported calendar feature{?s}.",
           "i" = "Unknown: {.val {missing_features}}.",
           "i" = "Available: {.val {allowed}}."
         ),
