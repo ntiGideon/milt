@@ -27,6 +27,13 @@ articles:
       - milt-overview
       - milt-getting-started
       - milt-forecasting
+  - title: "API Reference"
+    navbar: "API Reference"
+    contents:
+      - milt-series-api
+      - milt-model-reference
+      - milt-metrics-guide
+      - milt-eda-diagnostics
   - title: "Core workflows"
     navbar: "Core workflows"
     contents:
