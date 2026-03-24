@@ -1,5 +1,9 @@
 # Shared torch infrastructure for deep learning backends
 
+# `self` is a special binding injected by torch::nn_module() into every
+# method body.  Declare it here to silence R CMD check NOTE.
+utils::globalVariables("self")
+
 # ── Device detection ──────────────────────────────────────────────────────────
 
 #' Detect the best available torch device

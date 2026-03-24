@@ -112,7 +112,7 @@ plot.MiltExplanation <- function(x, top_n = 20L, ...) {
 
   shap_tbl <- NULL
   shap_raw <- tryCatch(
-    xgboost::predict(model_obj, newdata = X, predcontrib = TRUE),
+    predict(model_obj, newdata = X, predcontrib = TRUE),
     error = function(e) NULL
   )
   if (!is.null(shap_raw)) {

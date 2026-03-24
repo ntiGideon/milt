@@ -106,7 +106,7 @@ milt_dashboard <- function(model,
     output$plot_acf <- shiny::renderPlot({
       tryCatch({
         r <- stats::na.omit(milt_residuals(.model))
-        graphics::acf(r, main = "ACF of Residuals")
+        stats::acf(r, main = "ACF of Residuals")
       }, error = function(e) ggplot2::ggplot() + ggplot2::theme_void())
     })
 

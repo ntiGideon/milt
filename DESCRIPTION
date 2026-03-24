@@ -60,6 +60,7 @@ Suggests:
     tseries,
     xts,
     zoo,
+    pak,
     pkgdown,
     covr,
     lintr
