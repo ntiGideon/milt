@@ -1,0 +1,20 @@
+pandoc: 3.1.11
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  milt-anomaly-detection: milt-anomaly-detection.html
+  milt-deep-learning: milt-deep-learning.html
+  milt-deployment: milt-deployment.html
+  milt-eda-diagnostics: milt-eda-diagnostics.html
+  milt-forecasting: milt-forecasting.html
+  milt-getting-started: milt-getting-started.html
+  milt-metrics-guide: milt-metrics-guide.html
+  milt-model-reference: milt-model-reference.html
+  milt-multi-series: milt-multi-series.html
+  milt-overview: milt-overview.html
+  milt-pipelines: milt-pipelines.html
+  milt-series-api: milt-series-api.html
+last_built: 2026-03-25T14:27Z
+urls:
+  reference: https://ntiGideon.github.io/milt/reference
+  article: https://ntiGideon.github.io/milt/articles

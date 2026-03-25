@@ -1,0 +1,391 @@
+# EDA and Diagnostics
+
+milt provides two complementary tools for understanding a time series
+before modelling:
+
+- **[`milt_eda()`](https://ntiGideon.github.io/milt/reference/milt_eda.md)**
+  — a *statistical* deep-dive: descriptive statistics, stationarity
+  tests, seasonality strength, ACF/PACF, decomposition, and distribution
+  plots all in one call.
+- **[`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md)**
+  — a *diagnostic* summary: stationarity, seasonality, trend, gap
+  detection, outlier count, and actionable modelling recommendations.
+
+Both functions accept a `MiltSeries` object and are fully pipe-friendly.
+
+------------------------------------------------------------------------
+
+## 1. Quick Start
+
+``` r
+library(milt)
+
+ap <- milt_series(AirPassengers)
+
+eda  <- milt_eda(ap)
+diag <- milt_diagnose(ap)
+
+print(eda)
+print(diag)
+```
+
+------------------------------------------------------------------------
+
+## 2. Exploratory Data Analysis — `milt_eda()`
+
+``` r
+milt_eda(series, plots = TRUE, quiet = FALSE)
+```
+
+| Argument | Type       | Default | Description                                                                                                         |
+|----------|------------|---------|---------------------------------------------------------------------------------------------------------------------|
+| `series` | MiltSeries | —       | The time series to analyse.                                                                                         |
+| `plots`  | logical    | `TRUE`  | Whether to render ACF/PACF, decomposition, and distribution plots. Set to `FALSE` for non-interactive or batch use. |
+| `quiet`  | logical    | `FALSE` | Suppress cli progress messages during analysis.                                                                     |
+
+**Returns:** a `MiltEDA` object. Use
+[`print()`](https://rdrr.io/r/base/print.html),
+[`summary()`](https://rdrr.io/r/base/summary.html), or
+[`tibble::as_tibble()`](https://tibble.tidyverse.org/reference/as_tibble.html)
+to inspect results.
+
+### 2.1 Descriptive Statistics
+
+The EDA report starts with a table of basic statistics:
+
+``` r
+eda <- milt_eda(ap)
+print(eda)
+```
+
+Reported statistics include:
+
+| Statistic     | Description                          |
+|---------------|--------------------------------------|
+| `n`           | Total number of observations.        |
+| `mean`        | Arithmetic mean of values.           |
+| `sd`          | Standard deviation.                  |
+| `min` / `max` | Range of the series.                 |
+| `q25` / `q75` | 25th and 75th percentiles (IQR).     |
+| `missing`     | Count and percentage of `NA` values. |
+| `zeros`       | Count of exact zero values.          |
+
+Extract as a tibble for downstream use:
+
+``` r
+tibble::as_tibble(eda)
+```
+
+### 2.2 Stationarity Tests
+
+milt automatically runs two complementary stationarity tests:
+
+| Test                                         | H₀                                 | Pass condition                                 | Method                                                     |
+|----------------------------------------------|------------------------------------|------------------------------------------------|------------------------------------------------------------|
+| **PP (Phillips-Perron)**                     | Unit root present (non-stationary) | p-value \< 0.05 rejects H₀ → stationary        | [`stats::PP.test()`](https://rdrr.io/r/stats/pp.test.html) |
+| **KPSS (Kwiatkowski-Phillips-Schmidt-Shin)** | Level stationary                   | p-value ≥ 0.05 fails to reject H₀ → stationary | Base-R implementation (Newey-West LRV)                     |
+
+Both tests are always computed using base-R implementations (no extra
+packages required).
+
+**Interpreting the combined result:**
+
+| PP p-value | KPSS p-value | Conclusion                                    |
+|------------|--------------|-----------------------------------------------|
+| \< 0.05    | ≥ 0.05       | Stationary — no differencing needed.          |
+| ≥ 0.05     | \< 0.05      | Non-stationary — consider first-differencing. |
+| \< 0.05    | \< 0.05      | Ambiguous — inspect ACF/PACF manually.        |
+| ≥ 0.05     | ≥ 0.05       | Ambiguous — likely a borderline case.         |
+
+Access raw test results:
+
+``` r
+stat <- eda$stationarity()
+
+stat$pp_pvalue    # Phillips-Perron p-value
+stat$kpss_pvalue  # KPSS p-value
+stat$stationary   # logical: TRUE if both tests agree series is stationary
+```
+
+### 2.3 Seasonality Detection
+
+Seasonal strength is computed via STL decomposition
+(`stats::stl(s.window = "periodic", robust = TRUE)`):
+
+$$\text{strength} = \max\!\left( 0,\ 1 - \frac{\text{Var(remainder)}}{\text{Var(seasonal)} + \text{Var(remainder)}} \right)$$
+
+Values range from 0 (no seasonality) to 1 (perfectly seasonal). A
+strength above **0.40** is generally considered meaningful for modelling
+purposes.
+
+``` r
+seas <- eda$seasonality()
+
+seas$period    # dominant seasonal period (e.g. 12 for monthly data)
+seas$strength  # strength in [0, 1]
+seas$seasonal  # logical: TRUE if strength > 0.40
+```
+
+### 2.4 Visual Outputs
+
+When `plots = TRUE`,
+[`milt_eda()`](https://ntiGideon.github.io/milt/reference/milt_eda.md)
+renders the following plots:
+
+**ACF / PACF** — generated by
+[`milt_plot_acf()`](https://ntiGideon.github.io/milt/reference/milt_plot_acf.md):
+
+``` r
+milt_plot_acf(ap, lags = 36)
+```
+
+Useful for identifying: - Slow ACF decay → non-stationary or trend
+present. - Spikes at lag *m* → seasonality with period *m*. -
+Significant PACF at lag 1–2 only → AR process.
+
+**Decomposition** — generated by
+[`milt_plot_decomp()`](https://ntiGideon.github.io/milt/reference/milt_plot_decomp.md):
+
+``` r
+milt_plot_decomp(ap)
+```
+
+Decomposes the series into trend, seasonal, and remainder components
+using STL. Helpful for understanding the dominant patterns before
+choosing a model.
+
+**Distribution** — a histogram + density overlay of the value
+distribution. Helps identify skewness, heavy tails, or bimodality that
+may warrant transformations (e.g. log, Box-Cox).
+
+------------------------------------------------------------------------
+
+## 3. Series Diagnostics — `milt_diagnose()`
+
+``` r
+milt_diagnose(series)
+```
+
+| Argument | Type       | Description                  |
+|----------|------------|------------------------------|
+| `series` | MiltSeries | The time series to diagnose. |
+
+**Returns:** a `MiltDiagnosis` object. Use
+[`print()`](https://rdrr.io/r/base/print.html) or
+[`summary()`](https://rdrr.io/r/base/summary.html).
+
+### 3.1 What `milt_diagnose()` checks
+
+[`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md)
+runs six checks and synthesises modelling recommendations:
+
+#### Stationarity
+
+Uses the coefficient-of-variation ratio: if the rolling-window CV is
+stable across the series, it is classified as stationary. The result is
+a logical `$stationary` flag plus a short recommendation.
+
+#### Seasonality
+
+Uses STL-based strength (identical to
+[`milt_eda()`](https://ntiGideon.github.io/milt/reference/milt_eda.md)):
+
+``` r
+diag <- milt_diagnose(ap)
+
+diag$.__enclos_env__$private$.seasonality$seasonal   # TRUE/FALSE
+diag$.__enclos_env__$private$.seasonality$strength   # numeric
+diag$.__enclos_env__$private$.seasonality$period     # integer
+```
+
+#### Trend
+
+A simple linear regression of values on time. The slope and its p-value
+determine whether a trend is considered present (`p < 0.05`):
+
+``` r
+diag$.__enclos_env__$private$.trend$has_trend  # logical
+diag$.__enclos_env__$private$.trend$slope      # regression slope
+diag$.__enclos_env__$private$.trend$p_value    # linear trend p-value
+```
+
+#### Gap Detection
+
+Checks whether consecutive time steps match the expected frequency.
+Reports a tibble of gap locations:
+
+``` r
+gaps <- diag$.__enclos_env__$private$.gaps
+# A tibble: time_before, time_after, n_missing
+```
+
+#### Outlier Detection
+
+Uses a simple IQR rule: values outside
+$\left\lbrack Q1 - 3 \times \text{IQR},\, Q3 + 3 \times \text{IQR} \right\rbrack$
+are flagged.
+
+``` r
+out <- diag$.__enclos_env__$private$.outliers
+out$n_outliers  # integer count
+out$indices     # integer vector of row indices
+```
+
+#### Recommendations
+
+Based on all checks,
+[`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md)
+returns a character vector of actionable suggestions:
+
+``` r
+diag$.__enclos_env__$private$.recommendations
+```
+
+Example output for `AirPassengers`:
+
+    [1] "Series appears non-stationary — consider differencing or a model with trend/drift."
+    [2] "Strong seasonality detected (period = 12) — use a seasonal model (snaive, ETS, SARIMA)."
+    [3] "Trend present — include trend component or apply detrending."
+
+### 3.2 Full Diagnostic Report
+
+``` r
+diag <- milt_diagnose(ap)
+print(diag)
+
+# MiltDiagnosis
+# Series    : 144 obs @ monthly
+# Range     : 1949-01-01 — 1960-12-01
+#
+# Stationarity : non-stationary (CV ratio = 0.412)
+# Seasonality  : seasonal (strength = 0.92, period = 12)
+# Trend        : trend present (slope = 2.667, p = 3.1e-52)
+# Gaps         : 0
+# Outliers     : 0
+#
+# Recommendations:
+#  • Consider differencing or a model with trend/drift.
+#  • Use a seasonal model (snaive, ETS, SARIMA, TBATS, Prophet).
+```
+
+------------------------------------------------------------------------
+
+## 4. ACF and PACF Plots — `milt_plot_acf()`
+
+``` r
+milt_plot_acf(series, lags = NULL, type = c("both", "acf", "pacf"))
+```
+
+| Argument | Type                     | Default  | Description                                                             |
+|----------|--------------------------|----------|-------------------------------------------------------------------------|
+| `series` | MiltSeries               | —        | Input series.                                                           |
+| `lags`   | positive integer or NULL | `NULL`   | Number of lags to plot. Defaults to `min(floor(n / 4), 50)`.            |
+| `type`   | character                | `"both"` | Which plot(s) to render: `"acf"`, `"pacf"`, or `"both"` (side-by-side). |
+
+**Reading the ACF:**
+
+- **Slow geometric decay** (all lags positive and declining slowly) →
+  strong trend; series needs differencing.
+- **Sine-wave pattern** → deterministic seasonality.
+- **Single significant spike at lag *k*, then cuts off** → MA(*k*)
+  process.
+- **All lags inside confidence bands** → white noise (no
+  autocorrelation).
+
+**Reading the PACF:**
+
+- **Single significant spike at lag 1** → AR(1) process.
+- **Significant spikes at lags 1–*p*, then cuts off** → AR(*p*) process.
+- **Spike at seasonal lag *m*** → seasonal AR term.
+
+``` r
+# Side-by-side ACF and PACF
+milt_plot_acf(ap, lags = 36, type = "both")
+
+# ACF only with custom lag count
+milt_plot_acf(ap, lags = 24, type = "acf")
+```
+
+------------------------------------------------------------------------
+
+## 5. Decomposition Plot — `milt_plot_decomp()`
+
+``` r
+milt_plot_decomp(series, method = c("stl", "classical"), robust = TRUE)
+```
+
+| Argument | Type       | Default | Description                                                                                                                                                                                               |
+|----------|------------|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `series` | MiltSeries | —       | Input series. Must have a known seasonal period \> 1.                                                                                                                                                     |
+| `method` | character  | `"stl"` | Decomposition method: `"stl"` (STL via [`stats::stl()`](https://rdrr.io/r/stats/stl.html)) or `"classical"` (additive/multiplicative via [`stats::decompose()`](https://rdrr.io/r/stats/decompose.html)). |
+| `robust` | logical    | `TRUE`  | Use robust fitting in STL (less sensitive to outliers). Only applies when `method = "stl"`.                                                                                                               |
+
+**Returns:** a ggplot2 object with four panels: observed, trend,
+seasonal, and remainder.
+
+``` r
+milt_plot_decomp(ap)
+
+# Inspect the STL remainder for anomalies
+milt_plot_decomp(ap, method = "stl", robust = TRUE)
+```
+
+------------------------------------------------------------------------
+
+## 6. Complete Pre-Modelling Workflow
+
+The recommended workflow before fitting any model:
+
+``` r
+library(milt)
+
+# 1. Load data
+ap <- milt_series(AirPassengers)
+
+# 2. Diagnose structure
+diag <- milt_diagnose(ap)
+print(diag)
+
+# 3. Deep-dive EDA
+eda <- milt_eda(ap)
+print(eda)
+
+# 4. Visualise autocorrelation structure
+milt_plot_acf(ap, lags = 36)
+
+# 5. Decompose
+milt_plot_decomp(ap)
+
+# 6. Choose model based on findings
+# Strong seasonality + trend → ETS, SARIMA, or Prophet
+fc <- milt_model("auto_arima") |>
+  milt_fit(ap) |>
+  milt_forecast(h = 24)
+
+plot(fc)
+```
+
+### Decision tree based on diagnostic output
+
+| Finding                     | Recommended action                                                                                |
+|-----------------------------|---------------------------------------------------------------------------------------------------|
+| Non-stationary (trend)      | Use ARIMA with differencing, ETS(A,A,\*), or Prophet                                              |
+| Seasonal + trend            | auto_arima, ETS(A,A,A), TBATS, Prophet                                                            |
+| Seasonal only               | snaive baseline, ETS(A,N,A), SARIMA                                                               |
+| Stationary, no seasonality  | ARIMA(p,0,q), ETS(A,N,N)                                                                          |
+| Irregular gaps              | [`milt_fill_gaps()`](https://ntiGideon.github.io/milt/reference/milt_fill_gaps.md) before fitting |
+| Many outliers               | Robust fitting; consider `robust = TRUE` in decomp                                                |
+| Short series (\< 2 seasons) | Naïve or drift; avoid complex models                                                              |
+
+------------------------------------------------------------------------
+
+## See Also
+
+- [`vignette("milt-series-api")`](https://ntiGideon.github.io/milt/articles/milt-series-api.md)
+  — creating and manipulating MiltSeries
+- [`vignette("milt-forecasting")`](https://ntiGideon.github.io/milt/articles/milt-forecasting.md)
+  — fitting and forecasting models
+- [`vignette("milt-model-reference")`](https://ntiGideon.github.io/milt/articles/milt-model-reference.md)
+  — model parameter reference
+- [`vignette("milt-metrics-guide")`](https://ntiGideon.github.io/milt/articles/milt-metrics-guide.md)
+  — accuracy metrics reference
