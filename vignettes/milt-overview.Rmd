@@ -276,7 +276,7 @@ print(anom)
 
 Changepoint analysis is exposed separately:
 
-```{r changepoints}
+```{r changepoints, eval = requireNamespace("changepoint", quietly = TRUE)}
 cp <- milt_changepoints(air)
 print(cp)
 ```
