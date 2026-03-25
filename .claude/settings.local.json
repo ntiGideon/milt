@@ -20,7 +20,8 @@
       "Bash(ls tests/testthat/test-*.R)",
       "Bash(Rscript -e \"devtools::test\\(\\)\" 2>&1)",
       "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::test\\(reporter = 'progress'\\)\" 2>&1)",
-      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::load_all\\(quiet=TRUE\\); for\\(f in c\\(''''tests/testthat/test-backend-deepar.R'''',''''tests/testthat/test-backend-nbeats.R'''',''''tests/testthat/test-backend-nhits.R'''',''''tests/testthat/test-backend-patch-tst.R'''',''''tests/testthat/test-backend-tcn.R'''',''''tests/testthat/test-backend-tft.R''''\\)\\) testthat::test_file\\(f\\)\")"
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::load_all\\(quiet=TRUE\\); for\\(f in c\\(''''tests/testthat/test-backend-deepar.R'''',''''tests/testthat/test-backend-nbeats.R'''',''''tests/testthat/test-backend-nhits.R'''',''''tests/testthat/test-backend-patch-tst.R'''',''''tests/testthat/test-backend-tcn.R'''',''''tests/testthat/test-backend-tft.R''''\\)\\) testthat::test_file\\(f\\)\")",
+      "Bash(git ls-tree:*)"
     ]
   }
 }
