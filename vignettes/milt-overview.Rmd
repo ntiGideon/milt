@@ -119,7 +119,7 @@ Other workflows return their own result classes, including:
 
 Forecasting is one major pillar of the package.
 
-```{r forecasting}
+```{r forecasting, eval = requireNamespace("forecast", quietly = TRUE)}
 fct_ets <- milt_model("ets") |>
   milt_fit(air) |>
   milt_forecast(horizon = 24)
