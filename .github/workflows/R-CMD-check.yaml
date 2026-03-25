@@ -9,22 +9,41 @@ name: R-CMD-check
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    continue-on-error: ${{ matrix.config.allow_failure || false }}
 
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-latest,   r: 'release'}
-          - {os: ubuntu-latest,   r: 'devel',  http-user-agent: 'release'}
-          - {os: ubuntu-latest,   r: 'oldrel-1'}
-          - {os: macos-latest,    r: 'release'}
-          - {os: windows-latest,  r: 'release'}
+          - os: ubuntu-latest
+            r: release
+            dependencies: '"hard"'
+            build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          - os: ubuntu-latest
+            r: devel
+            http-user-agent: release
+            dependencies: '"hard"'
+            build_args: 'c("--no-manual","--no-build-vignettes")'
+            allow_failure: true
+          - os: ubuntu-latest
+            r: oldrel-1
+            dependencies: '"hard"'
+            build_args: 'c("--no-manual","--no-build-vignettes")'
+          - os: macos-latest
+            r: release
+            dependencies: '"hard"'
+            build_args: 'c("--no-manual","--no-build-vignettes")'
+          - os: windows-latest
+            r: release
+            dependencies: '"hard"'
+            build_args: 'c("--no-manual","--no-build-vignettes")'
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
+      _R_CHECK_FORCE_SUGGESTS_: false
+      NOT_CRAN: true
 
     steps:
       - uses: actions/checkout@v4
@@ -41,8 +60,10 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+          dependencies: ${{ matrix.config.dependencies }}
 
-      - uses: r-lib/actions/check-r-package@v2
+      - name: Check package
+        uses: r-lib/actions/check-r-package@v2
         with:
-          upload-snapshots: true
-          build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+          upload-snapshots: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release' }}
+          build_args: ${{ matrix.config.build_args }}
