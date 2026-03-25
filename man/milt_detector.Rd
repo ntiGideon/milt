@@ -17,7 +17,7 @@ A \code{MiltDetector} object.
 }
 \description{
 Returns an unfitted detector object.  Pass it to \code{\link[=milt_detect]{milt_detect()}} along
-with a \link{MiltSeries} to run detection.
+with a \code{MiltSeries} to run detection.
 }
 \examples{
 d <- milt_detector("iqr", k = 1.5)

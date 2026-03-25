@@ -55,7 +55,7 @@ test_that("step_lag: errors on invalid lags", {
 })
 
 test_that("step_lag: errors when series too short for lags", {
-  tiny <- milt_series(1:5)
+  tiny <- milt_series(1:5, frequency = 1L)
   expect_error(milt_step_lag(tiny, lags = 1:10),
                class = "milt_error_insufficient_data")
 })
@@ -90,7 +90,7 @@ test_that("step_rolling: no NA in rolling columns after drop", {
 
 test_that("step_rolling: rolling mean of constant series equals constant", {
   vals    <- rep(5, 30)
-  s_const <- milt_series(vals)
+  s_const <- milt_series(vals, frequency = 1L)
   s_rol   <- milt_step_rolling(s_const, windows = 5L, fns = "mean")
   expect_true(all(abs(s_rol$as_tibble()$.rolling_mean_5 - 5) < 1e-10))
 })

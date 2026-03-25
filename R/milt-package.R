@@ -19,5 +19,6 @@
 #'   facet_wrap scale_color_manual theme_minimal labs theme
 #'   element_text element_blank autoplot
 #' @importFrom data.table as.data.table setDT
+#' @importFrom utils head tail
 ## usethis namespace: end
 NULL

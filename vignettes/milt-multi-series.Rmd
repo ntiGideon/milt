@@ -1,0 +1,170 @@
+---
+title: "Working with Multiple Series"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Working with Multiple Series}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+```{r setup}
+library(milt)
+```
+
+## Overview
+
+milt handles multi-series data natively.  A grouped `MiltSeries` stores
+multiple series in a single object, and `milt_local_model()` fits one model
+per series in parallel.
+
+---
+
+## 1. Creating a multi-series MiltSeries
+
+```{r multi-create}
+# Build a synthetic dataset with 3 stores
+set.seed(42)
+n   <- 48L
+tbl <- tibble::tibble(
+  date     = rep(seq(as.Date("2020-01-01"), by = "month", length.out = n), 3),
+  store    = rep(c("A", "B", "C"), each = n),
+  sales    = c(
+    rnorm(n, 100, 10),
+    rnorm(n, 200, 20),
+    rnorm(n, 150, 15)
+  )
+)
+
+ms <- milt_series(tbl,
+                   time_col  = "date",
+                   value_cols = "sales",
+                   group_col = "store")
+print(ms)
+```
+
+---
+
+## 2. Visualise all series
+
+```{r multi-plot}
+plot(ms)
+```
+
+---
+
+## 3. Local models — one per series
+
+`milt_local_model()` wraps any model to train independently on each group:
+
+```{r local-model, eval = requireNamespace("forecast", quietly = TRUE)}
+local_m <- milt_local_model(milt_model("ets"))
+fitted  <- milt_fit(local_m, ms)
+fct     <- milt_forecast(fitted, 12)
+print(fct)
+plot(fct)
+```
+
+---
+
+## 4. Split and manipulate individual series
+
+```{r split}
+# Extract one group by filtering the underlying tibble
+s_A <- milt_series(
+  dplyr::filter(ms$as_tibble(), store == "A"),
+  time_col   = "date",
+  value_cols = "sales"
+)
+
+spl <- milt_split(s_A, ratio = 0.8)
+cat("Train:", spl$train$n_timesteps(), "Test:", spl$test$n_timesteps(), "\n")
+```
+
+---
+
+## 5. Concatenate series
+
+```{r concat}
+s1 <- milt_series(AirPassengers)[1:72]
+s2 <- milt_series(AirPassengers)[73:144]
+s_full <- milt_concat(s1, s2)
+cat("Combined length:", s_full$n_timesteps(), "\n")
+```
+
+---
+
+## 6. Time series clustering
+
+Group series by shape similarity:
+
+```{r cluster}
+# Create a list of separate MiltSeries for clustering
+series_list <- lapply(c("A", "B", "C"), function(g) {
+  milt_window(ms, group = g)
+})
+
+cl <- milt_cluster(series_list, k = 2L, method = "feature_based")
+print(cl)
+```
+
+---
+
+## 7. Time series classification
+
+Train a classifier on labelled series:
+
+```{r classify, eval = requireNamespace("ranger", quietly = TRUE)}
+# Assign synthetic labels
+labels <- c("high", "high", "low")   # stores A, B, C
+
+clf <- milt_classifier("feature_based")
+milt_classify_fit(clf, series_list, labels)
+
+pred <- milt_classify_predict(clf, series_list)
+cat("Predicted labels:", pred$labels, "\n")
+```
+
+---
+
+## 8. Hierarchical reconciliation
+
+Ensure aggregate forecasts are coherent with bottom-level sums:
+
+```{r hierarchical, eval = requireNamespace("forecast", quietly = TRUE)}
+# Fit models for Total + each store
+s_total <- milt_series(
+  tibble::tibble(
+    date  = seq(as.Date("2020-01-01"), by = "month", length.out = n),
+    sales = tbl$sales[tbl$store == "A"] +
+            tbl$sales[tbl$store == "B"] +
+            tbl$sales[tbl$store == "C"]
+  ),
+  time_col = "date", value_cols = "sales"
+)
+
+fc_total <- milt_model("ets") |> milt_fit(s_total)  |> milt_forecast(6)
+fc_A     <- milt_model("ets") |> milt_fit(series_list[[1L]]) |> milt_forecast(6)
+fc_B     <- milt_model("ets") |> milt_fit(series_list[[2L]]) |> milt_forecast(6)
+fc_C     <- milt_model("ets") |> milt_fit(series_list[[3L]]) |> milt_forecast(6)
+
+# Summing matrix (Total = A + B + C)
+S <- matrix(c(1,1,1, 1,0,0, 0,1,0, 0,0,1),
+            nrow = 4, ncol = 3, byrow = TRUE,
+            dimnames = list(c("Total","A","B","C"), c("A","B","C")))
+
+rc <- milt_reconcile(
+  list(Total = fc_total, A = fc_A, B = fc_B, C = fc_C),
+  S      = S,
+  method = "ols"
+)
+print(rc)
+```

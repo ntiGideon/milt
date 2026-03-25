@@ -5,6 +5,8 @@
 #   "majority" — flag a point when more than half of the detectors do
 #   "mean"     — flag a point when the mean anomaly score exceeds threshold
 
+#' @keywords internal
+#' @noRd
 MiltDetectorEnsemble <- R6::R6Class(
   classname = "MiltDetectorEnsemble",
   inherit   = MiltDetectorBase,

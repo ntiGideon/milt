@@ -2,7 +2,7 @@
 % Please edit documentation in R/metrics.R
 \name{milt_r_squared}
 \alias{milt_r_squared}
-\title{Coefficient of Determination (R²)}
+\title{Coefficient of Determination (R^2)}
 \usage{
 milt_r_squared(actual, predicted)
 }
@@ -17,7 +17,7 @@ A numeric value, typically in \verb{(-Inf, 1]}. A value of 1 is perfect;
 indicate the model is worse than the mean.
 }
 \description{
-Coefficient of Determination (R²)
+Coefficient of Determination (R^2)
 }
 \seealso{
 Other metrics: 

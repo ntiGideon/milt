@@ -7,8 +7,8 @@
 milt_save(object, path, compress = TRUE)
 }
 \arguments{
-\item{object}{Any milt object: \link{MiltSeries}, a fitted \link{MiltModel},
-\link{MiltForecast}, \code{MiltDetector}, etc.}
+\item{object}{Any milt object: \code{MiltSeries}, a fitted \code{MiltModel},
+\code{MiltForecast}, \code{MiltDetector}, etc.}
 
 \item{path}{Character. File path.  The \code{.milt} extension is appended if
 not already present.}

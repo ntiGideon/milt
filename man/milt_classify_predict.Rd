@@ -9,7 +9,7 @@ milt_classify_predict(classifier, series_list)
 \arguments{
 \item{classifier}{A fitted \code{MiltClassifier}.}
 
-\item{series_list}{A list of \link{MiltSeries} objects (test set).}
+\item{series_list}{A list of \code{MiltSeries} objects (test set).}
 }
 \value{
 A named list:
@@ -19,7 +19,7 @@ A named list:
 }
 }
 \description{
-Applies a fitted \link{MiltClassifier} to a list of new series.
+Applies a fitted \code{MiltClassifier} to a list of new series.
 }
 \seealso{
 \code{\link[=milt_classifier]{milt_classifier()}}, \code{\link[=milt_classify_fit]{milt_classify_fit()}}

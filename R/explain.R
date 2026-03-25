@@ -6,6 +6,8 @@
 
 # ── Result class ──────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltExplanationR6 <- R6::R6Class(
   classname = "MiltExplanation",
   cloneable = FALSE,
@@ -110,7 +112,7 @@ plot.MiltExplanation <- function(x, top_n = 20L, ...) {
 
   shap_tbl <- NULL
   shap_raw <- tryCatch(
-    xgboost::predict(model_obj, newdata = X, predcontrib = TRUE),
+    stats::predict(model_obj, newdata = X, predcontrib = TRUE),
     error = function(e) NULL
   )
   if (!is.null(shap_raw)) {
@@ -181,11 +183,11 @@ plot.MiltExplanation <- function(x, top_n = 20L, ...) {
 #' Explain a fitted ML time series model
 #'
 #' Extracts feature importance (and optionally SHAP values for XGBoost) from
-#' a fitted ML-backed [MiltModel].  Supported backends: `"xgboost"`,
+#' a fitted ML-backed `MiltModel`. Supported backends: `"xgboost"`,
 #' `"random_forest"`, `"elastic_net"`, and `"lightgbm"`.
 #'
-#' @param model A fitted [MiltModel] (must have been fit with [milt_fit()]).
-#' @param series Optional [MiltSeries] object.  When provided, the series is
+#' @param model A fitted `MiltModel` (must have been fit with [milt_fit()]).
+#' @param series Optional `MiltSeries` object. When provided, the series is
 #'   used to compute the design matrix for SHAP value calculation (XGBoost
 #'   only).  If omitted the training data stored in the model is used.
 #' @param ... Additional arguments (currently unused).
@@ -233,7 +235,7 @@ milt_explain <- function(model, series = NULL, ...) {
       X <- if (!is.null(be$feature_names)) {
         tryCatch({
           xgboost::xgb.DMatrix(
-            data = model.matrix(~ . - 1,
+            data = stats::model.matrix(~ . - 1,
                                 data = as.data.frame(
                                   be$feature_names  # just the names; fallback below
                                 ))
@@ -253,7 +255,7 @@ milt_explain <- function(model, series = NULL, ...) {
           X_raw <- cbind(X_raw, matrix(lag_col, ncol = 1L,
                                        dimnames = list(NULL, paste0("lag_", k))))
         }
-        complete_rows <- complete.cases(X_raw)
+        complete_rows <- stats::complete.cases(X_raw)
         X_raw <- X_raw[complete_rows, , drop = FALSE]
         X <- xgboost::xgb.DMatrix(data = X_raw)
       }

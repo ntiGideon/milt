@@ -6,16 +6,16 @@
 #' Launch a Shiny monitoring dashboard
 #'
 #' Opens an interactive dashboard for exploring a fitted model and its
-#' training series.  Requires the `shiny` package.
+#' training series. Requires the `shiny` package.
 #'
 #' The dashboard provides four tabs:
-#' * **Series** — interactive line chart of the training data.
-#' * **Forecast** — adjustable horizon slider with PI fan chart.
-#' * **Diagnostics** — residuals, ACF, and histogram.
-#' * **Anomalies** — IQR-based anomaly overlay.
+#' * **Series** - interactive line chart of the training data.
+#' * **Forecast** - adjustable horizon slider with PI fan chart.
+#' * **Diagnostics** - residuals, ACF, and histogram.
+#' * **Anomalies** - IQR-based anomaly overlay.
 #'
-#' @param model A fitted [MiltModel].
-#' @param series Optional [MiltSeries] to display; defaults to the training
+#' @param model A fitted `MiltModel`.
+#' @param series Optional `MiltSeries` to display; defaults to the training
 #'   series stored in `model`.
 #' @param port Integer. Shiny port. Default `NULL` (Shiny auto-selects).
 #' @param launch_browser Logical. Open in browser? Default `TRUE`.
@@ -30,9 +30,9 @@
 #' }
 #' @export
 milt_dashboard <- function(model,
-                            series         = NULL,
-                            port           = NULL,
-                            launch_browser = TRUE) {
+                           series = NULL,
+                           port = NULL,
+                           launch_browser = TRUE) {
   check_installed_backend("shiny", "milt_dashboard")
   if (!inherits(model, "MiltModel")) {
     milt_abort("{.arg model} must be a fitted {.cls MiltModel}.",
@@ -43,12 +43,12 @@ milt_dashboard <- function(model,
                class = "milt_error_not_fitted")
   }
 
-  .model  <- model
+  .model <- model
   .series <- series %||% model$.__enclos_env__$private$.training_series
-  .name   <- model$.__enclos_env__$private$.name
+  .name <- model$.__enclos_env__$private$.name
 
   ui <- shiny::fluidPage(
-    shiny::titlePanel(paste("milt Dashboard —", .name)),
+    shiny::titlePanel(paste("milt Dashboard -", .name)),
     shiny::tabsetPanel(
       shiny::tabPanel("Series", shiny::plotOutput("plot_series")),
       shiny::tabPanel(
@@ -89,9 +89,9 @@ milt_dashboard <- function(model,
 
     output$plot_resid <- shiny::renderPlot({
       tryCatch({
-        r   <- milt_residuals(.model)
+        r <- milt_residuals(.model)
         tbl <- tibble::tibble(
-          index    = seq_along(r),
+          index = seq_along(r),
           residual = r
         )
         ggplot2::ggplot(tbl, ggplot2::aes(.data$index, .data$residual)) +
@@ -106,13 +106,13 @@ milt_dashboard <- function(model,
     output$plot_acf <- shiny::renderPlot({
       tryCatch({
         r <- stats::na.omit(milt_residuals(.model))
-        graphics::acf(r, main = "ACF of Residuals")
+        stats::acf(r, main = "ACF of Residuals")
       }, error = function(e) ggplot2::ggplot() + ggplot2::theme_void())
     })
 
     output$plot_anom <- shiny::renderPlot({
       tryCatch({
-        d   <- milt_detector("iqr", k = input$iqr_k)
+        d <- milt_detector("iqr", k = input$iqr_k)
         anm <- milt_detect(d, .series)
         plot(anm)
       }, error = function(e) {
@@ -126,7 +126,9 @@ milt_dashboard <- function(model,
   app <- shiny::shinyApp(ui = ui, server = server)
 
   opts <- list(launch.browser = launch_browser)
-  if (!is.null(port)) opts$port <- as.integer(port)
+  if (!is.null(port)) {
+    opts$port <- as.integer(port)
+  }
 
   do.call(shiny::runApp, c(list(appDir = app), opts))
   invisible(app)

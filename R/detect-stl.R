@@ -3,6 +3,8 @@
 # Decomposes the series with stats::stl() and applies a z-score threshold to
 # the remainder component.  Points whose |z| > threshold are flagged.
 
+#' @keywords internal
+#' @noRd
 MiltDetectorSTL <- R6::R6Class(
   classname = "MiltDetectorSTL",
   inherit   = MiltDetectorBase,
@@ -33,10 +35,11 @@ MiltDetectorSTL <- R6::R6Class(
                    class = "milt_error_not_univariate")
       }
 
-      p    <- private$.params
-      freq <- series$freq()
+      p        <- private$.params
+      freq     <- series$freq()
+      freq_num <- .freq_label_to_numeric(as.character(freq))
 
-      if (is.numeric(freq) && freq <= 1) {
+      if (is.na(freq_num) || freq_num <= 1) {
         milt_abort(
           c(
             "STL decomposition requires a seasonal series (frequency > 1).",
@@ -47,10 +50,20 @@ MiltDetectorSTL <- R6::R6Class(
         )
       }
 
-      ts_obj    <- series$as_ts()
-      stl_fit   <- stats::stl(ts_obj,
-                               s.window = p$s_window,
-                               robust   = p$robust)
+      ts_obj  <- series$as_ts()
+      stl_fit <- tryCatch(
+        stats::stl(ts_obj, s.window = p$s_window, robust = p$robust),
+        error = function(e) {
+          milt_abort(
+            c(
+              "STL decomposition failed.",
+              "i" = conditionMessage(e),
+              "i" = "Ensure the series has at least two full seasonal periods."
+            ),
+            class = "milt_error_insufficient_data"
+          )
+        }
+      )
       remainder <- as.numeric(stl_fit$time.series[, "remainder"])
 
       # Z-score of remainder

@@ -10,6 +10,8 @@
 
 # ── Result class ──────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltClassifierR6 <- R6::R6Class(
   classname = "MiltClassifier",
   cloneable = TRUE,
@@ -175,11 +177,18 @@ milt_classifier <- function(method    = "feature_based",
 #' Trains the classifier on a labelled set of time series.
 #'
 #' @param classifier A `MiltClassifier` from [milt_classifier()].
-#' @param series_list A list of [MiltSeries] objects (training set).
+#' @param series_list A list of `MiltSeries` objects (training set).
 #' @param labels Character or factor vector of class labels, one per series.
 #' @return The fitted `MiltClassifier` (invisibly, mutated in place).
 #' @seealso [milt_classifier()], [milt_classify_predict()]
 #' @family classify
+#' @examples
+#' \donttest{
+#' s1  <- milt_series(AirPassengers)
+#' s2  <- milt_series(AirPassengers * 1.2)
+#' clf <- milt_classifier("feature_based")
+#' milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+#' }
 #' @export
 milt_classify_fit <- function(classifier, series_list, labels) {
   if (!inherits(classifier, "MiltClassifier")) {
@@ -196,15 +205,23 @@ milt_classify_fit <- function(classifier, series_list, labels) {
 
 #' Predict class labels for new time series
 #'
-#' Applies a fitted [MiltClassifier] to a list of new series.
+#' Applies a fitted `MiltClassifier` to a list of new series.
 #'
 #' @param classifier A fitted `MiltClassifier`.
-#' @param series_list A list of [MiltSeries] objects (test set).
+#' @param series_list A list of `MiltSeries` objects (test set).
 #' @return A named list:
 #'   * `$labels` — character vector of predicted class labels.
 #'   * `$probabilities` — matrix of class probabilities (or `NULL`).
 #' @seealso [milt_classifier()], [milt_classify_fit()]
 #' @family classify
+#' @examples
+#' \donttest{
+#' s1  <- milt_series(AirPassengers)
+#' s2  <- milt_series(AirPassengers * 1.2)
+#' clf <- milt_classifier("feature_based")
+#' milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+#' milt_classify_predict(clf, list(s1))
+#' }
 #' @export
 milt_classify_predict <- function(classifier, series_list) {
   if (!inherits(classifier, "MiltClassifier")) {

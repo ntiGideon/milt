@@ -9,8 +9,8 @@
 #' model forecasts, and anomaly detection.  Requires `rmarkdown` (and
 #' `tinytex` for PDF output).
 #'
-#' @param series A [MiltSeries] object.
-#' @param models Optional named list of fitted [MiltModel] objects.  Each
+#' @param series A `MiltSeries` object.
+#' @param models Optional named list of fitted `MiltModel` objects. Each
 #'   model will be forecasted and plotted in the report.
 #' @param horizon Integer. Forecast horizon shown in the report. Default `12L`.
 #' @param output_format Character. `"html"` (default) or `"pdf"`.

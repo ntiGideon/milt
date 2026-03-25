@@ -1,0 +1,144 @@
+---
+title: "Anomaly Detection with milt"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Anomaly Detection with milt}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+```{r setup}
+library(milt)
+```
+
+## Overview
+
+milt's anomaly detection API follows a two-step pattern:
+
+```r
+detector <- milt_detector("<method>", ...)
+anomalies <- milt_detect(detector, series)
+```
+
+Results are returned as a `MiltAnomalies` object with `print()`, `plot()`,
+and `as_tibble()` methods.
+
+---
+
+## 1. Create a series with injected spikes
+
+```{r spike-series}
+set.seed(42)
+tbl <- tibble::tibble(
+  date  = seq(as.Date("2020-01-01"), by = "month", length.out = 60),
+  value = c(rnorm(20, 10, 1), 50, rnorm(19, 10, 1),   # spike at 21
+             rnorm(10, 10, 1), -30, rnorm(9, 10, 1))   # dip at 51
+)
+s <- milt_series(tbl, time_col = "date", value_cols = "value")
+plot(s)
+```
+
+---
+
+## 2. IQR detector (fast, no assumptions)
+
+```{r iqr}
+d   <- milt_detector("iqr", k = 1.5)
+anm <- milt_detect(d, s)
+print(anm)
+plot(anm)
+```
+
+---
+
+## 3. GESD test (statistical, iterative)
+
+```{r gesd}
+d_gesd <- milt_detector("gesd", max_anoms = 5, alpha = 0.05)
+anm_gesd <- milt_detect(d_gesd, s)
+plot(anm_gesd)
+```
+
+---
+
+## 4. STL decomposition–based
+
+STL separates trend and seasonality; anomalies are in the remainder:
+
+```{r stl}
+air <- milt_series(AirPassengers)
+d_stl  <- milt_detector("stl", threshold = 3)
+anm_stl <- milt_detect(d_stl, air)
+print(anm_stl)
+plot(anm_stl)
+```
+
+---
+
+## 5. Isolation Forest
+
+Requires the `isotree` package:
+
+```{r iforest, eval = requireNamespace("isotree", quietly = TRUE)}
+d_if  <- milt_detector("iforest", n_trees = 50, threshold = 0.6)
+anm_if <- milt_detect(d_if, s)
+plot(anm_if)
+```
+
+---
+
+## 6. Local Outlier Factor
+
+Requires the `dbscan` package:
+
+```{r lof, eval = requireNamespace("dbscan", quietly = TRUE)}
+d_lof  <- milt_detector("lof", k = 5, threshold = 1.5)
+anm_lof <- milt_detect(d_lof, s)
+plot(anm_lof)
+```
+
+---
+
+## 7. Ensemble detection
+
+Combine multiple detectors with majority vote or mean score:
+
+```{r ensemble}
+d1  <- milt_detector("iqr",   k = 1.5)
+d2  <- milt_detector("grubbs", alpha = 0.05)
+d3  <- milt_detector("gesd",  max_anoms = 5)
+
+ens <- milt_detector("ensemble",
+                      detectors = list(d1, d2, d3),
+                      method    = "majority")
+anm_ens <- milt_detect(ens, s)
+plot(anm_ens)
+```
+
+---
+
+## 8. Changepoint detection
+
+```{r changepoints, eval = requireNamespace("changepoint", quietly = TRUE)}
+cp <- milt_changepoints(air, method = "pelt", stat = "mean")
+print(cp)
+plot(cp)
+```
+
+---
+
+## 9. Tidy output
+
+```{r tidy}
+tbl_out <- tibble::as_tibble(milt_detect(milt_detector("iqr"), s))
+head(tbl_out)
+```

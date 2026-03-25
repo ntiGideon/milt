@@ -13,6 +13,12 @@
   list(X = X, y = y, lags = lags, max_lag = max_lag)
 }
 
+.ml_next_lag_row <- function(history, lags) {
+  x_row <- matrix(history[length(history) - lags + 1L], nrow = 1L)
+  colnames(x_row) <- paste0(".lag_", lags)
+  x_row
+}
+
 # Given a fitted ML model and the last `max_lag` values of the training series,
 # generate a recursive h-step-ahead forecast.
 # `.predict_fn(model, X_row)` must return a single numeric prediction.
@@ -28,9 +34,7 @@
   forecasts <- numeric(horizon)
 
   for (h in seq_len(horizon)) {
-    x_row        <- matrix(.compute_lags(history, lags)[length(history), ],
-                           nrow = 1L)
-    colnames(x_row) <- paste0(".lag_", lags)
+    x_row        <- .ml_next_lag_row(history, lags)
     pt           <- predict_fn(x_row)
     forecasts[h] <- pt
     history      <- c(history, pt)
@@ -63,6 +67,9 @@
 # Returns list(lower = named list, upper = named list).
 .ml_pi_from_residuals <- function(residuals, forecasts, times, level) {
   sigma <- stats::sd(residuals, na.rm = TRUE)
+  if (is.na(sigma) || !is.finite(sigma)) {
+    sigma <- 0
+  }
   lower <- stats::setNames(
     lapply(level, function(l) {
       z <- stats::qnorm(1 - (1 - l / 100) / 2)
@@ -82,6 +89,8 @@
 
 # ── XGBoost ───────────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltXGBoost <- R6::R6Class(
   classname = "MiltXGBoost",
   inherit   = MiltModelBase,
@@ -100,7 +109,7 @@ MiltXGBoost <- R6::R6Class(
     #' @param max_depth Integer. Maximum tree depth. Default `6L`.
     #' @param eta Numeric. Learning rate. Default `0.1`.
     #' @param nthread Integer. Number of threads. Default `1L`.
-    #' @param ... Additional arguments forwarded to [xgboost::xgb.train()].
+    #' @param ... Additional arguments forwarded to `xgboost::xgb.train()`.
     initialize = function(lags     = 1:12,
                           nrounds  = 100L,
                           max_depth = 6L,
@@ -164,9 +173,7 @@ MiltXGBoost <- R6::R6Class(
       forecasts  <- numeric(horizon)
 
       for (h in seq_len(horizon)) {
-        x_row <- matrix(.compute_lags(history, lags)[length(history), ],
-                        nrow = 1L)
-        colnames(x_row) <- paste0(".lag_", lags)
+        x_row <- .ml_next_lag_row(history, lags)
         dmat  <- xgboost::xgb.DMatrix(data = x_row)
         pt    <- predict(fit, dmat)
         forecasts[h] <- pt

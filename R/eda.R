@@ -8,6 +8,37 @@
 #   - Decomposition plot
 #   - Distribution plot
 
+# Base-R KPSS test (level stationarity, H0: stationary).
+# Returns an approximate p-value using critical value interpolation from
+# Kwiatkowski et al. (1992), Table 1 (mu case).
+.kpss_pvalue_base <- function(x) {
+  x <- as.numeric(x)
+  n <- length(x)
+  e <- x - mean(x)                       # demean (level case)
+  S <- cumsum(e)                          # partial sums
+
+  # Newey-West long-run variance with Bartlett kernel
+  l     <- max(1L, floor(4 * (n / 100)^0.25))
+  lrv   <- sum(e^2) / n
+  for (j in seq_len(l)) {
+    g   <- sum(e[(j + 1L):n] * e[1L:(n - j)]) / n
+    lrv <- lrv + 2 * (1 - j / (l + 1)) * g
+  }
+  lrv <- max(lrv, 1e-10)
+
+  kpss_stat <- sum(S^2) / (n^2 * lrv)
+
+  # Critical values (level) and corresponding p-values
+  cv <- c(0.347, 0.463, 0.574, 0.739)
+  pv <- c(0.10,  0.05,  0.025, 0.01)
+
+  if (kpss_stat <= cv[1L]) return(0.10)
+  if (kpss_stat >= cv[4L]) return(0.01)
+  idx  <- findInterval(kpss_stat, cv)
+  frac <- (kpss_stat - cv[idx]) / (cv[idx + 1L] - cv[idx])
+  pv[idx] + frac * (pv[idx + 1L] - pv[idx])
+}
+
 # ── Result class ──────────────────────────────────────────────────────────────
 
 MiltEDAR6 <- R6::R6Class(
@@ -111,9 +142,9 @@ plot.MiltEDA <- function(x, ...) {
 #' Automated exploratory data analysis for a time series
 #'
 #' Computes descriptive statistics, stationarity tests, and seasonality
-#' metrics for a [MiltSeries].  Results are printed in a structured report.
+#' metrics for a `MiltSeries`. Results are printed in a structured report.
 #'
-#' @param series A [MiltSeries] object (univariate).
+#' @param series A `MiltSeries` object (univariate).
 #' @param ... Additional arguments (unused).
 #' @return A `MiltEDA` object.
 #' @seealso [milt_diagnose()]
@@ -157,16 +188,23 @@ milt_eda <- function(series, ...) {
 
   # ── Stationarity ──────────────────────────────────────────────────────────
   stationarity <- tryCatch({
-    if (!requireNamespace("tseries", quietly = TRUE)) {
-      list(adf_pvalue = NA_real_, kpss_pvalue = NA_real_,
-           likely_stationary = NA)
-    } else {
-      adf_res  <- tseries::adf.test(stats::na.omit(vals))
-      kpss_res <- tseries::kpss.test(stats::na.omit(vals))
+    x <- stats::na.omit(vals)
+    if (requireNamespace("tseries", quietly = TRUE)) {
+      adf_res  <- tseries::adf.test(x)
+      kpss_res <- tseries::kpss.test(x)
       list(
         adf_pvalue        = adf_res$p.value,
         kpss_pvalue       = kpss_res$p.value,
         likely_stationary = adf_res$p.value < 0.05 && kpss_res$p.value > 0.05
+      )
+    } else {
+      # Fallback: Phillips-Perron (base stats) + simple KPSS implementation
+      pp_pval   <- stats::PP.test(x)$p.value
+      kpss_pval <- .kpss_pvalue_base(x)
+      list(
+        adf_pvalue        = pp_pval,
+        kpss_pvalue       = kpss_pval,
+        likely_stationary = pp_pval < 0.05 && kpss_pval > 0.05
       )
     }
   }, error = function(e) {
@@ -175,8 +213,9 @@ milt_eda <- function(series, ...) {
   })
 
   # ── Seasonality ───────────────────────────────────────────────────────────
-  freq   <- series$freq()
-  period <- if (is.numeric(freq) && freq > 1) as.integer(round(freq)) else 1L
+  freq        <- series$freq()
+  freq_num    <- .freq_label_to_numeric(as.character(freq))
+  period      <- if (!is.na(freq_num) && freq_num > 1) as.integer(round(freq_num)) else 1L
 
   strength <- 0
   has_seas <- FALSE

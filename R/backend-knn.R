@@ -24,6 +24,8 @@
 
 # ── R6 class ──────────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltKNN <- R6::R6Class(
   classname = "MiltKNN",
   inherit   = MiltModelBase,

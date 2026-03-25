@@ -16,7 +16,7 @@ test_that("explain: unfitted model errors", {
 
 test_that("explain: unsupported backend errors", {
   skip_if_not_installed("forecast")
-  m <- milt_model("arima") |> milt_fit(air)
+  m <- milt_model("auto_arima") |> milt_fit(air)
   expect_error(milt_explain(m), class = "milt_error_not_supported")
 })
 

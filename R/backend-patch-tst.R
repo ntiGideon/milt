@@ -27,7 +27,7 @@
       # Linear patch embedding
       self$patch_embed <- torch::nn_linear(patch_len, d_model)
 
-      # Learnable positional encoding (0-indexed: positions 0..n_patches-1)
+      # Learnable positional encoding (1-indexed: positions 1..n_patches)
       self$pos_embed   <- torch::nn_embedding(n_patches, d_model)
 
       # Transformer encoder
@@ -63,12 +63,11 @@
       # Patch embedding: (batch, n_patches, d_model)
       tok_emb <- self$patch_embed(x_patches)
 
-      # Positional encoding (0-indexed)
-      pos <- torch::torch_arange(
-        start = 0L,
-        end   = self$n_patches,
-        device = x$device,
-        dtype  = torch::torch_long()
+      # Positional encoding — seq_len() gives [1, 2, ..., n_patches] (1-indexed)
+      pos <- torch::torch_tensor(
+        seq_len(self$n_patches),
+        dtype  = torch::torch_long(),
+        device = x$device
       )
       pos_emb <- self$pos_embed(pos)$unsqueeze(1L)  # (1, n_patches, d_model)
 
@@ -87,6 +86,8 @@
 
 # ── MiltPatchTST R6 backend ───────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltPatchTST <- R6::R6Class(
   classname = "MiltPatchTST",
   inherit   = MiltModelBase,
@@ -225,13 +226,13 @@ MiltPatchTST <- R6::R6Class(
         as.numeric(
           torch::with_no_grad({
             X_t <- torch::torch_tensor(X_train,
-                                        dtype = torch::torch_float())$to(device)
+                                        dtype = torch::torch_float())$to(device = device)
             net(X_t)$cpu()$detach()
           })[, ocl]
         ),
         norm$mean, norm$sd
       )
-      y_true_denorm <- vals[(icl + ocl):length(vals)]
+      y_true_denorm <- .ts_denormalise(y_train[, ocl], norm$mean, norm$sd)
       resid_final   <- y_true_denorm - y_hat_denorm
 
       private$.torch_model <- net
@@ -257,7 +258,7 @@ MiltPatchTST <- R6::R6Class(
       generated <- numeric(0L)
       while (length(generated) < horizon) {
         x_in  <- matrix(utils::tail(c(history, generated), icl), nrow = 1L)
-        x_t   <- torch::torch_tensor(x_in, dtype = torch::torch_float())$to(device)
+        x_t   <- torch::torch_tensor(x_in, dtype = torch::torch_float())$to(device = device)
         y_hat <- as.numeric(
           torch::with_no_grad({ net(x_t) })$cpu()$detach()
         )
@@ -300,7 +301,7 @@ MiltPatchTST <- R6::R6Class(
       device <- .milt_torch_device()
       net    <- private$.torch_model
       X_t    <- torch::torch_tensor(wins$X,
-                                     dtype = torch::torch_float())$to(device)
+                                     dtype = torch::torch_float())$to(device = device)
       y_hat  <- as.numeric(
         torch::with_no_grad({ net(X_t) })$cpu()$detach()[, ocl]
       )

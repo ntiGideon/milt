@@ -96,6 +96,8 @@ milt_split_at <- function(series, time) {
 #' @param series A `MiltSeries` object.
 #' @param start Start of the window (`Date`, `POSIXct`, or `NULL`).
 #' @param end   End of the window (`Date`, `POSIXct`, or `NULL`).
+#' @param group Optional group value for grouped series. When supplied, only
+#'   observations from that group are retained before applying the time window.
 #' @return A `MiltSeries` containing only the windowed observations.
 #' @seealso [milt_split()], [milt_split_at()]
 #' @family series
@@ -103,18 +105,29 @@ milt_split_at <- function(series, time) {
 #' s <- milt_series(AirPassengers)
 #' milt_window(s, start = as.Date("1953-01-01"), end = as.Date("1956-12-01"))
 #' @export
-milt_window <- function(series, start = NULL, end = NULL) {
+milt_window <- function(series, start = NULL, end = NULL, group = NULL) {
   assert_milt_series(series)
-  if (is.null(start) && is.null(end)) {
+  if (is.null(start) && is.null(end) && is.null(group)) {
     milt_warn("Both {.arg start} and {.arg end} are NULL; returning series unchanged.")
     return(series)
   }
 
   tbl <- series$as_tibble()
-  tc  <- series$.__enclos_env__$private$.time_col
+  p   <- series$.__enclos_env__$private
+  tc  <- p$.time_col
+  gc  <- p$.group_col
   t   <- tbl[[tc]]
 
   mask <- rep(TRUE, nrow(tbl))
+  if (!is.null(group)) {
+    if (is.null(gc)) {
+      milt_abort(
+        "{.arg group} can only be used with grouped {.cls MiltSeries} objects.",
+        class = "milt_error_invalid_arg"
+      )
+    }
+    mask <- mask & (tbl[[gc]] == group)
+  }
   if (!is.null(start)) mask <- mask & (t >= start)
   if (!is.null(end))   mask <- mask & (t <= end)
 
@@ -185,7 +198,7 @@ milt_resample <- function(series, period, agg_fn = mean) {
     dplyr::across(tidyr::all_of(vcs), agg_fn),
     .groups = "drop"
   )
-  agg <- dplyr::rename(agg, !!tc := ".__bucket__")
+  names(agg)[names(agg) == ".__bucket__"] <- tc
   agg <- dplyr::arrange(agg, dplyr::across(tidyr::all_of(c(tc, gc))))
 
   MiltSeriesR6$new(

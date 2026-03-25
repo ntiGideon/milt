@@ -34,6 +34,7 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown,
+    jsonlite,
     forecast (>= 8.21),
     fable (>= 0.3.0),
     fabletools (>= 0.3.0),
@@ -51,11 +52,35 @@ Suggests:
     arrow,
     isotree,
     dbscan,
+    dtw,
     changepoint,
     CausalImpact,
     shiny,
     plumber,
+    tseries,
+    xts,
+    zoo,
+    pak,
     pkgdown,
-    covr
+    covr,
+    lintr
 Config/testthat/edition: 3
+Config/Needs/coverage:
+    forecast,
+    tseries,
+    changepoint,
+    prophet,
+    ranger,
+    glmnet,
+    e1071,
+    xgboost,
+    isotree,
+    dbscan,
+    dtw,
+    CausalImpact,
+    shiny,
+    plumber,
+    xts,
+    zoo
+Config/Needs/website: pkgdown
 VignetteBuilder: knitr

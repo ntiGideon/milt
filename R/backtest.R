@@ -205,7 +205,7 @@ plot.MiltBacktest <- function(x, ...) {
 #' s  <- milt_series(AirPassengers)
 #' bt <- milt_backtest(milt_model("naive"), s, horizon = 12)
 #' print(bt)
-#' as_tibble(bt)
+#' tibble::as_tibble(bt)
 #' }
 #' @export
 milt_backtest <- function(model,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/compare.R
 \name{MiltComparisonR6}
 \alias{MiltComparisonR6}
-\title{MiltComparison — results of milt_compare()}
+\title{MiltComparison - results of milt_compare()}
 \description{
 Stores per-model backtest results and provides a ranked summary table.
 Produced by \code{\link[=milt_compare]{milt_compare()}}. Use \code{print()}, \code{plot()}, or \code{as_tibble()} to

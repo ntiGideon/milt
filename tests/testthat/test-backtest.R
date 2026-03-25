@@ -205,13 +205,13 @@ test_that("backtest: summary mean >= summary min", {
 test_that("backtest: print() produces output without error", {
   bt <- milt_backtest(milt_model("naive"), air, horizon = 12,
                       initial_window = 120L, stride = 12L)
-  expect_output(print(bt), regexp = "MiltBacktest")
+  expect_message(print(bt), regexp = "MiltBacktest")
 })
 
 test_that("backtest: summary() produces same output as print()", {
   bt <- milt_backtest(milt_model("naive"), air, horizon = 12,
                       initial_window = 120L, stride = 12L)
-  expect_output(summary(bt), regexp = "MiltBacktest")
+  expect_message(summary(bt), regexp = "MiltBacktest")
 })
 
 # ── Default initial_window ────────────────────────────────────────────────────

@@ -14,7 +14,7 @@ milt_changepoints(
 )
 }
 \arguments{
-\item{series}{A \link{MiltSeries} object (univariate).}
+\item{series}{A \code{MiltSeries} object (univariate).}
 
 \item{method}{Character. Search method: \code{"pelt"} (default), \code{"binseg"}, or
 \code{"amoc"} (at-most-one-changepoint).}

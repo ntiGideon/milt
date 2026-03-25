@@ -1,5 +1,7 @@
 # Ensemble model: MiltEnsemble R6 + milt_ensemble()
 
+#' @keywords internal
+#' @noRd
 MiltEnsemble <- R6::R6Class(
   classname = "MiltEnsemble",
   inherit   = MiltModelBase,
@@ -22,6 +24,22 @@ MiltEnsemble <- R6::R6Class(
       private$.member_specs <- member_specs
       private$.method       <- method
       private$.weights      <- weights
+
+      fitted_flags <- vapply(member_specs, function(m) m$is_fitted(), logical(1L))
+      if (all(fitted_flags)) {
+        private$.member_fitted <- member_specs
+        private$.backend_model <- member_specs
+        private$.training_series <- member_specs[[1L]]$.__enclos_env__$private$.training_series
+        private$.fitted <- TRUE
+      } else if (any(fitted_flags)) {
+        milt_abort(
+          c(
+            "All ensemble members must be either all fitted or all unfitted.",
+            "i" = "Fit every member before calling {.fn milt_ensemble}, or pass all members in unfitted form and call {.fn milt_fit} on the ensemble."
+          ),
+          class = "milt_error_invalid_arg"
+        )
+      }
     },
 
     fit = function(series, ...) {

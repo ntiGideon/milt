@@ -9,6 +9,8 @@
 
 # ── Result class ──────────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltClustersR6 <- R6::R6Class(
   classname = "MiltClusters",
   cloneable = FALSE,
@@ -130,10 +132,10 @@ plot.MiltClusters <- function(x, ...) {
 
 #' Cluster multiple time series
 #'
-#' Partitions a list of [MiltSeries] objects into `k` groups using one of
+#' Partitions a list of `MiltSeries` objects into `k` groups using one of
 #' four algorithms.
 #'
-#' @param series_list A list of [MiltSeries] objects (each univariate).
+#' @param series_list A list of `MiltSeries` objects (each univariate).
 #' @param k Integer. Number of clusters.
 #' @param method Character. Clustering method:
 #'   * `"dtw_kmeans"` — k-means with DTW distance (requires `dtw` package).
@@ -143,7 +145,7 @@ plot.MiltClusters <- function(x, ...) {
 #' @param max_iter Integer. Maximum k-means iterations. Default `100L`.
 #' @param ... Additional arguments (unused).
 #' @return A `MiltClusters` object.
-#' @seealso [milt_classify()]
+#' @seealso [milt_classifier()]
 #' @family cluster
 #' @examples
 #' \donttest{

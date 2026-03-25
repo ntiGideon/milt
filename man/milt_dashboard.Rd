@@ -7,9 +7,9 @@
 milt_dashboard(model, series = NULL, port = NULL, launch_browser = TRUE)
 }
 \arguments{
-\item{model}{A fitted \link{MiltModel}.}
+\item{model}{A fitted \code{MiltModel}.}
 
-\item{series}{Optional \link{MiltSeries} to display; defaults to the training
+\item{series}{Optional \code{MiltSeries} to display; defaults to the training
 series stored in \code{model}.}
 
 \item{port}{Integer. Shiny port. Default \code{NULL} (Shiny auto-selects).}
@@ -22,15 +22,15 @@ the user closes it).
 }
 \description{
 Opens an interactive dashboard for exploring a fitted model and its
-training series.  Requires the \code{shiny} package.
+training series. Requires the \code{shiny} package.
 }
 \details{
 The dashboard provides four tabs:
 \itemize{
-\item \strong{Series} — interactive line chart of the training data.
-\item \strong{Forecast} — adjustable horizon slider with PI fan chart.
-\item \strong{Diagnostics} — residuals, ACF, and histogram.
-\item \strong{Anomalies} — IQR-based anomaly overlay.
+\item \strong{Series} - interactive line chart of the training data.
+\item \strong{Forecast} - adjustable horizon slider with PI fan chart.
+\item \strong{Diagnostics} - residuals, ACF, and histogram.
+\item \strong{Anomalies} - IQR-based anomaly overlay.
 }
 }
 \examples{

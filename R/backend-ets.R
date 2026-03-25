@@ -1,5 +1,7 @@
 # ETS (Error-Trend-Seasonality) backend via the forecast package
 
+#' @keywords internal
+#' @noRd
 MiltEts <- R6::R6Class(
   classname = "MiltEts",
   inherit   = MiltModelBase,

@@ -3,6 +3,8 @@
 # Wraps Facebook Prophet for trend + seasonality decomposition.
 # Converts MiltSeries times to Date and formats as Prophet's ds/y columns.
 
+#' @keywords internal
+#' @noRd
 MiltProphet <- R6::R6Class(
   classname = "MiltProphet",
   inherit   = MiltModelBase,
@@ -17,7 +19,7 @@ MiltProphet <- R6::R6Class(
     #'   `"multiplicative"`.
     #' @param changepoint_prior_scale Numeric. Flexibility of the trend.
     #'   Default `0.05`.
-    #' @param ... Additional arguments forwarded to [prophet::prophet()].
+    #' @param ... Additional arguments forwarded to `prophet::prophet()`.
     initialize = function(yearly_seasonality      = "auto",
                           weekly_seasonality      = "auto",
                           daily_seasonality       = "auto",

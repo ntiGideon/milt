@@ -99,6 +99,17 @@ test_that("milt_window errors when window contains no data", {
   )
 })
 
+test_that("milt_window filters by group for grouped series", {
+  tbl <- tibble::tibble(
+    store = rep(c("A", "B"), each = 12),
+    date = rep(seq(as.Date("2020-01-01"), by = "month", length.out = 12), 2),
+    value = seq_len(24)
+  )
+  s <- milt_series(tbl, time_col = "date", value_cols = "value", group_col = "store")
+  w <- milt_window(s, group = "A")
+  expect_true(all(w$as_tibble()$store == "A"))
+})
+
 # ── milt_resample ─────────────────────────────────────────────────────────────
 
 test_that("milt_resample to annual reduces row count", {

@@ -25,9 +25,9 @@ RMSSE). Optional for all other metrics.}
 
 \item{metrics}{Character vector of metric names to compute, or one of:
 \itemize{
-\item \code{"auto"} — all metrics computable from \code{actual} and \code{predicted}
-\item \code{"all"}  — same as \code{"auto"} (alias)
-\item \code{"point"} — point metrics only (excludes MASE/RMSSE if training missing)
+\item \code{"auto"} - all metrics computable from \code{actual} and \code{predicted}
+\item \code{"all"}  - same as \code{"auto"} (alias)
+\item \code{"point"} - point metrics only (excludes MASE/RMSSE if training missing)
 }}
 }
 \value{

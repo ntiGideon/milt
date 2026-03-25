@@ -9,3 +9,9 @@
 ^\.github$
 ^milt-project-requirements\.txt$
 ^CLAUDE\.md$
+^\.claude$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
+^sample_runner\.R$
+^documentation\.html$
+^documentation\.qmd$

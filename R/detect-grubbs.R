@@ -4,6 +4,8 @@
 # Grubbs statistic exceeds the critical value at the specified significance
 # level.  Optionally iterates to find multiple outliers (sequential Grubbs).
 
+#' @keywords internal
+#' @noRd
 MiltDetectorGrubbs <- R6::R6Class(
   classname = "MiltDetectorGrubbs",
   inherit   = MiltDetectorBase,

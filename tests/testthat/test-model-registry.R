@@ -95,7 +95,7 @@ test_that("list_milt_models includes registered model", {
     register_milt_model("reg_list_test", gen, description = "A list test model")
     tbl <- list_milt_models()
     expect_true("reg_list_test" %in% tbl$name)
-    expect_equal(tbl$description[tbl$name == "reg_list_test"], "A list test model")
+    expect_equal(unname(tbl$description[tbl$name == "reg_list_test"]), "A list test model")
   })
 })
 

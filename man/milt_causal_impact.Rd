@@ -7,7 +7,7 @@
 milt_causal_impact(series, event_time, covariates = NULL, n_seasons = 0L, ...)
 }
 \arguments{
-\item{series}{A \link{MiltSeries} object (univariate).}
+\item{series}{A \code{MiltSeries} object (univariate).}
 
 \item{event_time}{The time at which the intervention occurred.  Must be a
 value present in \code{series$times()}.  The pre-period is everything strictly
@@ -20,7 +20,7 @@ to \code{CausalImpact} as additional columns in the data matrix.}
 \item{n_seasons}{Integer.  Number of seasons for the seasonal component.
 \code{0L} (default) disables seasonality.}
 
-\item{...}{Additional arguments forwarded to \code{\link[CausalImpact:CausalImpact]{CausalImpact::CausalImpact()}}.}
+\item{...}{Additional arguments forwarded to \code{CausalImpact::CausalImpact()}.}
 }
 \value{
 A \code{MiltCausalImpact} object.

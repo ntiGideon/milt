@@ -13,7 +13,8 @@
 }
 \value{
 A \code{\link[tibble:tibble]{tibble::tibble()}} with columns \code{time}, \code{value}, \code{.is_anomaly},
-\code{.anomaly_score}.
+\code{.anomaly_score}, and compatibility aliases \code{is_anomaly},
+\code{anomaly_score}.
 }
 \description{
 Convert MiltAnomalies to tibble

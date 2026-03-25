@@ -4,6 +4,8 @@
 # Uses the same .ml_build_lag_features / .ml_recursive_forecast helpers
 # defined in backend-xgboost.R.
 
+#' @keywords internal
+#' @noRd
 MiltSVM <- R6::R6Class(
   classname = "MiltSVM",
   inherit   = MiltModelBase,

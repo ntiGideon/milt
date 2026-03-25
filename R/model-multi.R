@@ -11,7 +11,8 @@
 #' When passed a single-series `MiltSeries`, it behaves identically to the
 #' wrapped model.
 #'
-#' @export
+#' @keywords internal
+#' @noRd
 MiltLocalModel <- R6::R6Class(
   classname = "MiltLocalModel",
   inherit   = MiltModelBase,
@@ -56,9 +57,6 @@ MiltLocalModel <- R6::R6Class(
         for (g in groups) {
           g_key    <- as.character(g)
           g_tbl    <- tbl[tbl[[gc]] == g_key | tbl[[gc]] == g, ]
-          g_series <- series$clone_with(
-            tibble::as_tibble(g_tbl[, setdiff(names(g_tbl), gc)])
-          )
           # Rebuild without group_col so each is treated as a plain series
           g_series2 <- MiltSeriesR6$new(
             data       = g_tbl[, setdiff(names(g_tbl), gc)],

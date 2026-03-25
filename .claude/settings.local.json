@@ -1,7 +1,27 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/features-*.R C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/backend-*.R)"
+      "Bash(ls C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/features-*.R C:/Users/GideonNtiBoateng/Desktop/inspector/milt/R/backend-*.R)",
+      "Bash(wc:*)",
+      "Bash(grep -v \"^R$\\\\|^tests$\\\\|^vignettes$\\\\|^man$\\\\|^data\")",
+      "Read(//c/Users/GideonNtiBoateng/AppData/Local/Programs/**)",
+      "Read(//c/Program Files/R//**)",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" --version 2>&1)",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::test\\(\\)\")",
+      "Bash(grep -v \"^Fitting\\\\|^Done\\\\|^Running\\\\|^SKIP\\\\|^Comparing\\\\|^Local\\\\|^--$\")",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::test\\(filter=''''crossval''''\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::build_vignettes\\(\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"tools::buildVignettes\\(dir = ''''.'''', tangle = FALSE\\)\")",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \":*)",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::load_all\\(quiet=TRUE\\); rmarkdown::render\\(''vignettes/milt-anomaly-detection.Rmd'', output_dir=tempdir\\(\\)\\)\")",
+      "Bash(grep:*)",
+      "Bash(find /c/Users/GideonNtiBoateng/Desktop/inspector/milt/vignettes -type f -name *.Rmd -o -name *.qmd)",
+      "Bash(find /c/Users/GideonNtiBoateng/Desktop/inspector/milt -type f -name TODO* -o -name CHANGELOG* -o -name NEWS*)",
+      "Bash(ls tests/testthat/test-*.R)",
+      "Bash(Rscript -e \"devtools::test\\(\\)\" 2>&1)",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::test\\(reporter = 'progress'\\)\" 2>&1)",
+      "Bash(\"/c/Program Files/R/R-4.4.1/bin/Rscript.exe\" -e \"devtools::load_all\\(quiet=TRUE\\); for\\(f in c\\(''''tests/testthat/test-backend-deepar.R'''',''''tests/testthat/test-backend-nbeats.R'''',''''tests/testthat/test-backend-nhits.R'''',''''tests/testthat/test-backend-patch-tst.R'''',''''tests/testthat/test-backend-tcn.R'''',''''tests/testthat/test-backend-tft.R''''\\)\\) testthat::test_file\\(f\\)\")",
+      "Bash(git ls-tree:*)"
     ]
   }
 }

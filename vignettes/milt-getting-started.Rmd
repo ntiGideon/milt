@@ -175,7 +175,7 @@ plot(bt)
 Retrieve per-fold results as a tibble:
 
 ```{r backtest-tibble}
-as_tibble(bt)
+tibble::as_tibble(bt)
 ```
 
 ---

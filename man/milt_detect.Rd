@@ -9,7 +9,7 @@ milt_detect(detector, series, ...)
 \arguments{
 \item{detector}{A \code{MiltDetector} created by \code{\link[=milt_detector]{milt_detector()}}.}
 
-\item{series}{A \link{MiltSeries} object (univariate).}
+\item{series}{A \code{MiltSeries} object (univariate).}
 
 \item{...}{Additional arguments forwarded to the detector's \code{detect()}
 method.}
@@ -18,7 +18,7 @@ method.}
 A \code{MiltAnomalies} object.
 }
 \description{
-Runs the detector's algorithm on \code{series} and returns a \link{MiltAnomalies}
+Runs the detector's algorithm on \code{series} and returns a \code{MiltAnomalies}
 object containing binary labels and continuous anomaly scores.
 }
 \examples{

@@ -1,0 +1,140 @@
+---
+title: "Building Pipelines with milt"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Building Pipelines with milt}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+```{r setup}
+library(milt)
+```
+
+## Overview
+
+Feature engineering in milt is done with `milt_step_*()` functions that each
+accept and return a `MiltSeries`.  They compose naturally with the native
+pipe `|>`.
+
+---
+
+## 1. Lag features
+
+```{r lags}
+air    <- milt_series(AirPassengers)
+air_lg <- milt_step_lag(air, lags = 1:12)
+print(air_lg)
+```
+
+---
+
+## 2. Rolling statistics
+
+```{r rolling}
+air_roll <- milt_step_rolling(air, windows = c(3, 6, 12), fns = c("mean", "sd"))
+print(air_roll)
+```
+
+---
+
+## 3. Fourier terms
+
+Fourier terms capture complex seasonality:
+
+```{r fourier}
+air_f <- milt_step_fourier(air, period = 12, K = 3)
+print(air_f)
+```
+
+---
+
+## 4. Calendar features
+
+```{r calendar}
+tbl <- tibble::tibble(
+  date  = seq(as.Date("2020-01-01"), by = "day", length.out = 365),
+  value = rnorm(365, 100, 10)
+)
+s_daily <- milt_series(tbl, time_col = "date", value_cols = "value")
+
+s_cal <- milt_step_calendar(s_daily)
+print(s_cal)
+```
+
+---
+
+## 5. Scaling
+
+`milt_step_scale()` normalises values and returns an invertible step object:
+
+```{r scaling}
+out       <- milt_step_scale(air, method = "zscore")
+air_z     <- out$series    # scaled MiltSeries
+scaler    <- out$step      # MiltScaleStep — keeps centering/scaling params
+
+# Verify: mean ≈ 0, sd ≈ 1
+cat("Mean:", round(mean(air_z$values()), 4), "\n")
+cat("SD:  ", round(sd(air_z$values()),   4), "\n")
+
+# Invert
+air_back  <- milt_step_unscale(scaler, air_z)
+cat("Original max:", max(air$values()), "\n")
+cat("Restored max:", max(air_back$values()), "\n")
+```
+
+---
+
+## 6. Chaining steps
+
+Steps compose with `|>`:
+
+```{r chain}
+air_features <- air |>
+  milt_step_lag(lags = 1:6)   |>
+  milt_step_rolling(windows = 3, fns = "mean") |>
+  milt_step_fourier(period = 12, K = 2)
+
+print(air_features)
+```
+
+---
+
+## 7. Using features with an ML model
+
+```{r ml-pipeline, eval = requireNamespace("xgboost", quietly = TRUE)}
+# Scale → fit → forecast
+scaled_out <- milt_step_scale(air, method = "zscore")
+air_scaled <- scaled_out$series
+scaler     <- scaled_out$step
+
+m   <- milt_model("xgboost", lags = 1:12) |> milt_fit(air_scaled)
+fct <- milt_forecast(m, 12)
+
+# Point forecasts back in original units
+fct_vals_orig <- scaler$inverse_transform_vector(fct$as_tibble()$.mean)
+cat("Forecast (original units):\n")
+print(round(fct_vals_orig, 1))
+```
+
+---
+
+## 8. Model explainability
+
+After fitting an ML model, inspect feature importance:
+
+```{r explain, eval = requireNamespace("xgboost", quietly = TRUE)}
+m   <- milt_model("xgboost", lags = 1:12) |> milt_fit(air)
+exp <- milt_explain(m)
+print(exp)
+plot(exp)
+```

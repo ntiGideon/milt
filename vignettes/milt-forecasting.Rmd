@@ -1,0 +1,158 @@
+---
+title: "Forecasting with milt"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Forecasting with milt}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse  = TRUE,
+  comment   = "#>",
+  fig.width = 7,
+  fig.height = 4,
+  eval = requireNamespace("forecast", quietly = TRUE)
+)
+```
+
+```{r setup}
+library(milt)
+```
+
+## Overview
+
+This vignette walks through milt's full forecasting model zoo — from classical
+statistical models to machine learning and ensembles — using a single
+consistent API.
+
+```r
+milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon = 12)
+```
+
+---
+
+## 1. The model zoo
+
+List every registered model:
+
+```{r list-models}
+list_milt_models()
+```
+
+---
+
+## 2. Classical models
+
+```{r classical}
+air <- milt_series(AirPassengers)
+
+# Auto-ARIMA
+fct_arima <- milt_model("auto_arima") |> milt_fit(air) |> milt_forecast(24)
+plot(fct_arima)
+
+# ETS
+fct_ets <- milt_model("ets") |> milt_fit(air) |> milt_forecast(24)
+plot(fct_ets)
+```
+
+---
+
+## 3. Train/test evaluation
+
+```{r train-test}
+spl <- milt_split(air, ratio = 0.8)
+h   <- spl$test$n_timesteps()
+
+fct_cv <- milt_model("ets") |>
+  milt_fit(spl$train) |>
+  milt_forecast(h)
+
+milt_accuracy(spl$test$values(), fct_cv$as_tibble()$.mean)
+```
+
+---
+
+## 4. ML models with lag features
+
+XGBoost, LightGBM, random forest, and elastic net all use automatic lag
+features.  You can customise the lags:
+
+```{r ml-models, eval = requireNamespace("xgboost", quietly = TRUE)}
+fct_xgb <- milt_model("xgboost", lags = 1:12) |>
+  milt_fit(air) |>
+  milt_forecast(12)
+plot(fct_xgb)
+```
+
+---
+
+## 5. Model comparison
+
+`milt_compare()` runs a rolling-origin backtest on each model and ranks them:
+
+```{r compare, eval = requireNamespace("xgboost", quietly = TRUE)}
+models <- list(
+  arima  = milt_model("auto_arima"),
+  ets    = milt_model("ets"),
+  xgb    = milt_model("xgboost", lags = 1:12)
+)
+cmp <- milt_compare(models, air, horizon = 12)
+print(cmp)
+plot(cmp)
+```
+
+---
+
+## 6. Ensemble models
+
+Combine forecasts with a mean ensemble:
+
+```{r ensemble}
+m1 <- milt_model("auto_arima") |> milt_fit(air)
+m2 <- milt_model("ets")        |> milt_fit(air)
+m3 <- milt_model("naive")      |> milt_fit(air)
+
+ens <- milt_ensemble(list(arima = m1, ets = m2, naive = m3), method = "mean")
+fct_ens <- milt_forecast(ens, 12)
+plot(fct_ens)
+```
+
+---
+
+## 7. Probabilistic forecasts
+
+Every model returns 80% and 95% prediction intervals.  Access them via
+`as_tibble()`:
+
+```{r prob-forecast}
+tbl <- fct_arima$as_tibble()
+head(tbl)
+```
+
+For sample-path–based probabilistic forecasts, use `num_samples`:
+
+```{r samples, eval = FALSE}
+fct_samples <- milt_model("naive") |>
+  milt_fit(air) |>
+  milt_forecast(12, num_samples = 200)
+```
+
+---
+
+## 8. Backtesting
+
+`milt_backtest()` implements expanding- and sliding-window CV:
+
+```{r backtest}
+bt <- milt_backtest(
+  milt_model("ets"),
+  series  = air,
+  horizon = 12,
+  stride  = 12,
+  method  = "expanding"
+)
+print(bt)
+plot(bt)
+```

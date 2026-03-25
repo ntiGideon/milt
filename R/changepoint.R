@@ -5,6 +5,8 @@
 
 # ── R6 result class ───────────────────────────────────────────────────────────
 
+#' @keywords internal
+#' @noRd
 MiltChangepointsR6 <- R6::R6Class(
   classname = "MiltChangepoints",
   cloneable = FALSE,
@@ -120,7 +122,7 @@ plot.MiltChangepoints <- function(x, ...) {
 #' Wraps the `changepoint` package to identify structural breaks in the mean,
 #' variance, or both.
 #'
-#' @param series A [MiltSeries] object (univariate).
+#' @param series A `MiltSeries` object (univariate).
 #' @param method Character. Search method: `"pelt"` (default), `"binseg"`, or
 #'   `"amoc"` (at-most-one-changepoint).
 #' @param stat Character. Test statistic: `"mean"` (default), `"variance"`,
@@ -155,7 +157,7 @@ milt_changepoints <- function(series,
     )
   }
 
-  method <- match.arg(method, c("pelt", "binseg", "amoc"))
+  method <- match.arg(method, c("pelt", "binseg", "amoc", "segneigh"))
   stat   <- match.arg(stat,   c("mean", "variance", "meanvar"))
 
   vals <- series$values()
@@ -167,8 +169,16 @@ milt_changepoints <- function(series,
     "meanvar" = changepoint::cpt.meanvar
   )
 
-  args <- list(data = vals, method = toupper(method), penalty = penalty, ...)
-  if (method == "binseg" && !is.na(n_cpts)) {
+  cp_method <- switch(
+    method,
+    pelt = "PELT",
+    binseg = "BinSeg",
+    amoc = "AMOC",
+    segneigh = "SegNeigh"
+  )
+
+  args <- list(data = vals, method = cp_method, penalty = penalty, ...)
+  if (method %in% c("binseg", "segneigh") && !is.na(n_cpts)) {
     args$Q <- as.integer(n_cpts)
   }
 

@@ -5,7 +5,9 @@ air <- milt_series(AirPassengers)
 # ── milt_changepoints: input validation ───────────────────────────────────────
 
 test_that("changepoint: errors without changepoint package", {
-  skip_if_not_installed("changepoint")  # if present this block is skipped
+  if (requireNamespace("changepoint", quietly = TRUE)) {
+    skip("changepoint is installed")
+  }
   expect_error(milt_changepoints(air))
 })
 

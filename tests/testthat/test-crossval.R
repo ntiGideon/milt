@@ -19,7 +19,7 @@ test_that("cv: errors on folds < 1", {
 })
 
 test_that("cv: errors on insufficient data", {
-  tiny <- milt_series(1:5)
+  tiny <- milt_series(1:5, frequency = 1L)
   expect_error(
     milt_cv(milt_model("naive"), tiny, folds = 5L, horizon = 3L),
     class = "milt_error_insufficient_data"

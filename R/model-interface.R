@@ -190,6 +190,7 @@ milt_fit <- function(model, series, ...) {
   elapsed <- proc.time()[["elapsed"]] - t0
 
   # Record fit metadata in private fields (R6 reference semantics)
+  model$.__enclos_env__$private$.fitted          <- TRUE
   model$.__enclos_env__$private$.fit_time        <- as.difftime(elapsed, units = "secs")
   model$.__enclos_env__$private$.training_series <- series
 
@@ -247,6 +248,13 @@ milt_forecast <- function(model,
 #' @param ... Additional arguments forwarded to the backend's `predict()`.
 #' @return A numeric vector of fitted/predicted values.
 #' @family model
+#' @examples
+#' \donttest{
+#' s     <- milt_series(AirPassengers)
+#' model <- milt_model("naive") |> milt_fit(s)
+#' fitted_vals <- milt_predict(model)
+#' head(fitted_vals)
+#' }
 #' @export
 milt_predict <- function(model, series = NULL, ...) {
   .assert_milt_model(model)
