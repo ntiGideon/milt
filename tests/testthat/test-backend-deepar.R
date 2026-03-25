@@ -40,7 +40,7 @@ test_that("deepar: errors on multivariate series", {
 })
 
 test_that("deepar: errors on insufficient data", {
-  tiny <- milt_series(1:10)
+  tiny <- milt_series(1:10, frequency = 1)
   expect_error(
     milt_model("deepar",
                input_chunk_length = 8L,

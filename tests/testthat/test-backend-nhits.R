@@ -42,7 +42,7 @@ test_that("nhits: errors on multivariate series", {
 })
 
 test_that("nhits: errors on insufficient data", {
-  tiny <- milt_series(1:10)
+  tiny <- milt_series(1:10, frequency = 1)
   expect_error(
     milt_model("nhits",
                input_chunk_length = 8L,

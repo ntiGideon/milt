@@ -42,7 +42,7 @@ test_that("tcn: errors on multivariate series", {
 })
 
 test_that("tcn: errors on insufficient data", {
-  tiny <- milt_series(1:10)
+  tiny <- milt_series(1:10, frequency = 1)
   expect_error(
     milt_model("tcn",
                input_chunk_length = 8L,

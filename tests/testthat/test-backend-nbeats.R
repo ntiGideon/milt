@@ -36,7 +36,7 @@ test_that("nbeats: errors on multivariate series", {
 })
 
 test_that("nbeats: errors on insufficient data", {
-  tiny <- milt_series(1:10)
+  tiny <- milt_series(1:10, frequency = 1)
   expect_error(
     milt_model("nbeats",
                input_chunk_length = 8L,
