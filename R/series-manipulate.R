@@ -198,7 +198,7 @@ milt_resample <- function(series, period, agg_fn = mean) {
     dplyr::across(tidyr::all_of(vcs), agg_fn),
     .groups = "drop"
   )
-  agg <- dplyr::rename(agg, !!tc := ".__bucket__")
+  names(agg)[names(agg) == ".__bucket__"] <- tc
   agg <- dplyr::arrange(agg, dplyr::across(tidyr::all_of(c(tc, gc))))
 
   MiltSeriesR6$new(

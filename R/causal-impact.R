@@ -169,9 +169,11 @@ plot.MiltCausalImpact <- function(x, ...) {
 #' @family anomaly
 #' @examples
 #' \donttest{
-#' s <- milt_series(AirPassengers)
-#' ci <- milt_causal_impact(s, event_time = as.Date("1956-01-01"))
-#' plot(ci)
+#' if (requireNamespace("CausalImpact", quietly = TRUE)) {
+#'   s <- milt_series(AirPassengers)
+#'   ci <- milt_causal_impact(s, event_time = as.Date("1956-01-01"))
+#'   plot(ci)
+#' }
 #' }
 #' @export
 milt_causal_impact <- function(series,

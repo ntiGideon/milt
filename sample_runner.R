@@ -3,7 +3,7 @@ devtools::load_all()
 # creating a series
 ap = milt_series(AirPassengers)
 print(ap)
-
+help("milt")
 help("AirPassengers")
 ap2 = milt_series(AirPassengers, frequency = 12, start = c(1949,1))
 print(ap2)
@@ -23,7 +23,7 @@ s_df = milt_series(df, time_col = "date", value_cols = "sales", frequency = 12)
 print(s_df)
 View(df)
 
-
+devtools::test(filter = "backend-tft")
 # Inspecting a Series
 ap = milt_series(AirPassengers)
 ap$n_timesteps()# get number of observations

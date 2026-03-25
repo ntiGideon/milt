@@ -19,25 +19,30 @@ jobs:
           - os: ubuntu-latest
             r: release
             dependencies: '"hard"'
-            build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+            build_args: 'c("--compact-vignettes=gs+qpdf")'
+            check_args: 'c("--no-manual")'
           - os: ubuntu-latest
             r: devel
             http-user-agent: release
             dependencies: '"hard"'
-            build_args: 'c("--no-manual","--no-build-vignettes")'
+            build_args: 'c("--no-build-vignettes")'
+            check_args: 'c("--no-manual","--ignore-vignettes")'
             allow_failure: true
           - os: ubuntu-latest
             r: oldrel-1
             dependencies: '"hard"'
-            build_args: 'c("--no-manual","--no-build-vignettes")'
+            build_args: 'c("--no-build-vignettes")'
+            check_args: 'c("--no-manual","--ignore-vignettes")'
           - os: macos-latest
             r: release
             dependencies: '"hard"'
-            build_args: 'c("--no-manual","--no-build-vignettes")'
+            build_args: 'c("--no-build-vignettes")'
+            check_args: 'c("--no-manual","--ignore-vignettes")'
           - os: windows-latest
             r: release
             dependencies: '"hard"'
-            build_args: 'c("--no-manual","--no-build-vignettes")'
+            build_args: 'c("--no-build-vignettes")'
+            check_args: 'c("--no-manual","--ignore-vignettes")'
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -54,11 +59,11 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
-          use-public-rspm: true
+          use-public-rspm: ${{ matrix.config.os == 'ubuntu-latest' }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, any::testthat, any::knitr, any::rmarkdown
           needs: check
           dependencies: ${{ matrix.config.dependencies }}
 
@@ -67,3 +72,4 @@ jobs:
         with:
           upload-snapshots: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release' }}
           build_args: ${{ matrix.config.build_args }}
+          args: ${{ matrix.config.check_args }}

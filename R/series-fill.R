@@ -70,7 +70,8 @@ milt_fill_gaps <- function(series, method = "linear") {
   complete_times <- .complete_time_sequence(tbl[[tc]], freq)
 
   # Create a shell with all time steps
-  shell <- tibble::tibble(!!tc := complete_times)
+  shell <- tibble::tibble(.time_shell = complete_times)
+  names(shell)[names(shell) == ".time_shell"] <- tc
 
   # Left join to insert NAs at the missing steps
   full <- dplyr::left_join(shell, tbl, by = tc)
