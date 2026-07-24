@@ -25,10 +25,12 @@ a fitted ML-backed \code{MiltModel}. Supported backends: \code{"xgboost"},
 }
 \examples{
 \donttest{
-s   <- milt_series(AirPassengers)
-m   <- milt_model("xgboost") |> milt_fit(s)
-exp <- milt_explain(m)
-plot(exp)
+if (requireNamespace("xgboost", quietly = TRUE)) {
+  s   <- milt_series(AirPassengers)
+  m   <- milt_model("xgboost") |> milt_fit(s)
+  exp <- milt_explain(m)
+  plot(exp)
+}
 }
 }
 \seealso{

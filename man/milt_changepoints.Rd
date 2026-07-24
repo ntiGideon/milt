@@ -39,17 +39,19 @@ variance, or both.
 }
 \examples{
 \donttest{
-s  <- milt_series(AirPassengers)
-cp <- milt_changepoints(s, method = "pelt", stat = "mean")
-plot(cp)
+if (requireNamespace("changepoint", quietly = TRUE)) {
+  s  <- milt_series(AirPassengers)
+  cp <- milt_changepoints(s, method = "pelt", stat = "mean")
+  plot(cp)
+}
 }
 }
 \seealso{
 \code{\link[=milt_detector]{milt_detector()}}, \code{\link[=milt_detect]{milt_detect()}}
 
-Other anomaly: 
-\code{\link{milt_causal_impact}()},
-\code{\link{milt_detect}()},
-\code{\link{milt_detector}()}
+Other anomaly:
+\code{\link[=milt_causal_impact]{milt_causal_impact()}},
+\code{\link[=milt_detect]{milt_detect()}},
+\code{\link[=milt_detector]{milt_detector()}}
 }
 \concept{anomaly}

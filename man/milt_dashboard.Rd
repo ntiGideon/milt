@@ -42,7 +42,7 @@ m <- milt_model("naive") |> milt_fit(milt_series(AirPassengers))
 \seealso{
 \code{\link[=milt_serve]{milt_serve()}}
 
-Other deploy: 
-\code{\link{milt_serve}()}
+Other deploy:
+\code{\link[=milt_serve]{milt_serve()}}
 }
 \concept{deploy}

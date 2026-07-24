@@ -22,8 +22,10 @@
 #' @family dl
 #' @examples
 #' \donttest{
-#' milt_setup_darts()                      # check only
-#' milt_setup_darts(install = TRUE)        # check + install if missing
+#' if (requireNamespace("reticulate", quietly = TRUE)) {
+#'   milt_setup_darts()                      # check only
+#'   milt_setup_darts(install = TRUE)        # check + install if missing
+#' }
 #' }
 #' @export
 milt_setup_darts <- function(install = FALSE) {

@@ -22,7 +22,7 @@ milt_series(
 \item An \code{xts} object
 \item A \code{zoo} object
 \item A \code{tsibble}
-\item A \code{data.frame} or \code{tibble}
+\item A \code{data.frame}, \code{tibble}, or \code{data.table}
 \item A numeric vector (requires \code{frequency} and \code{start})
 }}
 
@@ -33,7 +33,8 @@ Auto-detected when \code{NULL}.}
 \code{NULL} (all non-time, non-group columns).}
 
 \item{group_col}{Name of the grouping column for multi-series data frames.
-\code{NULL} for single series.}
+\code{NULL} for single series. When \code{x} is a keyed \code{data.table} and
+\code{group_col} is not supplied, the first key column is used.}
 
 \item{frequency}{Frequency label (\code{"monthly"}, \code{"quarterly"}, \code{"daily"},
 etc.) or a numeric value. Auto-detected from the time index when \code{NULL}.}
@@ -69,25 +70,39 @@ s2 <- milt_series(df, time_col = "date", value_cols = "sales")
 s3 <- milt_series(as.numeric(AirPassengers), frequency = 12,
                   start = c(1949, 1))
 
+# From a data.table (grouping column auto-detected from the table's key)
+dt <- data.table::data.table(
+  date  = seq(as.Date("2020-01-01"), by = "month", length.out = 24),
+  sales = cumsum(rnorm(24, 100, 10))
+)
+s4 <- milt_series(dt, time_col = "date", value_cols = "sales")
+
 }
 \seealso{
 \code{\link[=milt_split]{milt_split()}}, \code{\link[=milt_window]{milt_window()}}, \code{\link[=milt_fill_gaps]{milt_fill_gaps()}},
 \code{\link[=milt_diagnose]{milt_diagnose()}}
 
-Other series: 
-\code{\link{milt_add_covariates}()},
-\code{\link{milt_concat}()},
-\code{\link{milt_diagnose}()},
-\code{\link{milt_fill_gaps}()},
-\code{\link{milt_get_covariates}()},
-\code{\link{milt_head}()},
-\code{\link{milt_plot_acf}()},
-\code{\link{milt_plot_decomp}()},
-\code{\link{milt_resample}()},
-\code{\link{milt_split}()},
-\code{\link{milt_split_at}()},
-\code{\link{milt_tail}()},
-\code{\link{milt_window}()},
-\code{\link{plot.MiltSeries}()}
+Other series:
+\code{\link[=milt_add_covariates]{milt_add_covariates()}},
+\code{\link[=milt_add_datetime_component]{milt_add_datetime_component()}},
+\code{\link[=milt_add_holidays]{milt_add_holidays()}},
+\code{\link[=milt_check_seasonality]{milt_check_seasonality()}},
+\code{\link[=milt_concat]{milt_concat()}},
+\code{\link[=milt_diagnose]{milt_diagnose()}},
+\code{\link[=milt_fill_gaps]{milt_fill_gaps()}},
+\code{\link[=milt_filter]{milt_filter()}},
+\code{\link[=milt_get_covariates]{milt_get_covariates()}},
+\code{\link[=milt_head]{milt_head()}},
+\code{\link[=milt_plot_acf]{milt_plot_acf()}},
+\code{\link[=milt_plot_decomp]{milt_plot_decomp()}},
+\code{\link[=milt_read_parquet]{milt_read_parquet()}},
+\code{\link[=milt_resample]{milt_resample()}},
+\code{\link[=milt_split]{milt_split()}},
+\code{\link[=milt_split_at]{milt_split_at()}},
+\code{\link[=milt_stack]{milt_stack()}},
+\code{\link[=milt_tail]{milt_tail()}},
+\code{\link[=milt_window]{milt_window()}},
+\code{\link[=milt_write_parquet]{milt_write_parquet()}},
+\code{\link[=plot.MiltSeries]{plot.MiltSeries()}}
 }
 \concept{series}

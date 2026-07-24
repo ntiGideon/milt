@@ -14,7 +14,7 @@ Returns a \code{torch_device} for CUDA (if available) or CPU.  Called
 automatically by all DL backends; users rarely need this directly.
 }
 \seealso{
-Other dl: 
-\code{\link{milt_setup_darts}()}
+Other dl:
+\code{\link[=milt_setup_darts]{milt_setup_darts()}}
 }
 \concept{dl}

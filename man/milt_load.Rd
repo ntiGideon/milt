@@ -27,7 +27,7 @@ s <- milt_load(tmp)
 \seealso{
 \code{\link[=milt_save]{milt_save()}}
 
-Other save: 
-\code{\link{milt_save}()}
+Other save:
+\code{\link[=milt_save]{milt_save()}}
 }
 \concept{save}

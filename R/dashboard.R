@@ -95,11 +95,11 @@ milt_dashboard <- function(model,
           residual = r
         )
         ggplot2::ggplot(tbl, ggplot2::aes(.data$index, .data$residual)) +
-          ggplot2::geom_line(colour = "#4472C4", linewidth = 0.5) +
+          ggplot2::geom_line(colour = .milt_primary, linewidth = 0.5) +
           ggplot2::geom_hline(yintercept = 0, linetype = "dashed",
-                              colour = "#888888") +
+                              colour = .milt_ink[["baseline"]]) +
           ggplot2::labs(title = "Residuals", x = "Index", y = "Residual") +
-          ggplot2::theme_minimal()
+          .milt_plot_theme()
       }, error = function(e) ggplot2::ggplot() + ggplot2::theme_void())
     })
 

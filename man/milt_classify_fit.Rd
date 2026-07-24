@@ -19,11 +19,21 @@ The fitted \code{MiltClassifier} (invisibly, mutated in place).
 \description{
 Trains the classifier on a labelled set of time series.
 }
+\examples{
+\donttest{
+if (requireNamespace("ranger", quietly = TRUE)) {
+  s1  <- milt_series(AirPassengers)
+  s2  <- milt_series(AirPassengers * 1.2)
+  clf <- milt_classifier("feature_based")
+  milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+}
+}
+}
 \seealso{
 \code{\link[=milt_classifier]{milt_classifier()}}, \code{\link[=milt_classify_predict]{milt_classify_predict()}}
 
-Other classify: 
-\code{\link{milt_classifier}()},
-\code{\link{milt_classify_predict}()}
+Other classify:
+\code{\link[=milt_classifier]{milt_classifier()}},
+\code{\link[=milt_classify_predict]{milt_classify_predict()}}
 }
 \concept{classify}

@@ -213,6 +213,89 @@ test_that("milt_r_squared warns and returns NaN for constant actual", {
   expect_true(is.nan(v))
 })
 
+# ── milt_wmape ────────────────────────────────────────────────────────────────
+
+test_that("milt_wmape computes correct value", {
+  # sum(|errors|) = 5, sum(|actual|) = 23
+  expect_equal(milt_wmape(actual, predicted), 5 / 23)
+})
+
+test_that("milt_wmape is 0 for perfect forecast", {
+  expect_equal(milt_wmape(1:5, 1:5), 0)
+})
+
+test_that("milt_wmape warns and returns NaN when actual is all zero", {
+  expect_warning(v <- milt_wmape(c(0, 0), c(1, 1)))
+  expect_true(is.nan(v))
+})
+
+# ── milt_ope ──────────────────────────────────────────────────────────────────
+
+test_that("milt_ope computes correct value", {
+  # sum(actual) = 23, sum(predicted) = 22
+  expect_equal(milt_ope(actual, predicted), 1 / 23)
+})
+
+test_that("milt_ope is 0 when totals match exactly", {
+  expect_equal(milt_ope(c(1, 2, 3), c(3, 2, 1)), 0)
+})
+
+test_that("milt_ope warns and returns NaN when actual sums to zero", {
+  expect_warning(v <- milt_ope(c(1, -1), c(0, 0)))
+  expect_true(is.nan(v))
+})
+
+# ── milt_coefficient_of_variation ─────────────────────────────────────────────
+
+test_that("milt_coefficient_of_variation computes correct value", {
+  # rmse = 1, mean(actual) = 23/5
+  expect_equal(milt_coefficient_of_variation(actual, predicted), 1 / (23 / 5))
+})
+
+test_that("milt_coefficient_of_variation is 0 for perfect forecast", {
+  expect_equal(milt_coefficient_of_variation(1:5, 1:5), 0)
+})
+
+test_that("milt_coefficient_of_variation warns and returns NaN when actual mean is zero", {
+  expect_warning(v <- milt_coefficient_of_variation(c(1, -1), c(0, 0)))
+  expect_true(is.nan(v))
+})
+
+# ── milt_marre ────────────────────────────────────────────────────────────────
+
+test_that("milt_marre computes correct value", {
+  # mean(|errors|) = 1, range(actual) = 6 - 3 = 3
+  expect_equal(milt_marre(actual, predicted), 1 / 3)
+})
+
+test_that("milt_marre is 0 for perfect forecast", {
+  expect_equal(milt_marre(1:5, 1:5), 0)
+})
+
+test_that("milt_marre warns and returns NaN for constant actual", {
+  expect_warning(v <- milt_marre(c(5, 5, 5), c(1, 2, 3)))
+  expect_true(is.nan(v))
+})
+
+# ── milt_rmsle ────────────────────────────────────────────────────────────────
+
+test_that("milt_rmsle is 0 for perfect forecast", {
+  expect_equal(milt_rmsle(1:5, 1:5), 0)
+})
+
+test_that("milt_rmsle computes correct value", {
+  # log1p(actual) = 0, log1p(predicted) = 1 -> squared diff = 1 -> sqrt(mean) = 1
+  expect_equal(milt_rmsle(c(0, 0), c(exp(1) - 1, exp(1) - 1)), 1)
+})
+
+test_that("milt_rmsle errors when actual has values <= -1", {
+  expect_error(milt_rmsle(c(-1, 2), c(1, 2)), class = "milt_error_invalid_metric_input")
+})
+
+test_that("milt_rmsle errors when predicted has values <= -1", {
+  expect_error(milt_rmsle(c(1, 2), c(-2, 2)), class = "milt_error_invalid_metric_input")
+})
+
 # ── milt_coverage ─────────────────────────────────────────────────────────────
 
 test_that("milt_coverage is 1 when all actuals are inside intervals", {
@@ -342,6 +425,21 @@ test_that("milt_accuracy includes standard point metrics", {
   expect_true("MAE"  %in% out$metric)
   expect_true("RMSE" %in% out$metric)
   expect_true("R2"   %in% out$metric)
+})
+
+test_that("milt_accuracy includes wMAPE, OPE, CV, and MARRE by default", {
+  out <- milt_accuracy(actual, predicted)
+  expect_true("WMAPE" %in% out$metric)
+  expect_true("OPE"   %in% out$metric)
+  expect_true("CV"    %in% out$metric)
+  expect_true("MARRE" %in% out$metric)
+})
+
+test_that("milt_accuracy excludes RMSLE by default but allows explicit selection", {
+  out_auto <- milt_accuracy(actual, predicted)
+  expect_false("RMSLE" %in% out_auto$metric)
+  out_explicit <- milt_accuracy(actual, predicted, metrics = "RMSLE")
+  expect_true("RMSLE" %in% out_explicit$metric)
 })
 
 test_that("milt_accuracy MAE value matches milt_mae", {

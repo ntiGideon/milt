@@ -1,16 +1,6 @@
-# Plotting S3 methods for MiltSeries (and stubs for future result classes)
-
-.milt_plot_theme <- function(base_size = 11) {
-  ggplot2::theme_minimal(base_size = base_size) +
-    ggplot2::theme(
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major.x = ggplot2::element_blank(),
-      plot.title = ggplot2::element_text(face = "bold"),
-      plot.subtitle = ggplot2::element_text(color = "#5B6573"),
-      legend.position = "bottom",
-      legend.title = ggplot2::element_text(face = "bold")
-    )
-}
+# Plotting S3 methods for MiltSeries
+#
+# .milt_plot_theme() and the shared colour constants live in R/utils-plot.R.
 
 # ── MiltSeries ────────────────────────────────────────────────────────────────
 
@@ -21,7 +11,8 @@
 #'
 #' @param x A `MiltSeries` object.
 #' @param title Optional plot title. Defaults to `"MiltSeries [<freq>]"`.
-#' @param color Single hex colour string used for univariate series.
+#' @param color Single hex colour string used for univariate series. Defaults
+#'   to the package's primary accent colour.
 #' @param ... Ignored.
 #' @return A `ggplot` object, invisibly.
 #' @seealso [autoplot.MiltSeries()], [milt_plot_acf()], [milt_plot_decomp()]
@@ -29,9 +20,10 @@
 #' @export
 plot.MiltSeries <- function(x,
                              title = NULL,
-                             color = "#2166AC",
+                             color = NULL,
                              ...) {
   assert_milt_series(x)
+  color <- color %||% .milt_primary
   p   <- x$.__enclos_env__$private
   tbl <- x$as_tibble()
   tc  <- p$.time_col
@@ -96,6 +88,7 @@ plot.MiltSeries <- function(x,
         lineend = "round",
         na.rm = TRUE
       ) +
+      ggplot2::scale_color_manual(values = .milt_pal_cat(length(vcs))) +
       ggplot2::labs(color = "Component")
   }
 

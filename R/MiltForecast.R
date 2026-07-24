@@ -177,6 +177,15 @@ summary.MiltForecast <- function(object, ...) {
 #' @export
 as_tibble.MiltForecast <- function(x, ...) x$as_tibble()
 
+#' Convert a MiltForecast to a data.table
+#'
+#' @param x A `MiltForecast` object.
+#' @param ... Ignored.
+#' @return A [data.table::data.table()] with the same columns as
+#'   [as_tibble.MiltForecast()].
+#' @export
+as.data.table.MiltForecast <- function(x, ...) data.table::as.data.table(x$as_tibble())
+
 #' Plot a MiltForecast
 #'
 #' Renders the point forecast with optional prediction interval ribbons. If the
@@ -270,7 +279,7 @@ plot.MiltForecast <- function(x, history = 50L, title = NULL, ...) {
       lineend = "round"
     ) +
     ggplot2::scale_color_manual(
-      values = c(Actual = "#1F2933", Forecast = "#1D70A2"),
+      values = c(Actual = .milt_ink[["primary"]], Forecast = .milt_primary),
       name = NULL
     ) +
     ggplot2::scale_linetype_manual(
@@ -279,8 +288,10 @@ plot.MiltForecast <- function(x, history = 50L, title = NULL, ...) {
     )
 
   if (length(lvls) > 0L) {
+    # Widest interval = lightest ribbon (most uncertain), narrowing toward the
+    # forecast line's own hue as intervals tighten. `lvls` is widest-first.
     fill_vals <- stats::setNames(
-      c("#9ECAE1", "#6BAED6", "#3182BD")[seq_along(lvls)],
+      .milt_pal_seq(length(lvls)),
       paste0(as.character(lvls), "% interval")
     )
     plt <- plt + ggplot2::scale_fill_manual(values = fill_vals, name = NULL)
@@ -295,7 +306,7 @@ plot.MiltForecast <- function(x, history = 50L, title = NULL, ...) {
           value = last_hist_tbl[[hist_vc]]
         ),
         mapping = ggplot2::aes(x = .data[["time"]], y = .data[["value"]]),
-        color = "#1F2933",
+        color = .milt_ink[["primary"]],
         size = 2.2
       )
   }

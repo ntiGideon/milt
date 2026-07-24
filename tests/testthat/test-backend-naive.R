@@ -210,3 +210,107 @@ test_that("drift: errors on series with < 3 observations", {
   expect_error(milt_fit(milt_model("drift"), s2),
                class = "milt_error_insufficient_data")
 })
+
+# ── Mean ──────────────────────────────────────────────────────────────────────
+
+test_that("mean: model is registered", {
+  expect_true(is_registered_model("mean"))
+})
+
+test_that("mean: forecast returns MiltForecast", {
+  fct <- milt_model("mean") |> milt_fit(air) |> milt_forecast(12)
+  expect_s3_class(fct, "MiltForecast")
+})
+
+test_that("mean: point forecast equals training mean, constant over horizon", {
+  m    <- milt_model("mean") |> milt_fit(air)
+  fct  <- milt_forecast(m, 6)
+  vals <- fct$as_tibble()$.mean
+  expect_true(all(abs(vals - mean(air$values())) < 1e-10))
+  expect_equal(length(unique(vals)), 1L)
+})
+
+test_that("mean: interval width does not grow with horizon", {
+  fct <- milt_model("mean") |> milt_fit(air) |> milt_forecast(12)
+  tbl <- fct$as_tibble()
+  widths <- tbl$.upper_80 - tbl$.lower_80
+  expect_true(all(abs(diff(widths)) < 1e-10))
+})
+
+test_that("mean: predict returns the training mean repeated", {
+  m   <- milt_model("mean") |> milt_fit(air)
+  prd <- milt_predict(m)
+  expect_length(prd, 144L)
+  expect_true(all(abs(prd - mean(air$values())) < 1e-10))
+})
+
+test_that("mean: residuals + predict sum to values", {
+  m     <- milt_model("mean") |> milt_fit(air)
+  v     <- air$values()
+  prd   <- milt_predict(m)
+  resid <- milt_residuals(m)
+  expect_equal(prd + resid, v, tolerance = 1e-8)
+})
+
+# ── Moving Average ────────────────────────────────────────────────────────────
+
+test_that("moving_average: model is registered", {
+  expect_true(is_registered_model("moving_average"))
+})
+
+test_that("moving_average: forecast returns MiltForecast", {
+  fct <- milt_model("moving_average") |> milt_fit(air) |> milt_forecast(12)
+  expect_s3_class(fct, "MiltForecast")
+})
+
+test_that("moving_average: default window is 3", {
+  m <- milt_model("moving_average") |> milt_fit(air)
+  expect_equal(m$.__enclos_env__$private$.backend_model$window, 3L)
+})
+
+test_that("moving_average: first forecast equals mean of the last `window` values", {
+  m    <- milt_model("moving_average", window = 4L) |> milt_fit(air)
+  fct  <- milt_forecast(m, 3)
+  last4 <- tail(air$values(), 4L)
+  expect_equal(fct$as_tibble()$.mean[[1L]], mean(last4), tolerance = 1e-10)
+})
+
+test_that("moving_average: forecast is autoregressive (uses its own prior forecasts)", {
+  m    <- milt_model("moving_average", window = 2L) |> milt_fit(air)
+  fct  <- milt_forecast(m, 2)
+  vals <- fct$as_tibble()$.mean
+  last2 <- tail(air$values(), 2L)
+  expect_equal(vals[[1L]], mean(last2), tolerance = 1e-10)
+  expect_equal(vals[[2L]], mean(c(last2[[2L]], vals[[1L]])), tolerance = 1e-10)
+})
+
+test_that("moving_average: intervals widen with horizon", {
+  fct <- milt_model("moving_average") |> milt_fit(air) |> milt_forecast(12)
+  tbl <- fct$as_tibble()
+  widths <- tbl$.upper_80 - tbl$.lower_80
+  expect_true(all(diff(widths) >= 0))
+})
+
+test_that("moving_average: residuals have correct length", {
+  m <- milt_model("moving_average") |> milt_fit(air)
+  expect_length(milt_residuals(m), 144L)
+})
+
+test_that("moving_average: errors on non-positive window", {
+  expect_error(
+    milt_fit(milt_model("moving_average", window = 0L), air),
+    class = "milt_error_invalid_arg"
+  )
+})
+
+test_that("moving_average: errors on series shorter than window", {
+  tbl <- tibble::tibble(
+    date  = seq(as.Date("2020-01-01"), by = "month", length.out = 2),
+    value = c(1, 2)
+  )
+  s2 <- milt_series(tbl, time_col = "date", value_cols = "value")
+  expect_error(
+    milt_fit(milt_model("moving_average", window = 3L), s2),
+    class = "milt_error_insufficient_data"
+  )
+})

@@ -38,7 +38,7 @@ s
 \seealso{
 \code{\link[=milt_series]{milt_series()}}, \link{milt_air}, \link{milt_retail}, \code{\link[=milt_add_covariates]{milt_add_covariates()}}
 
-Other datasets: 
+Other datasets:
 \code{\link{milt_air}},
 \code{\link{milt_retail}}
 }

@@ -240,42 +240,6 @@ milt_forecast <- function(model,
   )
 }
 
-#' In-sample predictions from a fitted milt model
-#'
-#' @param model A fitted `MiltModel`.
-#' @param series Optional `MiltSeries`. When `NULL`, returns fitted values for
-#'   the training series.
-#' @param ... Additional arguments forwarded to the backend's `predict()`.
-#' @return A numeric vector of fitted/predicted values.
-#' @family model
-#' @examples
-#' \donttest{
-#' s     <- milt_series(AirPassengers)
-#' model <- milt_model("naive") |> milt_fit(s)
-#' fitted_vals <- milt_predict(model)
-#' head(fitted_vals)
-#' }
-#' @export
-milt_predict <- function(model, series = NULL, ...) {
-  .assert_milt_model(model)
-  .assert_is_fitted(model)
-  if (!is.null(series)) assert_milt_series(series, "series")
-  model$predict(series, ...)
-}
-
-#' Residuals from a fitted milt model
-#'
-#' @param model A fitted `MiltModel`.
-#' @param ... Additional arguments forwarded to the backend's `residuals()`.
-#' @return A numeric vector of residuals (actual minus fitted).
-#' @family model
-#' @export
-milt_residuals <- function(model, ...) {
-  .assert_milt_model(model)
-  .assert_is_fitted(model)
-  model$residuals(...)
-}
-
 #' Refit a milt model on new data without re-tuning
 #'
 #' Uses the model's existing hyperparameters but trains on a new series.

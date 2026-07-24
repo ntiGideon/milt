@@ -19,5 +19,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Gideon Nti Boateng \email{gidiboateng200@gmail.com}
 
+Authors:
+\itemize{
+  \item Gideon Nti Boateng \email{gidiboateng200@gmail.com}
+}
+
 }
 \keyword{internal}

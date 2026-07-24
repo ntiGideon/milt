@@ -34,10 +34,11 @@ jobs:
             any::CausalImpact
             any::jsonlite
             any::plumber
+            any::arrow
             local::.
           dependencies: '"hard"'
 
       - name: Run optional backend tests
         run: |
-          devtools::test(filter = "backend|changepoint|explain|serve")
+          devtools::test(filter = "backend|changepoint|explain|serve|arrow")
         shell: Rscript {0}

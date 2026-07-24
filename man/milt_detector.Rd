@@ -25,9 +25,9 @@ d <- milt_detector("iqr", k = 1.5)
 \seealso{
 \code{\link[=milt_detect]{milt_detect()}}
 
-Other anomaly: 
-\code{\link{milt_causal_impact}()},
-\code{\link{milt_changepoints}()},
-\code{\link{milt_detect}()}
+Other anomaly:
+\code{\link[=milt_causal_impact]{milt_causal_impact()}},
+\code{\link[=milt_changepoints]{milt_changepoints()}},
+\code{\link[=milt_detect]{milt_detect()}}
 }
 \concept{anomaly}

@@ -76,22 +76,52 @@ summary.MiltClusters <- function(object, ...) print(object)
 #' @export
 as_tibble.MiltClusters <- function(x, ...) x$as_tibble()
 
+#' Plot a MiltClusters object
+#'
+#' Draws each clustered series as a line, faceted by cluster, so the shapes
+#' that were grouped together can be compared directly.
+#'
+#' @param x A `MiltClusters` object.
+#' @param ... Ignored.
+#' @return A `ggplot2` object, invisibly.
 #' @export
 plot.MiltClusters <- function(x, ...) {
-  tbl  <- x$as_tibble()
-  tbl$cluster <- factor(tbl$cluster)
-  ggplot2::ggplot(tbl, ggplot2::aes(x = .data$series_index,
-                                     y = .data$cluster,
-                                     colour = .data$cluster)) +
-    ggplot2::geom_point(size = 3) +
+  series_list <- x$.__enclos_env__$private$.series_list
+  labels      <- x$labels()
+
+  long <- dplyr::bind_rows(lapply(seq_along(series_list), function(i) {
+    s   <- series_list[[i]]
+    tbl <- s$as_tibble()
+    vc  <- s$.__enclos_env__$private$.value_cols[[1L]]
+    tibble::tibble(
+      series_index = i,
+      cluster       = labels[[i]],
+      step          = seq_len(nrow(tbl)),
+      value         = tbl[[vc]]
+    )
+  }))
+
+  cl_levels <- paste("Cluster", sort(unique(long$cluster)))
+  long$cluster <- factor(paste("Cluster", long$cluster), levels = cl_levels)
+
+  plt <- ggplot2::ggplot(
+    long,
+    ggplot2::aes(x = .data$step, y = .data$value,
+                 colour = .data$cluster, group = .data$series_index)
+  ) +
+    ggplot2::geom_line(linewidth = 0.6, alpha = 0.65, na.rm = TRUE) +
+    ggplot2::facet_wrap(~ .data$cluster, scales = "free_y") +
+    ggplot2::scale_colour_manual(values = .milt_pal_cat(length(cl_levels)), guide = "none") +
     ggplot2::labs(
-      title  = paste0("Time Series Clustering [", x$method(), "]"),
-      x      = "Series Index",
-      y      = "Cluster",
-      colour = "Cluster"
+      title    = paste0("Time Series Clustering [", x$method(), "]"),
+      subtitle = paste0(length(series_list), " series into ", x$k(), " clusters"),
+      x        = "Time step",
+      y        = "Value"
     ) +
-    ggplot2::theme_minimal(base_size = 12) +
-    ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
+    .milt_plot_theme(base_size = 12)
+
+  print(plt)
+  invisible(plt)
 }
 
 # ── Internal clustering algorithms ───────────────────────────────────────────

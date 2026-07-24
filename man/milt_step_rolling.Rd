@@ -34,11 +34,16 @@ head(s_rol$as_tibble())
 \seealso{
 \code{\link[=milt_step_lag]{milt_step_lag()}}, \code{\link[=milt_step_fourier]{milt_step_fourier()}}, \code{\link[=milt_step_calendar]{milt_step_calendar()}}
 
-Other features: 
-\code{\link{milt_step_calendar}()},
-\code{\link{milt_step_fourier}()},
-\code{\link{milt_step_lag}()},
-\code{\link{milt_step_scale}()},
-\code{\link{milt_step_unscale}()}
+Other features:
+\code{\link[=milt_step_boxcox]{milt_step_boxcox()}},
+\code{\link[=milt_step_calendar]{milt_step_calendar()}},
+\code{\link[=milt_step_diff]{milt_step_diff()}},
+\code{\link[=milt_step_fourier]{milt_step_fourier()}},
+\code{\link[=milt_step_lag]{milt_step_lag()}},
+\code{\link[=milt_step_map]{milt_step_map()}},
+\code{\link[=milt_step_scale]{milt_step_scale()}},
+\code{\link[=milt_step_unboxcox]{milt_step_unboxcox()}},
+\code{\link[=milt_step_undiff]{milt_step_undiff()}},
+\code{\link[=milt_step_unscale]{milt_step_unscale()}}
 }
 \concept{features}

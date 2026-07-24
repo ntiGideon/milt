@@ -11,110 +11,123 @@ Users do not instantiate this class directly; use \code{\link[=milt_backtest]{mi
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-MiltBacktest-new}{\code{MiltBacktestR6$new()}}
-\item \href{#method-MiltBacktest-model_name}{\code{MiltBacktestR6$model_name()}}
-\item \href{#method-MiltBacktest-method}{\code{MiltBacktestR6$method()}}
-\item \href{#method-MiltBacktest-horizon}{\code{MiltBacktestR6$horizon()}}
-\item \href{#method-MiltBacktest-n_folds}{\code{MiltBacktestR6$n_folds()}}
-\item \href{#method-MiltBacktest-metrics}{\code{MiltBacktestR6$metrics()}}
-\item \href{#method-MiltBacktest-summary_tbl}{\code{MiltBacktestR6$summary_tbl()}}
-\item \href{#method-MiltBacktest-as_tibble}{\code{MiltBacktestR6$as_tibble()}}
-}
+  \itemize{
+    \item \href{#method-MiltBacktest-initialize}{\code{MiltBacktest$new()}}
+    \item \href{#method-MiltBacktest-model_name}{\code{MiltBacktest$model_name()}}
+    \item \href{#method-MiltBacktest-method}{\code{MiltBacktest$method()}}
+    \item \href{#method-MiltBacktest-horizon}{\code{MiltBacktest$horizon()}}
+    \item \href{#method-MiltBacktest-n_folds}{\code{MiltBacktest$n_folds()}}
+    \item \href{#method-MiltBacktest-metrics}{\code{MiltBacktest$metrics()}}
+    \item \href{#method-MiltBacktest-summary_tbl}{\code{MiltBacktest$summary_tbl()}}
+    \item \href{#method-MiltBacktest-as_tibble}{\code{MiltBacktest$as_tibble()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-MiltBacktest-new"></a>}}
-\if{latex}{\out{\hypertarget{method-MiltBacktest-new}{}}}
-\subsection{Method \code{new()}}{
-Initialise (called internally by \code{\link[=milt_backtest]{milt_backtest()}}).
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$new(model_name, method, horizon, fold_results)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-MiltBacktest-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-MiltBacktest-initialize}{}}}
+\subsection{\code{MiltBacktest$new()}}{
+  Initialise (called internally by \code{\link[=milt_backtest]{milt_backtest()}}).
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$new(model_name, method, horizon, fold_results)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{model_name}}{Character scalar.}
+      \item{\code{method}}{Character scalar: \code{"expanding"} or \code{"sliding"}.}
+      \item{\code{horizon}}{Integer forecast horizon.}
+      \item{\code{fold_results}}{Tibble with per-fold metrics.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{model_name}}{Character scalar.}
-
-\item{\code{method}}{Character scalar: \code{"expanding"} or \code{"sliding"}.}
-
-\item{\code{horizon}}{Integer forecast horizon.}
-
-\item{\code{fold_results}}{Tibble with per-fold metrics.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltBacktest-model_name"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltBacktest-model_name}{}}}
-\subsection{Method \code{model_name()}}{
-Model identifier string.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$model_name()}\if{html}{\out{</div>}}
+\subsection{\code{MiltBacktest$model_name()}}{
+  Model identifier string.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$model_name()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltBacktest-method"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltBacktest-method}{}}}
-\subsection{Method \code{method()}}{
-Backtesting method: \code{"expanding"} or \code{"sliding"}.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$method()}\if{html}{\out{</div>}}
+\subsection{\code{MiltBacktest$method()}}{
+  Backtesting method: \code{"expanding"} or \code{"sliding"}.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$method()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltBacktest-horizon"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltBacktest-horizon}{}}}
-\subsection{Method \code{horizon()}}{
-Forecast horizon used.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$horizon()}\if{html}{\out{</div>}}
+\subsection{\code{MiltBacktest$horizon()}}{
+  Forecast horizon used.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$horizon()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltBacktest-n_folds"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltBacktest-n_folds}{}}}
-\subsection{Method \code{n_folds()}}{
-Number of folds evaluated.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$n_folds()}\if{html}{\out{</div>}}
+\subsection{\code{MiltBacktest$n_folds()}}{
+  Number of folds evaluated.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$n_folds()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltBacktest-metrics"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltBacktest-metrics}{}}}
-\subsection{Method \code{metrics()}}{
-Per-fold metric tibble.
+\subsection{\code{MiltBacktest$metrics()}}{
+  Per-fold metric tibble.
 Columns: \code{.fold}, \code{.train_n}, \code{.test_n}, plus one column per metric.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$metrics()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$metrics()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltBacktest-summary_tbl"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltBacktest-summary_tbl}{}}}
-\subsection{Method \code{summary_tbl()}}{
-Aggregated summary tibble.
+\subsection{\code{MiltBacktest$summary_tbl()}}{
+  Aggregated summary tibble.
 Columns: \code{metric}, \code{mean}, \code{sd}, \code{min}, \code{max}.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$summary_tbl()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$summary_tbl()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltBacktest-as_tibble"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltBacktest-as_tibble}{}}}
-\subsection{Method \code{as_tibble()}}{
-Return per-fold metric tibble (same as \code{metrics()}).
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltBacktestR6$as_tibble()}\if{html}{\out{</div>}}
+\subsection{\code{MiltBacktest$as_tibble()}}{
+  Return per-fold metric tibble (same as \code{metrics()}).
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltBacktest$as_tibble()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 }

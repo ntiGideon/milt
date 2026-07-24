@@ -35,7 +35,7 @@ Use `list_milt_models()` to print the full registry at any time.
 
 | Family | Models | Best for |
 |---|---|---|
-| Baseline | `naive`, `snaive`, `drift` | Benchmarks, sparse data |
+| Baseline | `naive`, `snaive`, `drift`, `mean`, `moving_average` | Benchmarks, sparse data |
 | Classical | `auto_arima`, `ets`, `theta`, `tbats`, `stl` | Univariate, well-behaved seasonality |
 | Intermittent | `croston` | Demand series with many zeros |
 | Machine learning | `xgboost`, `lightgbm`, `random_forest`, `elastic_net`, `svm`, `knn` | Complex patterns, many covariates |
@@ -95,6 +95,40 @@ observations.
 
 ```{r drift}
 drift_fct <- milt_model("drift") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 12)
+```
+
+---
+
+## `mean` — Mean forecast
+
+Repeats the training-series mean for every forecast step, with a constant
+(non-widening) prediction interval — appropriate when the series has no
+trend or seasonality and residuals are assumed i.i.d.
+
+**No hyperparameters.**  No package dependency.
+
+```{r mean}
+mean_fct <- milt_model("mean") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 12)
+```
+
+---
+
+## `moving_average` — Moving Average forecast
+
+Forecasts each step as the mean of the last `window` observations, then
+autoregressively slides that window forward using its own forecasts — so the
+h-step-ahead forecast eventually becomes the mean of prior forecasts alone.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `window` | integer | `3L` | Number of trailing observations averaged. |
+
+```{r moving_average}
+ma_fct <- milt_model("moving_average", window = 5L) |>
   milt_fit(air) |>
   milt_forecast(horizon = 12)
 ```

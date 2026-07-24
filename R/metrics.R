@@ -219,6 +219,107 @@ milt_r_squared <- function(actual, predicted) {
   1 - ss_res / ss_tot
 }
 
+#' Weighted Mean Absolute Percentage Error
+#'
+#' Scales total absolute error by total absolute actual value, avoiding the
+#' blow-up [milt_mape()] suffers when individual `actual` values are near
+#' zero.
+#'
+#' @inheritParams milt_mae
+#' @return A single numeric value (fraction, e.g. `0.05` = 5 %).
+#' @family metrics
+#' @export
+milt_wmape <- function(actual, predicted) {
+  .check_numeric_vectors(actual, predicted)
+  denom <- sum(abs(actual), na.rm = TRUE)
+  if (denom == 0) {
+    milt_warn("Sum of |actual| is zero; wMAPE is undefined.")
+    return(NaN)
+  }
+  sum(abs(actual - predicted), na.rm = TRUE) / denom
+}
+
+#' Overall Percentage Error
+#'
+#' Compares the *totals* of the actual and predicted series rather than
+#' averaging per-step percentage errors — errors that cancel out over time
+#' (over- and under-forecasting at different steps) are not penalised.
+#'
+#' @inheritParams milt_mae
+#' @return A single numeric value (fraction, e.g. `0.05` = 5 %).
+#' @family metrics
+#' @export
+milt_ope <- function(actual, predicted) {
+  .check_numeric_vectors(actual, predicted)
+  total_actual <- sum(actual, na.rm = TRUE)
+  if (total_actual == 0) {
+    milt_warn("Sum of {.arg actual} is zero; OPE is undefined.")
+    return(NaN)
+  }
+  abs(total_actual - sum(predicted, na.rm = TRUE)) / abs(total_actual)
+}
+
+#' Coefficient of Variation of the RMSE
+#'
+#' Expresses [milt_rmse()] as a fraction of the mean of `actual`, making error
+#' magnitude comparable across series with different scales.
+#'
+#' @inheritParams milt_mae
+#' @return A single numeric value (fraction, e.g. `0.05` = 5 %).
+#' @family metrics
+#' @export
+milt_coefficient_of_variation <- function(actual, predicted) {
+  .check_numeric_vectors(actual, predicted)
+  denom <- mean(actual, na.rm = TRUE)
+  if (denom == 0) {
+    milt_warn("Mean of {.arg actual} is zero; coefficient of variation is undefined.")
+    return(NaN)
+  }
+  milt_rmse(actual, predicted) / denom
+}
+
+#' Mean Absolute Ranged Relative Error
+#'
+#' Scales mean absolute error by the range of `actual` (`max - min`), giving a
+#' scale-free error measure that does not require a training/benchmark series.
+#'
+#' @inheritParams milt_mae
+#' @return A single numeric value (fraction, e.g. `0.05` = 5 %).
+#' @family metrics
+#' @export
+milt_marre <- function(actual, predicted) {
+  .check_numeric_vectors(actual, predicted)
+  range_actual <- max(actual, na.rm = TRUE) - min(actual, na.rm = TRUE)
+  if (range_actual == 0) {
+    milt_warn("Range of {.arg actual} is zero (constant series); MARRE is undefined.")
+    return(NaN)
+  }
+  mean(abs(actual - predicted), na.rm = TRUE) / range_actual
+}
+
+#' Root Mean Squared Log Error
+#'
+#' Penalises relative (rather than absolute) errors by comparing values on the
+#' log scale. Requires `actual > -1` and `predicted > -1`.
+#'
+#' @inheritParams milt_mae
+#' @return A single numeric value.
+#' @family metrics
+#' @export
+milt_rmsle <- function(actual, predicted) {
+  .check_numeric_vectors(actual, predicted)
+  if (any(actual <= -1, na.rm = TRUE) || any(predicted <= -1, na.rm = TRUE)) {
+    milt_abort(
+      c(
+        "{.fn milt_rmsle} requires {.arg actual} and {.arg predicted} to be > -1.",
+        "i" = "RMSLE is undefined for values at or below -1 (log of a non-positive number)."
+      ),
+      class = "milt_error_invalid_metric_input"
+    )
+  }
+  sqrt(mean((log1p(actual) - log1p(predicted))^2, na.rm = TRUE))
+}
+
 #
 
 #' Continuous Ranked Probability Score (CRPS)
@@ -417,7 +518,8 @@ milt_accuracy <- function(actual,
   .check_numeric_vectors(actual, predicted)
 
   # Resolve metric set
-  point_metrics <- c("MAE", "MSE", "RMSE", "MAPE", "sMAPE", "R2")
+  point_metrics <- c("MAE", "MSE", "RMSE", "MAPE", "sMAPE", "R2",
+                      "WMAPE", "OPE", "CV", "MARRE")
   scaled_metrics <- c("MASE", "RMSSE")
   all_point <- if (!is.null(training)) {
     c(point_metrics, scaled_metrics)
@@ -446,6 +548,33 @@ milt_accuracy <- function(actual,
   }
   if ("SMAPE" %in% selected) results[["sMAPE"]] <- milt_smape(actual, predicted)
   if ("R2"    %in% selected) results[["R2"]]    <- milt_r_squared(actual, predicted)
+  if ("WMAPE" %in% selected) {
+    results[["WMAPE"]] <- tryCatch(
+      milt_wmape(actual, predicted),
+      warning = function(w) suppressWarnings(milt_wmape(actual, predicted))
+    )
+  }
+  if ("OPE"   %in% selected) {
+    results[["OPE"]] <- tryCatch(
+      milt_ope(actual, predicted),
+      warning = function(w) suppressWarnings(milt_ope(actual, predicted))
+    )
+  }
+  if ("CV"    %in% selected) {
+    results[["CV"]] <- tryCatch(
+      milt_coefficient_of_variation(actual, predicted),
+      warning = function(w) suppressWarnings(milt_coefficient_of_variation(actual, predicted))
+    )
+  }
+  if ("MARRE" %in% selected) {
+    results[["MARRE"]] <- tryCatch(
+      milt_marre(actual, predicted),
+      warning = function(w) suppressWarnings(milt_marre(actual, predicted))
+    )
+  }
+  if ("RMSLE" %in% selected) {
+    results[["RMSLE"]] <- milt_rmsle(actual, predicted)
+  }
 
   if (!is.null(training)) {
     if ("MASE"  %in% selected) {

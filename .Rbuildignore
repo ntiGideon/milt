@@ -15,3 +15,4 @@
 ^sample_runner\.R$
 ^documentation\.html$
 ^documentation\.qmd$
+^Rplots\.pdf$

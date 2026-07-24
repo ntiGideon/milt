@@ -266,6 +266,166 @@ MiltDrift <- R6::R6Class(
   )
 )
 
+# ── Mean ──────────────────────────────────────────────────────────────────────
+
+MiltMean <- R6::R6Class(
+  classname = "MiltMean",
+  inherit   = MiltModelBase,
+
+  public = list(
+    initialize = function(...) {
+      super$initialize(name = "mean", ...)
+    },
+
+    fit = function(series, ...) {
+      assert_milt_series(series)
+      v     <- series$values()
+      mu    <- mean(v, na.rm = TRUE)
+      resid <- v - mu
+      sigma <- sqrt(mean(resid^2, na.rm = TRUE))
+
+      private$.backend_model   <- list(mean = mu, sigma = sigma)
+      private$.fitted          <- TRUE
+      private$.training_series <- series
+      invisible(self)
+    },
+
+    forecast = function(horizon, level = c(80, 95),
+                        num_samples = NULL, future_covariates = NULL, ...) {
+      bm    <- private$.backend_model
+      mu    <- bm$mean
+      sigma <- bm$sigma
+      times <- .future_times(private$.training_series, horizon)
+
+      pt <- tibble::tibble(time = times, value = rep(mu, horizon))
+
+      # PI: constant width (no random-walk growth) — residuals are assumed i.i.d.
+      lower <- upper <- list()
+      for (l in level) {
+        z  <- stats::qnorm((1 + l / 100) / 2)
+        nm <- as.character(l)
+        lower[[nm]] <- tibble::tibble(time = times, value = rep(mu - z * sigma, horizon))
+        upper[[nm]] <- tibble::tibble(time = times, value = rep(mu + z * sigma, horizon))
+      }
+
+      samples <- if (!is.null(num_samples)) {
+        matrix(
+          stats::rnorm(horizon * num_samples, mu, sigma),
+          nrow = horizon, ncol = num_samples
+        )
+      } else NULL
+
+      MiltForecastR6$new(
+        point_forecast  = pt, lower = lower, upper = upper,
+        samples = samples, model_name = "mean", horizon = horizon,
+        training_end    = private$.training_series$end_time(),
+        training_series = private$.training_series
+      )
+    },
+
+    predict = function(series = NULL, ...) {
+      rep(private$.backend_model$mean, private$.training_series$n_timesteps())
+    },
+
+    residuals = function(...) {
+      private$.training_series$values() - self$predict()
+    }
+  )
+)
+
+# ── Moving Average ────────────────────────────────────────────────────────────
+
+MiltMovingAverage <- R6::R6Class(
+  classname = "MiltMovingAverage",
+  inherit   = MiltModelBase,
+
+  public = list(
+    initialize = function(window = 3L, ...) {
+      super$initialize(name = "moving_average", window = window, ...)
+    },
+
+    fit = function(series, ...) {
+      assert_milt_series(series)
+      w <- as.integer(private$.params$window %||% 3L)
+      if (is.na(w) || w < 1L) {
+        milt_abort("{.arg window} must be a positive integer.",
+                   class = "milt_error_invalid_arg")
+      }
+      check_series_has_enough_data(series, w + 1L, "moving_average")
+      v <- series$values()
+      n <- length(v)
+
+      # One-step-ahead rolling-mean fitted values, for residual sigma
+      fitted <- vapply(seq_len(n), function(i) {
+        if (i <= w) return(NA_real_)
+        mean(v[(i - w):(i - 1L)])
+      }, numeric(1L))
+      resid <- v - fitted
+      sigma <- sqrt(mean(resid^2, na.rm = TRUE))
+
+      private$.backend_model <- list(
+        last_window = utils::tail(v, w),
+        window      = w,
+        sigma       = sigma,
+        fitted      = fitted
+      )
+      private$.fitted          <- TRUE
+      private$.training_series <- series
+      invisible(self)
+    },
+
+    forecast = function(horizon, level = c(80, 95),
+                        num_samples = NULL, future_covariates = NULL, ...) {
+      bm     <- private$.backend_model
+      window <- bm$last_window
+      sigma  <- bm$sigma
+      times  <- .future_times(private$.training_series, horizon)
+      h_seq  <- seq_len(horizon)
+
+      # Autoregressive: each new point re-enters the sliding window
+      point_vals <- numeric(horizon)
+      for (h in h_seq) {
+        point_vals[[h]] <- mean(window)
+        window <- c(window[-1L], point_vals[[h]])
+      }
+
+      pt <- tibble::tibble(time = times, value = point_vals)
+
+      lower <- upper <- list()
+      for (l in level) {
+        z  <- stats::qnorm((1 + l / 100) / 2)
+        mg <- z * sigma * sqrt(h_seq)
+        nm <- as.character(l)
+        lower[[nm]] <- tibble::tibble(time = times, value = point_vals - mg)
+        upper[[nm]] <- tibble::tibble(time = times, value = point_vals + mg)
+      }
+
+      samples <- if (!is.null(num_samples)) {
+        matrix(
+          stats::rnorm(horizon * num_samples, rep(point_vals, num_samples),
+                       rep(sigma * sqrt(h_seq), num_samples)),
+          nrow = horizon, ncol = num_samples
+        )
+      } else NULL
+
+      MiltForecastR6$new(
+        point_forecast  = pt, lower = lower, upper = upper,
+        samples = samples, model_name = "moving_average", horizon = horizon,
+        training_end    = private$.training_series$end_time(),
+        training_series = private$.training_series
+      )
+    },
+
+    predict = function(series = NULL, ...) {
+      private$.backend_model$fitted
+    },
+
+    residuals = function(...) {
+      private$.training_series$values() - self$predict()
+    }
+  )
+)
+
 # ── Registration ──────────────────────────────────────────────────────────────
 
 .onLoad_naive <- function() {
@@ -279,5 +439,13 @@ MiltDrift <- R6::R6Class(
 
   register_milt_model("drift",  MiltDrift,
     description = "Drift: linear extrapolation from first to last observed value.",
+    supports    = list(probabilistic = TRUE))
+
+  register_milt_model("mean", MiltMean,
+    description = "Mean: repeats the training-series mean.",
+    supports    = list(probabilistic = TRUE))
+
+  register_milt_model("moving_average", MiltMovingAverage,
+    description = "Moving Average: autoregressive rolling mean over the last `window` points.",
     supports    = list(probabilistic = TRUE))
 }

@@ -11,146 +11,162 @@ through the public verbs \code{\link[=milt_model]{milt_model()}}, \code{\link[=m
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-MiltModel-new}{\code{MiltModelBase$new()}}
-\item \href{#method-MiltModel-fit}{\code{MiltModelBase$fit()}}
-\item \href{#method-MiltModel-forecast}{\code{MiltModelBase$forecast()}}
-\item \href{#method-MiltModel-predict}{\code{MiltModelBase$predict()}}
-\item \href{#method-MiltModel-residuals}{\code{MiltModelBase$residuals()}}
-\item \href{#method-MiltModel-is_fitted}{\code{MiltModelBase$is_fitted()}}
-\item \href{#method-MiltModel-get_params}{\code{MiltModelBase$get_params()}}
-\item \href{#method-MiltModel-summary}{\code{MiltModelBase$summary()}}
-\item \href{#method-MiltModel-clone}{\code{MiltModelBase$clone()}}
-}
+  \itemize{
+    \item \href{#method-MiltModel-initialize}{\code{MiltModel$new()}}
+    \item \href{#method-MiltModel-fit}{\code{MiltModel$fit()}}
+    \item \href{#method-MiltModel-forecast}{\code{MiltModel$forecast()}}
+    \item \href{#method-MiltModel-predict}{\code{MiltModel$predict()}}
+    \item \href{#method-MiltModel-residuals}{\code{MiltModel$residuals()}}
+    \item \href{#method-MiltModel-is_fitted}{\code{MiltModel$is_fitted()}}
+    \item \href{#method-MiltModel-get_params}{\code{MiltModel$get_params()}}
+    \item \href{#method-MiltModel-summary}{\code{MiltModel$summary()}}
+    \item \href{#method-MiltModel-clone}{\code{MiltModel$clone()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-MiltModel-new"></a>}}
-\if{latex}{\out{\hypertarget{method-MiltModel-new}{}}}
-\subsection{Method \code{new()}}{
-Initialise a model with hyperparameters.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$new(name = NULL, ...)}\if{html}{\out{</div>}}
+\if{html}{\out{<a id="method-MiltModel-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-MiltModel-initialize}{}}}
+\subsection{\code{MiltModel$new()}}{
+  Initialise a model with hyperparameters.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$new(name = NULL, ...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{name}}{Character scalar: model identifier string.}
+      \item{\code{...}}{Hyperparameters stored in \code{private$.params}.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{name}}{Character scalar: model identifier string.}
-
-\item{\code{...}}{Hyperparameters stored in \code{private$.params}.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-fit"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-fit}{}}}
-\subsection{Method \code{fit()}}{
-Fit the model to a \code{MiltSeries}. \strong{Must be overridden.}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$fit(series)}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$fit()}}{
+  Fit the model to a \code{MiltSeries}. \strong{Must be overridden.}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$fit(series)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{series}}{A \code{MiltSeries} object.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{series}}{A \code{MiltSeries} object.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-forecast"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-forecast}{}}}
-\subsection{Method \code{forecast()}}{
-Generate a \code{MiltForecast}. \strong{Must be overridden.}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$forecast(horizon, ...)}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$forecast()}}{
+  Generate a \code{MiltForecast}. \strong{Must be overridden.}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$forecast(horizon, ...)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{horizon}}{Integer number of steps ahead.}
+      \item{\code{...}}{Additional arguments.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{horizon}}{Integer number of steps ahead.}
-
-\item{\code{...}}{Additional arguments.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-predict"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-predict}{}}}
-\subsection{Method \code{predict()}}{
-In-sample predictions. \strong{Must be overridden.}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$predict(series = NULL)}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$predict()}}{
+  In-sample predictions. \strong{Must be overridden.}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$predict(series = NULL)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{series}}{Optional \code{MiltSeries}. When \code{NULL}, returns training
+fitted values.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{series}}{Optional \code{MiltSeries}. When \code{NULL}, returns training
-fitted values.}
-}
-\if{html}{\out{</div>}}
-}
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-residuals"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-residuals}{}}}
-\subsection{Method \code{residuals()}}{
-Training residuals. \strong{Must be overridden.}
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$residuals()}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$residuals()}}{
+  Training residuals. \strong{Must be overridden.}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$residuals()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-is_fitted"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-is_fitted}{}}}
-\subsection{Method \code{is_fitted()}}{
-\code{TRUE} after \code{\link[=milt_fit]{milt_fit()}} has been called successfully.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$is_fitted()}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$is_fitted()}}{
+  \code{TRUE} after \code{\link[=milt_fit]{milt_fit()}} has been called successfully.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$is_fitted()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-get_params"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-get_params}{}}}
-\subsection{Method \code{get_params()}}{
-Return the hyperparameter list supplied at construction.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$get_params()}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$get_params()}}{
+  Return the hyperparameter list supplied at construction.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$get_params()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-summary"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-summary}{}}}
-\subsection{Method \code{summary()}}{
-Print a summary to the console.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$summary()}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$summary()}}{
+  Print a summary to the console.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$summary()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltModel-clone"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltModel-clone}{}}}
-\subsection{Method \code{clone()}}{
-The objects of this class are cloneable with this method.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltModelBase$clone(deep = FALSE)}\if{html}{\out{</div>}}
+\subsection{\code{MiltModel$clone()}}{
+  The objects of this class are cloneable with this method.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltModel$clone(deep = FALSE)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{deep}}{Whether to make a deep clone.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
 
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{deep}}{Whether to make a deep clone.}
-}
-\if{html}{\out{</div>}}
-}
-}
 }

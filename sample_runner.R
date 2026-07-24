@@ -1,4 +1,5 @@
 devtools::load_all()
+install.packages("forecast")
 
 # creating a series
 ap = milt_series(AirPassengers)
@@ -7,6 +8,11 @@ help("milt")
 help("AirPassengers")
 ap2 = milt_series(AirPassengers, frequency = 12, start = c(1949,1))
 print(ap2)
+# fit ARIMA model
+arima_fit = milt_model("auto_arima") |> milt_fit(ap)
+arima_predict = milt_forecast(arima_fit, horizon = 8)
+print(arima_predict)
+plot(arima_predict)
 # create a series from a numeric vector
 x = milt_series(
   rnorm(60, mean = 100, sd = 10),

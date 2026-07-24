@@ -8,14 +8,15 @@
 #'   - An `xts` object
 #'   - A `zoo` object
 #'   - A `tsibble`
-#'   - A `data.frame` or `tibble`
+#'   - A `data.frame`, `tibble`, or `data.table`
 #'   - A numeric vector (requires `frequency` and `start`)
 #' @param time_col Name of the time column when `x` is a data frame or tibble.
 #'   Auto-detected when `NULL`.
 #' @param value_cols Character vector of value column names. Auto-detected when
 #'   `NULL` (all non-time, non-group columns).
 #' @param group_col Name of the grouping column for multi-series data frames.
-#'   `NULL` for single series.
+#'   `NULL` for single series. When `x` is a keyed `data.table` and
+#'   `group_col` is not supplied, the first key column is used.
 #' @param frequency Frequency label (`"monthly"`, `"quarterly"`, `"daily"`,
 #'   etc.) or a numeric value. Auto-detected from the time index when `NULL`.
 #' @param start For numeric vector input only: a length-2 integer vector
@@ -46,6 +47,13 @@
 #' s3 <- milt_series(as.numeric(AirPassengers), frequency = 12,
 #'                   start = c(1949, 1))
 #'
+#' # From a data.table (grouping column auto-detected from the table's key)
+#' dt <- data.table::data.table(
+#'   date  = seq(as.Date("2020-01-01"), by = "month", length.out = 24),
+#'   sales = cumsum(rnorm(24, 100, 10))
+#' )
+#' s4 <- milt_series(dt, time_col = "date", value_cols = "sales")
+#'
 #' @export
 milt_series <- function(x,
                          time_col   = NULL,
@@ -71,7 +79,11 @@ milt_series <- function(x,
       ...
     )
   } else if (inherits(x, c("data.frame", "tbl_df"))) {
-    # data.frame / tibble
+    # data.frame / tibble / data.table
+    if (inherits(x, "data.table") && is.null(group_col)) {
+      dt_key <- data.table::key(x)
+      if (!is.null(dt_key)) group_col <- dt_key[[1L]]
+    }
     as_milt_series.data.frame(
       x,
       time_col   = time_col,

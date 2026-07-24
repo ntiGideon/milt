@@ -35,16 +35,18 @@ print(fct)
 \seealso{
 \code{\link[=milt_model]{milt_model()}}, \code{\link[=milt_fit]{milt_fit()}}
 
-Other model: 
-\code{\link{milt_backtest}()},
-\code{\link{milt_compare}()},
-\code{\link{milt_cv}()},
-\code{\link{milt_ensemble}()},
-\code{\link{milt_fit}()},
-\code{\link{milt_forecast}()},
-\code{\link{milt_model}()},
-\code{\link{milt_predict}()},
-\code{\link{milt_refit}()},
-\code{\link{milt_residuals}()}
+Other model:
+\code{\link[=milt_backtest]{milt_backtest()}},
+\code{\link[=milt_compare]{milt_compare()}},
+\code{\link[=milt_conformal]{milt_conformal()}},
+\code{\link[=milt_cv]{milt_cv()}},
+\code{\link[=milt_ensemble]{milt_ensemble()}},
+\code{\link[=milt_fit]{milt_fit()}},
+\code{\link[=milt_forecast]{milt_forecast()}},
+\code{\link[=milt_grid_search]{milt_grid_search()}},
+\code{\link[=milt_model]{milt_model()}},
+\code{\link[=milt_predict]{milt_predict()}},
+\code{\link[=milt_refit]{milt_refit()}},
+\code{\link[=milt_residuals]{milt_residuals()}}
 }
 \concept{model}

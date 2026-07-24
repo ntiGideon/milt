@@ -5,7 +5,7 @@
 \alias{autoplot.MiltSeries}
 \title{Plot a MiltSeries}
 \usage{
-\method{plot}{MiltSeries}(x, title = NULL, color = "#2166AC", ...)
+\method{plot}{MiltSeries}(x, title = NULL, color = NULL, ...)
 
 \method{autoplot}{MiltSeries}(object, ...)
 }
@@ -14,7 +14,8 @@
 
 \item{title}{Optional plot title. Defaults to \code{"MiltSeries [<freq>]"}.}
 
-\item{color}{Single hex colour string used for univariate series.}
+\item{color}{Single hex colour string used for univariate series. Defaults
+to the package's primary accent colour.}
 
 \item{...}{Ignored.}
 
@@ -30,20 +31,27 @@ facets for multi-series data and uses coloured lines for multivariate series.
 \seealso{
 \code{\link[=autoplot.MiltSeries]{autoplot.MiltSeries()}}, \code{\link[=milt_plot_acf]{milt_plot_acf()}}, \code{\link[=milt_plot_decomp]{milt_plot_decomp()}}
 
-Other series: 
-\code{\link{milt_add_covariates}()},
-\code{\link{milt_concat}()},
-\code{\link{milt_diagnose}()},
-\code{\link{milt_fill_gaps}()},
-\code{\link{milt_get_covariates}()},
-\code{\link{milt_head}()},
-\code{\link{milt_plot_acf}()},
-\code{\link{milt_plot_decomp}()},
-\code{\link{milt_resample}()},
-\code{\link{milt_series}()},
-\code{\link{milt_split}()},
-\code{\link{milt_split_at}()},
-\code{\link{milt_tail}()},
-\code{\link{milt_window}()}
+Other series:
+\code{\link[=milt_add_covariates]{milt_add_covariates()}},
+\code{\link[=milt_add_datetime_component]{milt_add_datetime_component()}},
+\code{\link[=milt_add_holidays]{milt_add_holidays()}},
+\code{\link[=milt_check_seasonality]{milt_check_seasonality()}},
+\code{\link[=milt_concat]{milt_concat()}},
+\code{\link[=milt_diagnose]{milt_diagnose()}},
+\code{\link[=milt_fill_gaps]{milt_fill_gaps()}},
+\code{\link[=milt_filter]{milt_filter()}},
+\code{\link[=milt_get_covariates]{milt_get_covariates()}},
+\code{\link[=milt_head]{milt_head()}},
+\code{\link[=milt_plot_acf]{milt_plot_acf()}},
+\code{\link[=milt_plot_decomp]{milt_plot_decomp()}},
+\code{\link[=milt_read_parquet]{milt_read_parquet()}},
+\code{\link[=milt_resample]{milt_resample()}},
+\code{\link[=milt_series]{milt_series()}},
+\code{\link[=milt_split]{milt_split()}},
+\code{\link[=milt_split_at]{milt_split_at()}},
+\code{\link[=milt_stack]{milt_stack()}},
+\code{\link[=milt_tail]{milt_tail()}},
+\code{\link[=milt_window]{milt_window()}},
+\code{\link[=milt_write_parquet]{milt_write_parquet()}}
 }
 \concept{series}

@@ -5,3 +5,6 @@
 inst/doc
 docs/
 milt-project-requirements.txt
+CLAUDE.md
+*.Rcheck/
+*.tar.gz

@@ -114,7 +114,7 @@ plot.MiltCausalImpact <- function(x, ...) {
     type  = rep(c("Actual", "Predicted"), each = nrow(tbl))
   )
 
-  ggplot2::ggplot(tbl_long,
+  plt <- ggplot2::ggplot(tbl_long,
                   ggplot2::aes(x     = .data$time,
                                y     = .data$value,
                                colour = .data$type,
@@ -123,12 +123,15 @@ plot.MiltCausalImpact <- function(x, ...) {
       data = tbl,
       ggplot2::aes(x = .data$time, ymin = .data$lower, ymax = .data$upper),
       inherit.aes = FALSE,
-      fill = "#4472C4", alpha = 0.15
+      fill = .milt_primary, alpha = 0.15
     ) +
     ggplot2::geom_line(linewidth = 0.7) +
     ggplot2::geom_vline(xintercept = as.numeric(t0),
-                        linetype = "dashed", colour = "#E05C5C", linewidth = 0.8) +
-    ggplot2::scale_colour_manual(values = c(Actual = "#222222", Predicted = "#4472C4")) +
+                        linetype = "dashed", colour = .milt_status[["critical"]],
+                        linewidth = 0.8) +
+    ggplot2::scale_colour_manual(
+      values = c(Actual = .milt_ink[["primary"]], Predicted = .milt_primary)
+    ) +
     ggplot2::scale_linetype_manual(values = c(Actual = "solid", Predicted = "dashed")) +
     ggplot2::labs(
       title    = "Causal Impact Analysis",
@@ -136,11 +139,10 @@ plot.MiltCausalImpact <- function(x, ...) {
       x        = "Time", y = "Value",
       colour   = NULL, linetype = NULL
     ) +
-    ggplot2::theme_minimal(base_size = 12) +
-    ggplot2::theme(
-      plot.title  = ggplot2::element_text(face = "bold"),
-      legend.position = "bottom"
-    )
+    .milt_plot_theme(base_size = 12)
+
+  print(plt)
+  invisible(plt)
 }
 
 # ── Public verb ───────────────────────────────────────────────────────────────

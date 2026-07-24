@@ -317,6 +317,14 @@ as.data.frame.MiltSeries <- function(x, ...) as.data.frame(x$as_tibble())
 #' @export
 as_tibble.MiltSeries <- function(x, ...) x$as_tibble()
 
+#' Convert a MiltSeries to a data.table
+#'
+#' @param x A `MiltSeries` object.
+#' @param ... Ignored.
+#' @return A [data.table::data.table()].
+#' @export
+as.data.table.MiltSeries <- function(x, ...) data.table::as.data.table(x$as_tibble())
+
 #' @export
 length.MiltSeries <- function(x) x$n_timesteps()
 

@@ -20,14 +20,16 @@ Call this once per session before using any \verb{darts_*} model.
 }
 \examples{
 \donttest{
-milt_setup_darts()                      # check only
-milt_setup_darts(install = TRUE)        # check + install if missing
+if (requireNamespace("reticulate", quietly = TRUE)) {
+  milt_setup_darts()                      # check only
+  milt_setup_darts(install = TRUE)        # check + install if missing
+}
 }
 }
 \seealso{
 \code{\link[=milt_model]{milt_model()}}, \code{\link[=list_milt_models]{list_milt_models()}}
 
-Other dl: 
-\code{\link{milt_torch_device}()}
+Other dl:
+\code{\link[=milt_torch_device]{milt_torch_device()}}
 }
 \concept{dl}

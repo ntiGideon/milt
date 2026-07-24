@@ -184,10 +184,12 @@ milt_classifier <- function(method    = "feature_based",
 #' @family classify
 #' @examples
 #' \donttest{
-#' s1  <- milt_series(AirPassengers)
-#' s2  <- milt_series(AirPassengers * 1.2)
-#' clf <- milt_classifier("feature_based")
-#' milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+#' if (requireNamespace("ranger", quietly = TRUE)) {
+#'   s1  <- milt_series(AirPassengers)
+#'   s2  <- milt_series(AirPassengers * 1.2)
+#'   clf <- milt_classifier("feature_based")
+#'   milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+#' }
 #' }
 #' @export
 milt_classify_fit <- function(classifier, series_list, labels) {
@@ -216,11 +218,13 @@ milt_classify_fit <- function(classifier, series_list, labels) {
 #' @family classify
 #' @examples
 #' \donttest{
-#' s1  <- milt_series(AirPassengers)
-#' s2  <- milt_series(AirPassengers * 1.2)
-#' clf <- milt_classifier("feature_based")
-#' milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
-#' milt_classify_predict(clf, list(s1))
+#' if (requireNamespace("ranger", quietly = TRUE)) {
+#'   s1  <- milt_series(AirPassengers)
+#'   s2  <- milt_series(AirPassengers * 1.2)
+#'   clf <- milt_classifier("feature_based")
+#'   milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+#'   milt_classify_predict(clf, list(s1))
+#' }
 #' }
 #' @export
 milt_classify_predict <- function(classifier, series_list) {

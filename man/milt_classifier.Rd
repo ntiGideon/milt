@@ -32,8 +32,8 @@ clf <- milt_classifier("feature_based")
 \seealso{
 \code{\link[=milt_classify_fit]{milt_classify_fit()}}, \code{\link[=milt_classify_predict]{milt_classify_predict()}}
 
-Other classify: 
-\code{\link{milt_classify_fit}()},
-\code{\link{milt_classify_predict}()}
+Other classify:
+\code{\link[=milt_classify_fit]{milt_classify_fit()}},
+\code{\link[=milt_classify_predict]{milt_classify_predict()}}
 }
 \concept{classify}

@@ -94,25 +94,26 @@ plot.MiltChangepoints <- function(x, ...) {
 
   p <- ggplot2::ggplot(tbl, ggplot2::aes(x = .data[[time_col]],
                                           y = .data[[val_col]])) +
-    ggplot2::geom_line(colour = "#4472C4", linewidth = 0.6) +
+    ggplot2::geom_line(colour = .milt_primary, linewidth = 0.6) +
     ggplot2::labs(
       title = paste0("Changepoint Detection [", x$method(), "]"),
       subtitle = paste0(x$n_changepoints(), " changepoint(s)"),
       x = "Time", y = "Value"
     ) +
-    ggplot2::theme_minimal(base_size = 12) +
-    ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
+    .milt_plot_theme(base_size = 12)
 
   if (x$n_changepoints() > 0L) {
     p <- p + ggplot2::geom_vline(
       data       = cp_tbl,
       ggplot2::aes(xintercept = .data$time),
-      colour     = "#E05C5C",
+      colour     = .milt_status[["critical"]],
       linetype   = "dashed",
       linewidth  = 0.8
     )
   }
-  p
+
+  print(p)
+  invisible(p)
 }
 
 # ── Public verb ───────────────────────────────────────────────────────────────
@@ -137,9 +138,11 @@ plot.MiltChangepoints <- function(x, ...) {
 #' @family anomaly
 #' @examples
 #' \donttest{
-#' s  <- milt_series(AirPassengers)
-#' cp <- milt_changepoints(s, method = "pelt", stat = "mean")
-#' plot(cp)
+#' if (requireNamespace("changepoint", quietly = TRUE)) {
+#'   s  <- milt_series(AirPassengers)
+#'   cp <- milt_changepoints(s, method = "pelt", stat = "mean")
+#'   plot(cp)
+#' }
 #' }
 #' @export
 milt_changepoints <- function(series,

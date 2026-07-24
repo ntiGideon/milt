@@ -126,6 +126,13 @@ test_that("as_tibble.MiltForecast has correct rows", {
   expect_equal(nrow(tibble::as_tibble(fct)), 10L)
 })
 
+test_that("as.data.table.MiltForecast returns a data.table", {
+  fct <- make_forecast(horizon = 10)
+  dt  <- data.table::as.data.table(fct)
+  expect_s3_class(dt, "data.table")
+  expect_equal(nrow(dt), 10L)
+})
+
 test_that("as_tibble.MiltForecast has .model and .mean columns", {
   fct <- make_forecast()
   tbl <- tibble::as_tibble(fct)

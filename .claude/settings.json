@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd \"c:\\\\Users\\\\GideonNtiBoateng\\\\Desktop\\\\PROJECTS\\\\milt\" && find . -not -path '*/\\\\.git/*' -type f | sort)",
+      "Read(//c/Users/GideonNtiBoateng/Desktop/PROJECTS/milt/\\\\*/.git/**)",
+      "Bash(where R.exe Rscript.exe)",
+      "Bash(Rscript --version)"
+    ]
+  }
+}

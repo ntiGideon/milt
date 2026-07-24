@@ -31,15 +31,15 @@ test_transformed <- milt_pipeline_transform(pipe, spl$test)
 \seealso{
 \code{\link[=milt_pipeline_fit]{milt_pipeline_fit()}}
 
-Other pipeline: 
-\code{\link{milt_pipe_model}()},
-\code{\link{milt_pipe_step_calendar}()},
-\code{\link{milt_pipe_step_fourier}()},
-\code{\link{milt_pipe_step_lag}()},
-\code{\link{milt_pipe_step_rolling}()},
-\code{\link{milt_pipe_step_scale}()},
-\code{\link{milt_pipeline}()},
-\code{\link{milt_pipeline_fit}()},
-\code{\link{milt_pipeline_forecast}()}
+Other pipeline:
+\code{\link[=milt_pipe_model]{milt_pipe_model()}},
+\code{\link[=milt_pipe_step_calendar]{milt_pipe_step_calendar()}},
+\code{\link[=milt_pipe_step_fourier]{milt_pipe_step_fourier()}},
+\code{\link[=milt_pipe_step_lag]{milt_pipe_step_lag()}},
+\code{\link[=milt_pipe_step_rolling]{milt_pipe_step_rolling()}},
+\code{\link[=milt_pipe_step_scale]{milt_pipe_step_scale()}},
+\code{\link[=milt_pipeline]{milt_pipeline()}},
+\code{\link[=milt_pipeline_fit]{milt_pipeline_fit()}},
+\code{\link[=milt_pipeline_forecast]{milt_pipeline_forecast()}}
 }
 \concept{pipeline}

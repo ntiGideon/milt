@@ -81,20 +81,20 @@ plot.MiltExplanation <- function(x, top_n = 20L, ...) {
   tbl <- utils::head(x$importance(), as.integer(top_n))
   tbl$feature <- factor(tbl$feature, levels = rev(tbl$feature))
 
-  ggplot2::ggplot(tbl, ggplot2::aes(x = .data$importance,
+  plt <- ggplot2::ggplot(tbl, ggplot2::aes(x = .data$importance,
                                      y = .data$feature)) +
-    ggplot2::geom_col(fill = "#4472C4", width = 0.7) +
+    ggplot2::geom_col(fill = .milt_primary, width = 0.7) +
     ggplot2::labs(
       title    = paste0("Feature Importance [", x$method(), "]"),
       subtitle = paste0("Top ", nrow(tbl), " features"),
       x        = "Importance",
       y        = NULL
     ) +
-    ggplot2::theme_minimal(base_size = 12) +
-    ggplot2::theme(
-      plot.title  = ggplot2::element_text(face = "bold"),
-      axis.text.y = ggplot2::element_text(size = 9)
-    )
+    .milt_plot_theme(base_size = 12) +
+    ggplot2::theme(axis.text.y = ggplot2::element_text(size = 9))
+
+  print(plt)
+  invisible(plt)
 }
 
 # ── Internal extractors (one per backend) ────────────────────────────────────
@@ -196,10 +196,12 @@ plot.MiltExplanation <- function(x, top_n = 20L, ...) {
 #' @family explain
 #' @examples
 #' \donttest{
-#' s   <- milt_series(AirPassengers)
-#' m   <- milt_model("xgboost") |> milt_fit(s)
-#' exp <- milt_explain(m)
-#' plot(exp)
+#' if (requireNamespace("xgboost", quietly = TRUE)) {
+#'   s   <- milt_series(AirPassengers)
+#'   m   <- milt_model("xgboost") |> milt_fit(s)
+#'   exp <- milt_explain(m)
+#'   plot(exp)
+#' }
 #' }
 #' @export
 milt_explain <- function(model, series = NULL, ...) {

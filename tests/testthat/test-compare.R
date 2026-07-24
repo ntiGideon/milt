@@ -97,6 +97,26 @@ test_that("compare: summary_tbl() has one row per model", {
   expect_equal(nrow(tbl), 2L)
 })
 
+# ── plot ──────────────────────────────────────────────────────────────────────
+
+test_that("compare: plot() returns a ggplot object", {
+  cmp <- milt_compare(
+    list(naive = milt_model("naive"), drift = milt_model("drift")),
+    air, 12, initial_window = 120L, stride = 12L, metrics = "MAE"
+  )
+  p <- plot(cmp)
+  expect_s3_class(p, "gg")
+})
+
+test_that("compare: plot() highlights the rank-1 model", {
+  cmp <- milt_compare(
+    list(naive = milt_model("naive"), drift = milt_model("drift")),
+    air, 12, initial_window = 120L, stride = 12L, metrics = "MAE"
+  )
+  p <- plot(cmp)
+  expect_true(any(p$data$is_best))
+})
+
 test_that("compare: summary_tbl() has model and rank columns", {
   cmp <- milt_compare(
     list(naive = milt_model("naive"), drift = milt_model("drift")),

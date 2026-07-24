@@ -21,19 +21,24 @@ energy-score formulation:
 \verb{CRPS = E|X - y| - 0.5 * E|X - X'|}
 }
 \seealso{
-Other metrics: 
-\code{\link{milt_accuracy}()},
-\code{\link{milt_coverage}()},
-\code{\link{milt_mae}()},
-\code{\link{milt_mape}()},
-\code{\link{milt_mase}()},
-\code{\link{milt_mrae}()},
-\code{\link{milt_mse}()},
-\code{\link{milt_pinball}()},
-\code{\link{milt_r_squared}()},
-\code{\link{milt_rmse}()},
-\code{\link{milt_rmsse}()},
-\code{\link{milt_smape}()},
-\code{\link{milt_winkler}()}
+Other metrics:
+\code{\link[=milt_accuracy]{milt_accuracy()}},
+\code{\link[=milt_coefficient_of_variation]{milt_coefficient_of_variation()}},
+\code{\link[=milt_coverage]{milt_coverage()}},
+\code{\link[=milt_mae]{milt_mae()}},
+\code{\link[=milt_mape]{milt_mape()}},
+\code{\link[=milt_marre]{milt_marre()}},
+\code{\link[=milt_mase]{milt_mase()}},
+\code{\link[=milt_mrae]{milt_mrae()}},
+\code{\link[=milt_mse]{milt_mse()}},
+\code{\link[=milt_ope]{milt_ope()}},
+\code{\link[=milt_pinball]{milt_pinball()}},
+\code{\link[=milt_r_squared]{milt_r_squared()}},
+\code{\link[=milt_rmse]{milt_rmse()}},
+\code{\link[=milt_rmsle]{milt_rmsle()}},
+\code{\link[=milt_rmsse]{milt_rmsse()}},
+\code{\link[=milt_smape]{milt_smape()}},
+\code{\link[=milt_winkler]{milt_winkler()}},
+\code{\link[=milt_wmape]{milt_wmape()}}
 }
 \concept{metrics}

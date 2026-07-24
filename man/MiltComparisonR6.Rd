@@ -10,84 +10,95 @@ inspect results.
 }
 \section{Methods}{
 \subsection{Public methods}{
-\itemize{
-\item \href{#method-MiltComparison-new}{\code{MiltComparisonR6$new()}}
-\item \href{#method-MiltComparison-backtests}{\code{MiltComparisonR6$backtests()}}
-\item \href{#method-MiltComparison-rank_metric}{\code{MiltComparisonR6$rank_metric()}}
-\item \href{#method-MiltComparison-n_models}{\code{MiltComparisonR6$n_models()}}
-\item \href{#method-MiltComparison-summary_tbl}{\code{MiltComparisonR6$summary_tbl()}}
-\item \href{#method-MiltComparison-as_tibble}{\code{MiltComparisonR6$as_tibble()}}
-}
+  \itemize{
+    \item \href{#method-MiltComparison-initialize}{\code{MiltComparison$new()}}
+    \item \href{#method-MiltComparison-backtests}{\code{MiltComparison$backtests()}}
+    \item \href{#method-MiltComparison-rank_metric}{\code{MiltComparison$rank_metric()}}
+    \item \href{#method-MiltComparison-n_models}{\code{MiltComparison$n_models()}}
+    \item \href{#method-MiltComparison-summary_tbl}{\code{MiltComparison$summary_tbl()}}
+    \item \href{#method-MiltComparison-as_tibble}{\code{MiltComparison$as_tibble()}}
+  }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-MiltComparison-new"></a>}}
-\if{latex}{\out{\hypertarget{method-MiltComparison-new}{}}}
-\subsection{Method \code{new()}}{
-Initialise (called by \code{\link[=milt_compare]{milt_compare()}}).
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltComparisonR6$new(backtests, rank_metric)}\if{html}{\out{</div>}}
-}
-
-\subsection{Arguments}{
-\if{html}{\out{<div class="arguments">}}
-\describe{
-\item{\code{backtests}}{Named list of \code{MiltBacktest} objects.}
-
-\item{\code{rank_metric}}{Character scalar: metric column (without leading \code{.})
+\if{html}{\out{<a id="method-MiltComparison-initialize"></a>}}
+\if{latex}{\out{\hypertarget{method-MiltComparison-initialize}{}}}
+\subsection{\code{MiltComparison$new()}}{
+  Initialise (called by \code{\link[=milt_compare]{milt_compare()}}).
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltComparison$new(backtests, rank_metric)}
+    \if{html}{\out{</div>}}
+  }
+  \subsection{Arguments}{
+    \if{html}{\out{<div class="arguments">}}
+    \describe{
+      \item{\code{backtests}}{Named list of \code{MiltBacktest} objects.}
+      \item{\code{rank_metric}}{Character scalar: metric column (without leading \code{.})
 used to rank models.}
+    }
+    \if{html}{\out{</div>}}
+  }
 }
-\if{html}{\out{</div>}}
-}
-}
+
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltComparison-backtests"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltComparison-backtests}{}}}
-\subsection{Method \code{backtests()}}{
-Named list of \code{MiltBacktest} objects, one per model.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltComparisonR6$backtests()}\if{html}{\out{</div>}}
+\subsection{\code{MiltComparison$backtests()}}{
+  Named list of \code{MiltBacktest} objects, one per model.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltComparison$backtests()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltComparison-rank_metric"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltComparison-rank_metric}{}}}
-\subsection{Method \code{rank_metric()}}{
-Metric used for ranking.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltComparisonR6$rank_metric()}\if{html}{\out{</div>}}
+\subsection{\code{MiltComparison$rank_metric()}}{
+  Metric used for ranking.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltComparison$rank_metric()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltComparison-n_models"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltComparison-n_models}{}}}
-\subsection{Method \code{n_models()}}{
-Number of models compared.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltComparisonR6$n_models()}\if{html}{\out{</div>}}
+\subsection{\code{MiltComparison$n_models()}}{
+  Number of models compared.
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltComparison$n_models()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltComparison-summary_tbl"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltComparison-summary_tbl}{}}}
-\subsection{Method \code{summary_tbl()}}{
-Ranked summary tibble.
+\subsection{\code{MiltComparison$summary_tbl()}}{
+  Ranked summary tibble.
 Columns: \code{model}, one column per metric (mean across folds), \code{rank}.
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltComparisonR6$summary_tbl()}\if{html}{\out{</div>}}
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltComparison$summary_tbl()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-MiltComparison-as_tibble"></a>}}
 \if{latex}{\out{\hypertarget{method-MiltComparison-as_tibble}{}}}
-\subsection{Method \code{as_tibble()}}{
-Return the ranked summary tibble (same as \code{summary_tbl()}).
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{MiltComparisonR6$as_tibble()}\if{html}{\out{</div>}}
+\subsection{\code{MiltComparison$as_tibble()}}{
+  Return the ranked summary tibble (same as \code{summary_tbl()}).
+  \subsection{Usage}{
+    \if{html}{\out{<div class="r">}}
+    \preformatted{MiltComparison$as_tibble()}
+    \if{html}{\out{</div>}}
+  }
 }
 
-}
 }

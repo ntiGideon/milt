@@ -278,6 +278,13 @@ test_that("as_tibble.MiltSeries returns a tibble", {
   expect_s3_class(tibble::as_tibble(s), "tbl_df")
 })
 
+test_that("as.data.table.MiltSeries returns a data.table", {
+  s <- make_series()
+  dt <- data.table::as.data.table(s)
+  expect_s3_class(dt, "data.table")
+  expect_equal(nrow(dt), s$n_timesteps())
+})
+
 test_that("plot.MiltSeries returns a ggplot invisibly", {
   skip_if_not_installed("ggplot2")
   s   <- make_series()

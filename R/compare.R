@@ -148,18 +148,24 @@ plot.MiltComparison <- function(x, ...) {
     values_to = "value"
   )
 
+  long$is_best <- long$rank == 1L
+
   p <- ggplot2::ggplot(
     long,
-    ggplot2::aes(x = .data$model, y = .data$value, fill = .data$model)
+    ggplot2::aes(x = .data$model, y = .data$value, fill = .data$is_best)
   ) +
     ggplot2::geom_col(show.legend = FALSE) +
+    ggplot2::scale_fill_manual(
+      values = c(`TRUE` = .milt_status[["good"]], `FALSE` = .milt_ink[["muted"]])
+    ) +
     ggplot2::facet_wrap(~ .data$metric, scales = "free_y") +
     ggplot2::labs(
-      title = "Model Comparison (mean across folds)",
-      x = NULL,
-      y = "Mean metric value"
+      title    = "Model Comparison (mean across folds)",
+      subtitle = paste0("Best model by ", x$rank_metric(), " highlighted"),
+      x        = NULL,
+      y        = "Mean metric value"
     ) +
-    ggplot2::theme_minimal() +
+    .milt_plot_theme() +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 30, hjust = 1))
 
   print(p)

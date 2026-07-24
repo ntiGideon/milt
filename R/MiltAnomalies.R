@@ -116,6 +116,17 @@ as_tibble.MiltAnomalies <- function(x, ...) {
   x$as_tibble()
 }
 
+#' Convert MiltAnomalies to a data.table
+#'
+#' @param x A `MiltAnomalies` object.
+#' @param ... Ignored.
+#' @return A [data.table::data.table()] with the same columns as
+#'   [as_tibble.MiltAnomalies()].
+#' @export
+as.data.table.MiltAnomalies <- function(x, ...) {
+  data.table::as.data.table(x$as_tibble())
+}
+
 #' Plot a MiltAnomalies object
 #'
 #' Draws the time series with anomalous points highlighted in red.
@@ -125,24 +136,40 @@ as_tibble.MiltAnomalies <- function(x, ...) {
 #' @return A `ggplot2` plot object.
 #' @export
 plot.MiltAnomalies <- function(x, ...) {
-  tbl    <- x$as_tibble()
-  anom   <- tbl[tbl$.is_anomaly, ]
-  normal <- tbl[!tbl$.is_anomaly, ]
+  tbl  <- x$as_tibble()
+  anom <- tbl[tbl$.is_anomaly, ]
 
-  ggplot2::ggplot(tbl, ggplot2::aes(x = .data$time, y = .data$value)) +
-    ggplot2::geom_line(colour = "#4472C4", linewidth = 0.6) +
-    ggplot2::geom_point(data = anom,
-                        ggplot2::aes(x = .data$time, y = .data$value),
-                        colour = "#E05C5C", size = 3, shape = 21,
-                        fill = "#E05C5C", alpha = 0.8) +
+  plt <- ggplot2::ggplot(tbl, ggplot2::aes(x = .data$time, y = .data$value)) +
+    ggplot2::geom_line(ggplot2::aes(colour = "Series"), linewidth = 0.6) +
+    ggplot2::geom_point(
+      data = anom,
+      ggplot2::aes(x = .data$time, y = .data$value, colour = "Anomaly"),
+      size = 3, shape = 21, fill = .milt_status[["critical"]], alpha = 0.85
+    ) +
+    ggplot2::scale_colour_manual(
+      name   = NULL,
+      breaks = c("Series", "Anomaly"),
+      limits = c("Series", "Anomaly"),
+      values = c(Series = .milt_primary, Anomaly = .milt_status[["critical"]]),
+      drop   = FALSE
+    ) +
+    ggplot2::guides(colour = ggplot2::guide_legend(
+      override.aes = list(
+        linetype = c("solid", "blank"),
+        shape    = c(NA, 21),
+        fill     = c(NA, .milt_status[["critical"]])
+      )
+    )) +
     ggplot2::labs(
       title    = paste0("Anomaly Detection [", x$method(), "]"),
       subtitle = paste0(x$n_anomalies(), " anomalies detected"),
       x        = "Time",
       y        = "Value"
     ) +
-    ggplot2::theme_minimal(base_size = 12) +
-    ggplot2::theme(plot.title = ggplot2::element_text(face = "bold"))
+    .milt_plot_theme()
+
+  print(plt)
+  invisible(plt)
 }
 
 #' @export

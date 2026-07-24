@@ -116,25 +116,31 @@ summary.MiltEDA <- function(object, ...) print(object)
 #' @export
 as_tibble.MiltEDA <- function(x, ...) x$as_tibble()
 
+#' Plot a MiltEDA object
+#'
+#' Displays the series line chart and a distribution histogram.
+#'
+#' @param x A `MiltEDA` object.
+#' @param ... Ignored.
+#' @return A list with `series` and `distribution` ggplot objects, invisibly.
 #' @export
 plot.MiltEDA <- function(x, ...) {
-  # Returns a grid of 4 plots via patchwork or a list
-  s <- x$series()
-  p1 <- plot(s)   # series plot
+  s  <- x$series()
+  p1 <- plot(s)   # series plot (already displayed by plot.MiltSeries)
 
-  tbl   <- s$as_tibble()
+  tbl     <- s$as_tibble()
   val_col <- s$.__enclos_env__$private$.value_cols[[1L]]
-  vals  <- tbl[[val_col]]
+  vals    <- tbl[[val_col]]
 
-  # Distribution
   p2 <- ggplot2::ggplot(tibble::tibble(value = vals),
                         ggplot2::aes(x = .data$value)) +
-    ggplot2::geom_histogram(bins = 30, fill = "#4472C4", colour = "white",
-                            alpha = 0.8) +
+    ggplot2::geom_histogram(bins = 30, fill = .milt_primary, colour = "white",
+                            alpha = 0.85, na.rm = TRUE) +
     ggplot2::labs(title = "Distribution", x = "Value", y = "Count") +
-    ggplot2::theme_minimal(base_size = 11)
+    .milt_plot_theme(base_size = 11)
 
-  list(series = p1, distribution = p2)
+  print(p2)
+  invisible(list(series = p1, distribution = p2))
 }
 
 # ── Public verb ───────────────────────────────────────────────────────────────

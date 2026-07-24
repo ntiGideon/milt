@@ -233,3 +233,12 @@ test_that("backtest: works with ets backend", {
   expect_equal(bt$model_name(), "ets")
   expect_false(any(is.na(bt$metrics()$.MAE)))
 })
+
+# ── plot ──────────────────────────────────────────────────────────────────────
+
+test_that("backtest: plot() returns a ggplot object", {
+  bt <- milt_backtest(milt_model("naive"), air, horizon = 12,
+                      initial_window = 120L, stride = 12L)
+  p <- plot(bt)
+  expect_s3_class(p, "gg")
+})

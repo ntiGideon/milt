@@ -91,6 +91,13 @@ test_that("MiltAnomalies: as_tibble().is_anomaly matches is_anomaly()", {
   expect_equal(tbl$.is_anomaly, a$is_anomaly())
 })
 
+test_that("MiltAnomalies: as.data.table S3 dispatch works", {
+  a  <- make_anoms()
+  dt <- data.table::as.data.table(a)
+  expect_s3_class(dt, "data.table")
+  expect_equal(nrow(dt), n)
+})
+
 # ── print / summary ───────────────────────────────────────────────────────────
 
 test_that("MiltAnomalies: print() runs without error", {
@@ -122,6 +129,19 @@ test_that("MiltAnomalies: plot() title mentions method", {
   a <- make_anoms()
   p <- plot(a)
   expect_true(grepl("test_method", p$labels$title))
+})
+
+test_that("MiltAnomalies: plot() with zero anomalies renders without error", {
+  # Regression test: the "Anomaly" legend key previously had no data to train
+  # its scale on when zero anomalies were flagged, which crashed guide
+  # construction (override.aes length mismatch) at render time.
+  a <- .new_milt_anomalies(
+    series        = air,
+    is_anomaly    = rep(FALSE, n),
+    anomaly_score = rep(0, n),
+    method        = "test_method"
+  )
+  expect_no_error(plot(a))
 })
 
 test_that("MiltAnomalies: autoplot() returns same structure as plot()", {

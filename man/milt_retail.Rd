@@ -38,7 +38,7 @@ s
 \seealso{
 \code{\link[=milt_series]{milt_series()}}, \link{milt_air}, \link{milt_energy}
 
-Other datasets: 
+Other datasets:
 \code{\link{milt_air}},
 \code{\link{milt_energy}}
 }

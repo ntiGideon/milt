@@ -156,8 +156,8 @@ plot.MiltBacktest <- function(x, ...) {
   long$metric <- sub("^\\.", "", long$metric)
 
   p <- ggplot2::ggplot(long, ggplot2::aes(x = .data$.fold, y = .data$value)) +
-    ggplot2::geom_line(colour = "#2C7BB6") +
-    ggplot2::geom_point(colour = "#2C7BB6", size = 2L) +
+    ggplot2::geom_line(colour = .milt_primary) +
+    ggplot2::geom_point(colour = .milt_primary, size = 2L) +
     ggplot2::facet_wrap(~ .data$metric, scales = "free_y") +
     ggplot2::labs(
       title    = paste0("Backtest: ", x$model_name(),
@@ -165,7 +165,7 @@ plot.MiltBacktest <- function(x, ...) {
       x        = "Fold",
       y        = "Metric value"
     ) +
-    ggplot2::theme_minimal()
+    .milt_plot_theme()
 
   print(p)
   invisible(p)

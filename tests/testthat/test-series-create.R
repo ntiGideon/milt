@@ -159,6 +159,42 @@ test_that("milt_series(tsibble) creates a MiltSeries", {
   expect_equal(s$n_timesteps(), 12L)
 })
 
+# ── From data.table ───────────────────────────────────────────────────────────
+
+test_that("milt_series(data.table) creates a MiltSeries", {
+  dt <- data.table::data.table(
+    date  = seq(as.Date("2020-01-01"), by = "month", length.out = 12),
+    value = 1:12
+  )
+  s <- milt_series(dt, time_col = "date", value_cols = "value")
+  expect_s3_class(s, "MiltSeries")
+  expect_equal(s$n_timesteps(), 12L)
+})
+
+test_that("milt_series(data.table) auto-detects group_col from the table key", {
+  dt <- data.table::data.table(
+    date  = rep(seq(as.Date("2020-01-01"), by = "month", length.out = 12), 2),
+    id    = rep(c("a", "b"), each = 12),
+    value = 1:24
+  )
+  data.table::setkey(dt, id)
+  s <- milt_series(dt, time_col = "date", value_cols = "value")
+  expect_s3_class(s, "MiltSeries")
+  expect_true(s$is_multi_series())
+  expect_equal(sort(unique(s$as_tibble()$id)), c("a", "b"))
+})
+
+test_that("milt_series(data.table) respects an explicit group_col over the key", {
+  dt <- data.table::data.table(
+    date  = rep(seq(as.Date("2020-01-01"), by = "month", length.out = 12), 2),
+    id    = rep(c("a", "b"), each = 12),
+    value = 1:24
+  )
+  data.table::setkey(dt, id)
+  s <- milt_series(dt, time_col = "date", value_cols = "value", group_col = "id")
+  expect_true(s$is_multi_series())
+})
+
 # ── Round-trip conversions ────────────────────────────────────────────────────
 
 test_that("milt_series → as_tibble → milt_series round-trips", {

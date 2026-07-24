@@ -36,17 +36,19 @@ Requires the \code{CausalImpact} package (>= 1.2.7).
 }
 \examples{
 \donttest{
-s <- milt_series(AirPassengers)
-ci <- milt_causal_impact(s, event_time = as.Date("1956-01-01"))
-plot(ci)
+if (requireNamespace("CausalImpact", quietly = TRUE)) {
+  s <- milt_series(AirPassengers)
+  ci <- milt_causal_impact(s, event_time = as.Date("1956-01-01"))
+  plot(ci)
+}
 }
 }
 \seealso{
 \code{\link[=milt_changepoints]{milt_changepoints()}}
 
-Other anomaly: 
-\code{\link{milt_changepoints}()},
-\code{\link{milt_detect}()},
-\code{\link{milt_detector}()}
+Other anomaly:
+\code{\link[=milt_changepoints]{milt_changepoints()}},
+\code{\link[=milt_detect]{milt_detect()}},
+\code{\link[=milt_detector]{milt_detector()}}
 }
 \concept{anomaly}

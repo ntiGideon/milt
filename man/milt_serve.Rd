@@ -41,7 +41,7 @@ m <- milt_model("naive") |> milt_fit(milt_series(AirPassengers))
 \seealso{
 \code{\link[=milt_save]{milt_save()}}, \code{\link[=milt_dashboard]{milt_dashboard()}}
 
-Other deploy: 
-\code{\link{milt_dashboard}()}
+Other deploy:
+\code{\link[=milt_dashboard]{milt_dashboard()}}
 }
 \concept{deploy}

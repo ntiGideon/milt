@@ -15,7 +15,7 @@ API for each model family. Whether you are fitting a naive baseline, an
 Auto-ARIMA model, an XGBoost regressor, or an ensemble, the workflow stays
 consistent.
 
-Documentation site: <https://ntigideon.github.io/milt>
+Documentation site: <https://ntigideon.github.io/milt/>
 
 ## What milt covers
 
@@ -168,11 +168,12 @@ pipe <- milt_pipeline() |>
 
 The package includes or supports:
 
-- baseline models such as `naive`, `snaive`, and `drift`
+- baseline models such as `naive`, `snaive`, `drift`, `mean`, and `moving_average`
 - classical statistical models such as `ets`, `auto_arima`, `theta`, `tbats`, and `stl`
 - machine-learning backends such as `xgboost`, `lightgbm`, `ranger`, `glmnet`, `svm`, and KNN-based methods
-- ensemble workflows
+- ensemble workflows, plus model-agnostic conformal prediction intervals via `milt_conformal()`
 - deep-learning integrations through `torch` and `reticulate`-based backends
+- filtering models (`milt_filter()`) for smoothing an already-observed series: moving-average, Kalman, and Gaussian Process
 
 Use `list_milt_models()` to inspect the currently registered model set.
 

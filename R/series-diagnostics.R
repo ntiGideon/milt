@@ -132,18 +132,18 @@ plot.MiltDiagnosis <- function(x, ...) {
   on.exit(graphics::par(old_par))
 
   # Panel 1: raw series
-  graphics::plot(times, v, type = "l", col = "#2166AC", lwd = 1.2,
+  graphics::plot(times, v, type = "l", col = .milt_primary, lwd = 1.2,
                  main = "Series", xlab = "", ylab = "", las = 1)
   # Panel 2: ACF
   stats::acf(v, main = "ACF", na.action = stats::na.pass, lag.max = min(36L, n %/% 4L))
   # Panel 3: detrended (residuals from linear fit)
   fit   <- stats::lm(v ~ idx)
   resid <- stats::residuals(fit)
-  graphics::plot(times, resid, type = "l", col = "#D6604D", lwd = 1.2,
+  graphics::plot(times, resid, type = "l", col = .milt_status[["critical"]], lwd = 1.2,
                  main = "Detrended", xlab = "", ylab = "", las = 1)
-  graphics::abline(h = 0, lty = 2, col = "grey60")
+  graphics::abline(h = 0, lty = 2, col = .milt_ink[["baseline"]])
   # Panel 4: histogram
-  graphics::hist(v, breaks = "Sturges", col = "#92C5DE", border = "white",
+  graphics::hist(v, breaks = "Sturges", col = .milt_primary, border = "white",
                  main = "Distribution", xlab = "")
 
   invisible(x)
