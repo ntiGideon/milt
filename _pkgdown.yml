@@ -62,7 +62,14 @@ reference:
       - milt_to_tibble
       - milt_to_ts
       - milt_to_tsibble
+      - milt_read_parquet
+      - milt_write_parquet
+      - milt_stack
+      - milt_add_datetime_component
+      - milt_add_holidays
+      - milt_check_seasonality
       - "`[.MiltSeries`"
+      - Ops.MiltSeries
 
   - title: "Models"
     desc: "Train and forecast with time series models"
@@ -79,6 +86,10 @@ reference:
       - milt_compare
       - milt_ensemble
       - milt_local_model
+      - milt_global_model
+      - milt_grid_search
+      - milt_conformal
+      - milt_filter
 
   - title: "Feature Engineering"
     desc: "Build lag, rolling, calendar, and pipeline features"
@@ -99,6 +110,11 @@ reference:
       - milt_step_calendar
       - milt_step_scale
       - milt_step_unscale
+      - milt_step_boxcox
+      - milt_step_unboxcox
+      - milt_step_diff
+      - milt_step_undiff
+      - milt_step_map
 
   - title: "Anomaly Detection"
     desc: "Detect outliers and anomalies in time series"
@@ -106,6 +122,9 @@ reference:
       - milt_detector
       - milt_detect
       - milt_changepoints
+      - milt_anomaly_model
+      - milt_anomaly_score
+      - milt_detect_anomalies
 
   - title: "Multi-Series And Hierarchies"
     desc: "Clustering, classification, and reconciliation"
@@ -155,6 +174,11 @@ reference:
       - milt_rmsse
       - milt_mrae
       - milt_r_squared
+      - milt_wmape
+      - milt_ope
+      - milt_coefficient_of_variation
+      - milt_marre
+      - milt_rmsle
       - milt_coverage
       - milt_crps
       - milt_pinball
@@ -190,6 +214,7 @@ reference:
     desc: "Documented S3 methods for printed, plotted, and summary outputs"
     contents:
       - starts_with("as_tibble.")
+      - starts_with("as.data.table.")
       - starts_with("plot.")
       - starts_with("print.")
       - starts_with("summary.")
