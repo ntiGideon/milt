@@ -605,6 +605,38 @@ patch_fct <- milt_model("patch_tst", input_chunk_length = 24L, output_chunk_leng
 deepar_fct <- milt_model("deepar", input_chunk_length = 24L, output_chunk_length = 12L) |>
   milt_fit(ap) |>
   milt_forecast(horizon = 12, num_samples = 100L)
+
+# NLinear (Zeng et al. 2022) — subtracts the last observed value before a
+# single linear layer, then adds it back; a deceptively strong, cheap
+# baseline that often matches much larger Transformer models
+nlinear_fct <- milt_model("nlinear", input_chunk_length = 24L, output_chunk_length = 12L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+# DLinear (Zeng et al. 2022) — decomposes the input window into a
+# moving-average trend and a seasonal/residual component, maps each through
+# its own linear layer, and sums the two projections
+dlinear_fct <- milt_model("dlinear", input_chunk_length = 24L, output_chunk_length = 12L,
+                          kernel_size = 25L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+# TiDE (Das et al. 2023) — an MLP encoder-decoder built from residual
+# blocks (Linear -> ReLU -> Linear -> Dropout + skip connection); a cheap,
+# strong alternative to attention-based long-horizon models
+tide_fct <- milt_model("tide", input_chunk_length = 24L, output_chunk_length = 12L,
+                       hidden_size = 64L, n_encoder_layers = 2L, n_decoder_layers = 2L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+# TSMixer (Chen et al. 2023) — a stack of residual "time-mixing" MLP
+# blocks over the lookback window, followed by a linear projection head
+# (simplified to time-mixing only, since feature-mixing is degenerate for
+# milt's single-channel series)
+tsmixer_fct <- milt_model("tsmixer", input_chunk_length = 24L, output_chunk_length = 12L,
+                          hidden_size = 64L, n_blocks = 2L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
 ```
 
 ### Checking the torch device
@@ -1579,6 +1611,10 @@ milt_accuracy(spl$test$values(), tibble::as_tibble(test_fct)$.mean)
 | `"tft"`               | Deep Learning | torch              |
 | `"patch_tst"`         | Deep Learning | torch              |
 | `"deepar"`            | Deep Learning | torch              |
+| `"nlinear"`           | Deep Learning | torch              |
+| `"dlinear"`           | Deep Learning | torch              |
+| `"tide"`              | Deep Learning | torch              |
+| `"tsmixer"`           | Deep Learning | torch              |
 | `"darts_rnn"`         | Deep Learning | reticulate + Darts |
 | `"darts_transformer"` | Deep Learning | reticulate + Darts |
 | `"darts_nbeats"`      | Deep Learning | reticulate + Darts |

@@ -45,6 +45,9 @@ and pipeline operates on \code{MiltSeries} objects. Create one with
   value_cols,
   group_col = NULL,
   frequency = NULL,
+  static_covs = NULL,
+  past_covs = NULL,
+  future_covs = NULL,
   metadata = list()
 )}
     \if{html}{\out{</div>}}
@@ -58,6 +61,10 @@ and pipeline operates on \code{MiltSeries} objects. Create one with
       \item{\code{group_col}}{Optional name of the grouping column (multi-series).}
       \item{\code{frequency}}{Frequency label (e.g. \code{"monthly"}, \code{"daily"}) or
 numeric. Auto-detected when \code{NULL}.}
+      \item{\code{static_covs}}{Optional tibble of per-group static covariates (see
+\code{\link[=milt_add_covariates]{milt_add_covariates()}}).}
+      \item{\code{past_covs}}{Optional tibble of past (time-varying) covariates.}
+      \item{\code{future_covs}}{Optional tibble of future (time-varying) covariates.}
       \item{\code{metadata}}{Named list of arbitrary metadata.}
     }
     \if{html}{\out{</div>}}

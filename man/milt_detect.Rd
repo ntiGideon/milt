@@ -30,8 +30,11 @@ a <- milt_detect(d, s)
 \code{\link[=milt_detector]{milt_detector()}}
 
 Other anomaly:
+\code{\link[=milt_anomaly_model]{milt_anomaly_model()}},
+\code{\link[=milt_anomaly_score]{milt_anomaly_score()}},
 \code{\link[=milt_causal_impact]{milt_causal_impact()}},
 \code{\link[=milt_changepoints]{milt_changepoints()}},
+\code{\link[=milt_detect_anomalies]{milt_detect_anomalies()}},
 \code{\link[=milt_detector]{milt_detector()}}
 }
 \concept{anomaly}

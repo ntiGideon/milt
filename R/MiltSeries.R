@@ -34,13 +34,20 @@ MiltSeriesR6 <- R6::R6Class(
     #' @param group_col Optional name of the grouping column (multi-series).
     #' @param frequency Frequency label (e.g. `"monthly"`, `"daily"`) or
     #'   numeric. Auto-detected when `NULL`.
+    #' @param static_covs Optional tibble of per-group static covariates (see
+    #'   [milt_add_covariates()]).
+    #' @param past_covs Optional tibble of past (time-varying) covariates.
+    #' @param future_covs Optional tibble of future (time-varying) covariates.
     #' @param metadata Named list of arbitrary metadata.
     initialize = function(data,
                           time_col,
                           value_cols,
-                          group_col  = NULL,
-                          frequency  = NULL,
-                          metadata   = list()) {
+                          group_col   = NULL,
+                          frequency   = NULL,
+                          static_covs = NULL,
+                          past_covs   = NULL,
+                          future_covs = NULL,
+                          metadata    = list()) {
 
       if (!tibble::is_tibble(data)) data <- tibble::as_tibble(data)
 
@@ -87,6 +94,9 @@ MiltSeriesR6 <- R6::R6Class(
       private$.value_cols  <- value_cols
       private$.group_col   <- group_col
       private$.frequency   <- frequency %||% .guess_frequency(data[[time_col]])
+      private$.static_covs <- static_covs
+      private$.past_covs   <- past_covs
+      private$.future_covs <- future_covs
       private$.metadata    <- metadata
     },
 
@@ -201,12 +211,15 @@ MiltSeriesR6 <- R6::R6Class(
     #' @param data A tibble with the same column structure.
     clone_with = function(data) {
       MiltSeriesR6$new(
-        data       = data,
-        time_col   = private$.time_col,
-        value_cols = private$.value_cols,
-        group_col  = private$.group_col,
-        frequency  = private$.frequency,
-        metadata   = private$.metadata
+        data        = data,
+        time_col    = private$.time_col,
+        value_cols  = private$.value_cols,
+        group_col   = private$.group_col,
+        frequency   = private$.frequency,
+        static_covs = private$.static_covs,
+        past_covs   = private$.past_covs,
+        future_covs = private$.future_covs,
+        metadata    = private$.metadata
       )
     }
   )

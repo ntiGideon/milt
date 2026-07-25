@@ -47,8 +47,11 @@ if (requireNamespace("CausalImpact", quietly = TRUE)) {
 \code{\link[=milt_changepoints]{milt_changepoints()}}
 
 Other anomaly:
+\code{\link[=milt_anomaly_model]{milt_anomaly_model()}},
+\code{\link[=milt_anomaly_score]{milt_anomaly_score()}},
 \code{\link[=milt_changepoints]{milt_changepoints()}},
 \code{\link[=milt_detect]{milt_detect()}},
+\code{\link[=milt_detect_anomalies]{milt_detect_anomalies()}},
 \code{\link[=milt_detector]{milt_detector()}}
 }
 \concept{anomaly}
