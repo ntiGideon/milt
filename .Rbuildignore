@@ -16,3 +16,4 @@
 ^documentation\.html$
 ^documentation\.qmd$
 ^Rplots\.pdf$
+^cran-comments\.md$

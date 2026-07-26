@@ -27,7 +27,7 @@ Rscript -e "devtools::check()"
 
 ## What to work on
 
-* **Bug reports** — search existing [issues](https://github.com/gideon-ntiboateng/milt/issues)
+* **Bug reports** — search existing [issues](https://github.com/ntiGideon/milt/issues)
   first. If your bug isn't there, open one with the *bug report* template before
   submitting a fix.
 * **Feature requests** — open a *feature request* issue first so we can discuss
@@ -151,5 +151,5 @@ classification without requiring any external package beyond base R.
 
 ## Getting help
 
-Open a [discussion](https://github.com/gideon-ntiboateng/milt/discussions) for
+Open an [issue](https://github.com/ntiGideon/milt/issues) for
 questions that don't fit into a bug report or feature request.

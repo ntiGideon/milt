@@ -56,7 +56,7 @@ to:
 
 ## Main object model
 
-The package is centered on a small set of reusable objects.
+The package is centred on a small set of reusable objects.
 
 ### `MiltSeries`
 
@@ -266,7 +266,7 @@ plot(exp)
 
 ## Anomaly detection and changepoints
 
-`milt` also includes detection workflows for unusual behavior in series.
+`milt` also includes detection workflows for unusual behaviour in series.
 
 ```{r anomalies}
 detector <- milt_detector("iqr")

@@ -198,7 +198,7 @@ For grouped or panel time series, `milt` supports:
 
 ## Deployment and reporting
 
-Trained objects can be operationalized through:
+Trained objects can be operationalised through:
 
 - `milt_save()` and `milt_load()`
 - `milt_serve()` for API-style serving
