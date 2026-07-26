@@ -54,15 +54,22 @@ MiltLocalModel <- R6::R6Class(
         names(fitted) <- as.character(groups)
 
         milt_info("Local model: fitting {length(groups)} group{?s}\u2026")
+        static_covs <- p$.static_covs
         for (g in groups) {
           g_key    <- as.character(g)
           g_tbl    <- tbl[tbl[[gc]] == g_key | tbl[[gc]] == g, ]
+          g_static <- if (!is.null(static_covs)) {
+            static_covs[static_covs[[gc]] == g_key | static_covs[[gc]] == g, ]
+          } else NULL
           # Rebuild without group_col so each is treated as a plain series
           g_series2 <- MiltSeriesR6$new(
-            data       = g_tbl[, setdiff(names(g_tbl), gc)],
-            time_col   = p$.time_col,
-            value_cols = p$.value_cols,
-            frequency  = series$freq()
+            data        = g_tbl[, setdiff(names(g_tbl), gc)],
+            time_col    = p$.time_col,
+            value_cols  = p$.value_cols,
+            frequency   = series$freq(),
+            static_covs = g_static,
+            past_covs   = p$.past_covs,
+            future_covs = p$.future_covs
           )
           m <- private$.base_spec$clone()
           m$fit(g_series2, ...)

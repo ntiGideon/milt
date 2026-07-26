@@ -38,7 +38,9 @@
 * `milt_compare()` runs multiple models and returns a ranked comparison table.
 * `milt_ensemble()` combines model forecasts with weighted averaging.
 * `milt_local_model()` wraps any model to train independently on each group of a
-  grouped `MiltSeries`.
+  grouped `MiltSeries`; static, past, and future covariates (added via
+  `milt_add_covariates()`) are sliced per group and passed through to each
+  group's fit.
 * `milt_conformal()` — model-agnostic, split-conformal prediction intervals:
   calibrates a `point ± margin` interval from walk-forward calibration-fold
   errors, usable with any model regardless of native probabilistic support.
@@ -63,7 +65,8 @@
 dependency).
 
 **Deep-learning backends** (requires `torch`): `"nbeats"`, `"nhits"`,
-`"tcn"`, `"deepar"`, `"tft"`, `"patch_tst"`.
+`"tcn"`, `"deepar"`, `"tft"`, `"patch_tst"`, `"nlinear"`, `"dlinear"`,
+`"tide"`, `"tsmixer"`.
 
 **Darts bridge backends** (requires `reticulate` + Python Darts, via
 `milt_setup_darts()`): `"darts_rnn"`, `"darts_transformer"`,
@@ -90,9 +93,22 @@ dependency).
   `"iforest"`, `"lof"`, `"ensemble"`, `"autoencoder"`.
 * `milt_changepoints()` wraps the `changepoint` package (PELT, BinSeg, AMOC,
   SegNeigh).
+* `milt_anomaly_model()` + `milt_detect_anomalies()` — wraps *any* fitted
+  `MiltModel` as an anomaly detector by scoring its residuals
+  (`milt_anomaly_score()`: `"norm"`, `"difference"`, `"nll_gaussian"`) and
+  thresholding them (`"quantile"` or explicit `"threshold"` bounds) —
+  the same forecasting-residual pattern as Darts'
+  `ForecastingAnomalyModel`. Returns a standard `MiltAnomalies` object, so
+  all existing `plot()`/`print()`/`as_tibble()` methods work unchanged.
 
 **Multi-series & hierarchy**
 
+* `milt_global_model()` — trains a *single* shared model (`"knn"` or
+  `"xgboost"`) across every group of a grouped `MiltSeries`, one-hot encoding
+  group identity and appending static covariates as constant-per-group
+  columns — unlike `milt_local_model()`, which fits one independent model per
+  group. Supports `forecast()` for one group and `forecast_all()` for every
+  group at once.
 * `milt_cluster()` — time series clustering (euclidean, k-Shape, feature-based,
   DTW k-means).
 * `milt_classifier()` / `milt_classify_fit()` / `milt_classify_predict()` —

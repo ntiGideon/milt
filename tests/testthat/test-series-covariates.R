@@ -99,3 +99,66 @@ test_that("milt_get_covariates errors on invalid type", {
 test_that("milt_get_covariates errors on non-MiltSeries", {
   expect_error(milt_get_covariates(list()), class = "milt_error_not_milt_series")
 })
+
+# ── Covariate propagation through clone_with() ────────────────────────────────
+
+test_that("past covariates survive milt_window() (which uses clone_with)", {
+  s     <- make_s_with_dates()
+  dates <- s$as_tibble()$time
+  cov   <- data.frame(time = dates, x = seq_along(dates))
+  milt_add_covariates(s, cov, type = "past", time_col = "time")
+
+  windowed <- milt_window(s, start = as.Date("1955-01-01"), end = as.Date("1956-12-01"))
+  stored   <- milt_get_covariates(windowed, "past")
+  expect_false(is.null(stored))
+  expect_equal(nrow(stored), length(dates))   # full covariate tibble carried through
+})
+
+test_that("future covariates survive [ subsetting (which uses clone_with)", {
+  s     <- make_s_with_dates()
+  dates <- s$as_tibble()$time
+  cov   <- data.frame(time = dates, x = rnorm(length(dates)))
+  milt_add_covariates(s, cov, type = "future", time_col = "time")
+
+  sub <- s[1:24]
+  expect_false(is.null(milt_get_covariates(sub, "future")))
+})
+
+test_that("static covariates survive milt_step_lag() (which uses clone_with)", {
+  tbl <- tibble::tibble(
+    date  = seq(as.Date("2020-01-01"), by = "month", length.out = 24),
+    value = rnorm(24),
+    store = "A"
+  )
+  s   <- milt_series(tbl, time_col = "date", value_cols = "value", group_col = "store")
+  cov <- data.frame(store = "A", region = "North")
+  milt_add_covariates(s, cov, type = "static")
+
+  lagged <- milt_step_lag(s, lags = 1)
+  expect_false(is.null(milt_get_covariates(lagged, "static")))
+})
+
+# ── Static covariates propagated per-group by MiltLocalModel ──────────────────
+
+test_that("MiltLocalModel splits static covariates per group", {
+  tbl <- tibble::tibble(
+    date  = rep(seq(as.Date("2020-01-01"), by = "month", length.out = 24), 2),
+    value = c(cumsum(rnorm(24, 1)), cumsum(rnorm(24, 2))),
+    store = rep(c("A", "B"), each = 24)
+  )
+  s   <- milt_series(tbl, time_col = "date", value_cols = "value", group_col = "store")
+  cov <- data.frame(store = c("A", "B"), region = c("North", "South"))
+  milt_add_covariates(s, cov, type = "static")
+
+  lm <- milt_local_model(milt_model("naive"))
+  milt_fit(lm, s)
+
+  m_a <- lm$fitted_models()[["A"]]
+  m_b <- lm$fitted_models()[["B"]]
+  cov_a <- milt_get_covariates(m_a$.__enclos_env__$private$.training_series, "static")
+  cov_b <- milt_get_covariates(m_b$.__enclos_env__$private$.training_series, "static")
+
+  expect_equal(nrow(cov_a), 1L)
+  expect_equal(cov_a$region, "North")
+  expect_equal(cov_b$region, "South")
+})

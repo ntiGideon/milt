@@ -47,4 +47,9 @@
   # Additional ML backends (Round 13)
   .onLoad_svm()
   .onLoad_knn()
+  # Additional DL backends (Tier 2 darts-parity)
+  .onLoad_nlinear()
+  .onLoad_dlinear()
+  .onLoad_tide()
+  .onLoad_tsmixer()
 }

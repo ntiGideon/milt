@@ -56,6 +56,7 @@ Other model:
 \code{\link[=milt_ensemble]{milt_ensemble()}},
 \code{\link[=milt_fit]{milt_fit()}},
 \code{\link[=milt_forecast]{milt_forecast()}},
+\code{\link[=milt_global_model]{milt_global_model()}},
 \code{\link[=milt_local_model]{milt_local_model()}},
 \code{\link[=milt_model]{milt_model()}},
 \code{\link[=milt_predict]{milt_predict()}},

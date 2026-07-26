@@ -26,8 +26,11 @@ d <- milt_detector("iqr", k = 1.5)
 \code{\link[=milt_detect]{milt_detect()}}
 
 Other anomaly:
+\code{\link[=milt_anomaly_model]{milt_anomaly_model()}},
+\code{\link[=milt_anomaly_score]{milt_anomaly_score()}},
 \code{\link[=milt_causal_impact]{milt_causal_impact()}},
 \code{\link[=milt_changepoints]{milt_changepoints()}},
-\code{\link[=milt_detect]{milt_detect()}}
+\code{\link[=milt_detect]{milt_detect()}},
+\code{\link[=milt_detect_anomalies]{milt_detect_anomalies()}}
 }
 \concept{anomaly}

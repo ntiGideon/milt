@@ -10,7 +10,7 @@ Description: A unified framework for time series forecasting, anomaly
     approaches. Includes backtesting, pipeline construction, multi-series
     support, and model explainability.
 License: MIT + file LICENSE
-URL: https://github.com/ntiGideon/milt
+URL: https://github.com/ntiGideon/milt, https://ntiGideon.github.io/milt
 BugReports: https://github.com/ntiGideon/milt/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

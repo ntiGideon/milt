@@ -50,8 +50,11 @@ if (requireNamespace("changepoint", quietly = TRUE)) {
 \code{\link[=milt_detector]{milt_detector()}}, \code{\link[=milt_detect]{milt_detect()}}
 
 Other anomaly:
+\code{\link[=milt_anomaly_model]{milt_anomaly_model()}},
+\code{\link[=milt_anomaly_score]{milt_anomaly_score()}},
 \code{\link[=milt_causal_impact]{milt_causal_impact()}},
 \code{\link[=milt_detect]{milt_detect()}},
+\code{\link[=milt_detect_anomalies]{milt_detect_anomalies()}},
 \code{\link[=milt_detector]{milt_detector()}}
 }
 \concept{anomaly}
