@@ -10,7 +10,7 @@ milt_model("<name>", <hyperparameters>) |>
 ```
 
 Use
-[`list_milt_models()`](https://ntiGideon.github.io/milt/reference/list_milt_models.md)
+[`list_milt_models()`](https://ntigideon.github.io/milt/reference/list_milt_models.md)
 to print the full registry at any time.
 
 ------------------------------------------------------------------------
@@ -372,7 +372,7 @@ xgb_fct <- milt_model("xgboost",
 ```
 
 **Feature importance** is available via
-[`milt_explain()`](https://ntiGideon.github.io/milt/reference/milt_explain.md):
+[`milt_explain()`](https://ntigideon.github.io/milt/reference/milt_explain.md):
 
 ``` r
 
@@ -763,7 +763,7 @@ deepar_fct <- milt_model("deepar",
 ## Comparing models
 
 Use
-[`milt_compare()`](https://ntiGideon.github.io/milt/reference/milt_compare.md)
+[`milt_compare()`](https://ntigideon.github.io/milt/reference/milt_compare.md)
 to run a rolling-origin backtest across multiple models and rank them by
 accuracy:
 

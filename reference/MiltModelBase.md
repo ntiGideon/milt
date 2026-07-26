@@ -4,12 +4,12 @@ Every model backend inherits from this class and overrides `fit()`,
 `forecast()`, [`predict()`](https://rdrr.io/r/stats/predict.html), and
 [`residuals()`](https://rdrr.io/r/stats/residuals.html). Users interact
 exclusively through the public verbs
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md),
-[`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md),
-[`milt_predict()`](https://ntiGideon.github.io/milt/reference/milt_predict.md),
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md),
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md),
+[`milt_forecast()`](https://ntigideon.github.io/milt/reference/milt_forecast.md),
+[`milt_predict()`](https://ntigideon.github.io/milt/reference/milt_predict.md),
 and
-[`milt_residuals()`](https://ntiGideon.github.io/milt/reference/milt_residuals.md).
+[`milt_residuals()`](https://ntigideon.github.io/milt/reference/milt_residuals.md).
 
 ## Methods
 
@@ -120,7 +120,7 @@ Training residuals. **Must be overridden.**
 ### `MiltModel$is_fitted()`
 
 `TRUE` after
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md)
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md)
 has been called successfully.
 
 #### Usage

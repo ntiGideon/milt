@@ -13,7 +13,7 @@ milt_classify_fit(classifier, series_list, labels)
 - classifier:
 
   A `MiltClassifier` from
-  [`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md).
+  [`milt_classifier()`](https://ntigideon.github.io/milt/reference/milt_classifier.md).
 
 - series_list:
 
@@ -29,12 +29,12 @@ The fitted `MiltClassifier` (invisibly, mutated in place).
 
 ## See also
 
-[`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md),
-[`milt_classify_predict()`](https://ntiGideon.github.io/milt/reference/milt_classify_predict.md)
+[`milt_classifier()`](https://ntigideon.github.io/milt/reference/milt_classifier.md),
+[`milt_classify_predict()`](https://ntigideon.github.io/milt/reference/milt_classify_predict.md)
 
 Other classify:
-[`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md),
-[`milt_classify_predict()`](https://ntiGideon.github.io/milt/reference/milt_classify_predict.md)
+[`milt_classifier()`](https://ntigideon.github.io/milt/reference/milt_classifier.md),
+[`milt_classify_predict()`](https://ntigideon.github.io/milt/reference/milt_classify_predict.md)
 
 ## Examples
 

@@ -48,7 +48,7 @@ A `MiltReconciliation` object.
 
 ## See also
 
-[`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md)
+[`milt_forecast()`](https://ntigideon.github.io/milt/reference/milt_forecast.md)
 
 ## Examples
 

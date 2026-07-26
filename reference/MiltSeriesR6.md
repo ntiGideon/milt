@@ -2,7 +2,7 @@
 
 The foundational data structure for the milt package. Every model,
 detector, and pipeline operates on `MiltSeries` objects. Create one with
-[`milt_series()`](https://ntiGideon.github.io/milt/reference/milt_series.md).
+[`milt_series()`](https://ntigideon.github.io/milt/reference/milt_series.md).
 
 ## Methods
 
@@ -92,7 +92,7 @@ Create a new MiltSeries.
 - `static_covs`:
 
   Optional tibble of per-group static covariates (see
-  [`milt_add_covariates()`](https://ntiGideon.github.io/milt/reference/milt_add_covariates.md)).
+  [`milt_add_covariates()`](https://ntigideon.github.io/milt/reference/milt_add_covariates.md)).
 
 - `past_covs`:
 

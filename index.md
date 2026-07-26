@@ -39,7 +39,7 @@ pak::pak("ntiGideon/milt")
 
 milt keeps heavy backend dependencies optional so the core package
 installs quickly and reliably. Use
-[`milt_install_backends()`](https://ntiGideon.github.io/milt/reference/milt_install_backends.md)
+[`milt_install_backends()`](https://ntigideon.github.io/milt/reference/milt_install_backends.md)
 to install what you need:
 
 ``` r
@@ -184,33 +184,33 @@ The package includes or supports:
   `glmnet`, `svm`, and KNN-based methods
 - ensemble workflows, plus model-agnostic conformal prediction intervals
   via
-  [`milt_conformal()`](https://ntiGideon.github.io/milt/reference/milt_conformal.md)
+  [`milt_conformal()`](https://ntigideon.github.io/milt/reference/milt_conformal.md)
 - deep-learning integrations through `torch` and `reticulate`-based
   backends
 - filtering models
-  ([`milt_filter()`](https://ntiGideon.github.io/milt/reference/milt_filter.md))
+  ([`milt_filter()`](https://ntigideon.github.io/milt/reference/milt_filter.md))
   for smoothing an already-observed series: moving-average, Kalman, and
   Gaussian Process
 
 Use
-[`list_milt_models()`](https://ntiGideon.github.io/milt/reference/list_milt_models.md)
+[`list_milt_models()`](https://ntigideon.github.io/milt/reference/list_milt_models.md)
 to inspect the currently registered model set.
 
 ## Diagnostics, anomaly detection, and explainability
 
 The package is not limited to forecasting. It also includes:
 
-- [`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md)
+- [`milt_diagnose()`](https://ntigideon.github.io/milt/reference/milt_diagnose.md)
   for stationarity, trend, seasonality, gaps, and outlier summaries
-- [`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md)
+- [`milt_detector()`](https://ntigideon.github.io/milt/reference/milt_detector.md)
   and
-  [`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md)
+  [`milt_detect()`](https://ntigideon.github.io/milt/reference/milt_detect.md)
   for anomaly detection
-- [`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md)
+- [`milt_changepoints()`](https://ntigideon.github.io/milt/reference/milt_changepoints.md)
   for changepoint analysis
-- [`milt_eda()`](https://ntiGideon.github.io/milt/reference/milt_eda.md)
+- [`milt_eda()`](https://ntigideon.github.io/milt/reference/milt_eda.md)
   for exploratory analysis
-- [`milt_explain()`](https://ntiGideon.github.io/milt/reference/milt_explain.md)
+- [`milt_explain()`](https://ntigideon.github.io/milt/reference/milt_explain.md)
   for model explainability and feature importance
 
 ## Multi-series workflows
@@ -219,27 +219,27 @@ For grouped or panel time series, `milt` supports:
 
 - grouped `MiltSeries` construction
 - clustering with
-  [`milt_cluster()`](https://ntiGideon.github.io/milt/reference/milt_cluster.md)
+  [`milt_cluster()`](https://ntigideon.github.io/milt/reference/milt_cluster.md)
 - classification with
-  [`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md),
-  [`milt_classify_fit()`](https://ntiGideon.github.io/milt/reference/milt_classify_fit.md),
+  [`milt_classifier()`](https://ntigideon.github.io/milt/reference/milt_classifier.md),
+  [`milt_classify_fit()`](https://ntigideon.github.io/milt/reference/milt_classify_fit.md),
   and
-  [`milt_classify_predict()`](https://ntiGideon.github.io/milt/reference/milt_classify_predict.md)
+  [`milt_classify_predict()`](https://ntigideon.github.io/milt/reference/milt_classify_predict.md)
 - reconciliation with
-  [`milt_reconcile()`](https://ntiGideon.github.io/milt/reference/milt_reconcile.md)
+  [`milt_reconcile()`](https://ntigideon.github.io/milt/reference/milt_reconcile.md)
 
 ## Deployment and reporting
 
-Trained objects can be operationalized through:
+Trained objects can be operationalised through:
 
-- [`milt_save()`](https://ntiGideon.github.io/milt/reference/milt_save.md)
+- [`milt_save()`](https://ntigideon.github.io/milt/reference/milt_save.md)
   and
-  [`milt_load()`](https://ntiGideon.github.io/milt/reference/milt_load.md)
-- [`milt_serve()`](https://ntiGideon.github.io/milt/reference/milt_serve.md)
+  [`milt_load()`](https://ntigideon.github.io/milt/reference/milt_load.md)
+- [`milt_serve()`](https://ntigideon.github.io/milt/reference/milt_serve.md)
   for API-style serving
-- [`milt_dashboard()`](https://ntiGideon.github.io/milt/reference/milt_dashboard.md)
+- [`milt_dashboard()`](https://ntigideon.github.io/milt/reference/milt_dashboard.md)
   for interactive exploration
-- [`milt_report()`](https://ntiGideon.github.io/milt/reference/milt_report.md)
+- [`milt_report()`](https://ntigideon.github.io/milt/reference/milt_report.md)
   for report generation
 
 ## Built-in datasets

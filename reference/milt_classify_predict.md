@@ -28,12 +28,12 @@ A named list:
 
 ## See also
 
-[`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md),
-[`milt_classify_fit()`](https://ntiGideon.github.io/milt/reference/milt_classify_fit.md)
+[`milt_classifier()`](https://ntigideon.github.io/milt/reference/milt_classifier.md),
+[`milt_classify_fit()`](https://ntigideon.github.io/milt/reference/milt_classify_fit.md)
 
 Other classify:
-[`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md),
-[`milt_classify_fit()`](https://ntiGideon.github.io/milt/reference/milt_classify_fit.md)
+[`milt_classifier()`](https://ntigideon.github.io/milt/reference/milt_classifier.md),
+[`milt_classify_fit()`](https://ntigideon.github.io/milt/reference/milt_classify_fit.md)
 
 ## Examples
 

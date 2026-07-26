@@ -1,7 +1,7 @@
 # Compare multiple milt models via walk-forward backtesting
 
 Runs
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md)
 on each model and collects results into a ranked comparison table.
 
 ## Usage
@@ -24,7 +24,7 @@ milt_compare(
 - models:
 
   A **named** list of unfitted `MiltModel` objects created with
-  [`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md).
+  [`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md).
   Names become the model labels in the comparison table.
 
 - series:
@@ -38,7 +38,7 @@ milt_compare(
 - initial_window:
 
   Positive integer or `NULL`. Passed to
-  [`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md).
+  [`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md).
 
 - stride:
 
@@ -63,23 +63,23 @@ A `MiltComparison` object.
 
 ## See also
 
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md),
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md),
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md)
 
 Other model:
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md),
-[`milt_conformal()`](https://ntiGideon.github.io/milt/reference/milt_conformal.md),
-[`milt_cv()`](https://ntiGideon.github.io/milt/reference/milt_cv.md),
-[`milt_ensemble()`](https://ntiGideon.github.io/milt/reference/milt_ensemble.md),
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md),
-[`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md),
-[`milt_global_model()`](https://ntiGideon.github.io/milt/reference/milt_global_model.md),
-[`milt_grid_search()`](https://ntiGideon.github.io/milt/reference/milt_grid_search.md),
-[`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md),
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
-[`milt_predict()`](https://ntiGideon.github.io/milt/reference/milt_predict.md),
-[`milt_refit()`](https://ntiGideon.github.io/milt/reference/milt_refit.md),
-[`milt_residuals()`](https://ntiGideon.github.io/milt/reference/milt_residuals.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md),
+[`milt_conformal()`](https://ntigideon.github.io/milt/reference/milt_conformal.md),
+[`milt_cv()`](https://ntigideon.github.io/milt/reference/milt_cv.md),
+[`milt_ensemble()`](https://ntigideon.github.io/milt/reference/milt_ensemble.md),
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md),
+[`milt_forecast()`](https://ntigideon.github.io/milt/reference/milt_forecast.md),
+[`milt_global_model()`](https://ntigideon.github.io/milt/reference/milt_global_model.md),
+[`milt_grid_search()`](https://ntigideon.github.io/milt/reference/milt_grid_search.md),
+[`milt_local_model()`](https://ntigideon.github.io/milt/reference/milt_local_model.md),
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md),
+[`milt_predict()`](https://ntigideon.github.io/milt/reference/milt_predict.md),
+[`milt_refit()`](https://ntigideon.github.io/milt/reference/milt_refit.md),
+[`milt_residuals()`](https://ntigideon.github.io/milt/reference/milt_residuals.md)
 
 ## Examples
 

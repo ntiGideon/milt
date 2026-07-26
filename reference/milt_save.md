@@ -33,10 +33,10 @@ milt_save(object, path, compress = TRUE)
 
 ## See also
 
-[`milt_load()`](https://ntiGideon.github.io/milt/reference/milt_load.md)
+[`milt_load()`](https://ntigideon.github.io/milt/reference/milt_load.md)
 
 Other save:
-[`milt_load()`](https://ntiGideon.github.io/milt/reference/milt_load.md)
+[`milt_load()`](https://ntigideon.github.io/milt/reference/milt_load.md)
 
 ## Examples
 
@@ -45,7 +45,7 @@ Other save:
 s <- milt_series(AirPassengers)
 tmp <- tempfile(fileext = ".milt")
 milt_save(s, tmp)
-#> Saved to /tmp/RtmpfPZx0H/file1cf95d5babb3.milt.
+#> Saved to /tmp/RtmpShUBBw/file1ce55d5babb3.milt.
 s2 <- milt_load(tmp)
 # }
 ```

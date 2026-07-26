@@ -23,11 +23,11 @@ Invisible `NULL`.
 
 ## See also
 
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
-[`list_milt_models()`](https://ntiGideon.github.io/milt/reference/list_milt_models.md)
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md),
+[`list_milt_models()`](https://ntigideon.github.io/milt/reference/list_milt_models.md)
 
 Other dl:
-[`milt_torch_device()`](https://ntiGideon.github.io/milt/reference/milt_torch_device.md)
+[`milt_torch_device()`](https://ntigideon.github.io/milt/reference/milt_torch_device.md)
 
 ## Examples
 

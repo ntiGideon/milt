@@ -14,7 +14,7 @@ milt_detect(detector, series, ...)
 - detector:
 
   A `MiltDetector` created by
-  [`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md).
+  [`milt_detector()`](https://ntigideon.github.io/milt/reference/milt_detector.md).
 
 - series:
 
@@ -30,15 +30,15 @@ A `MiltAnomalies` object.
 
 ## See also
 
-[`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md)
+[`milt_detector()`](https://ntigideon.github.io/milt/reference/milt_detector.md)
 
 Other anomaly:
-[`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md),
-[`milt_anomaly_score()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_score.md),
-[`milt_causal_impact()`](https://ntiGideon.github.io/milt/reference/milt_causal_impact.md),
-[`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md),
-[`milt_detect_anomalies()`](https://ntiGideon.github.io/milt/reference/milt_detect_anomalies.md),
-[`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md)
+[`milt_anomaly_model()`](https://ntigideon.github.io/milt/reference/milt_anomaly_model.md),
+[`milt_anomaly_score()`](https://ntigideon.github.io/milt/reference/milt_anomaly_score.md),
+[`milt_causal_impact()`](https://ntigideon.github.io/milt/reference/milt_causal_impact.md),
+[`milt_changepoints()`](https://ntigideon.github.io/milt/reference/milt_changepoints.md),
+[`milt_detect_anomalies()`](https://ntigideon.github.io/milt/reference/milt_detect_anomalies.md),
+[`milt_detector()`](https://ntigideon.github.io/milt/reference/milt_detector.md)
 
 ## Examples
 

@@ -54,7 +54,7 @@ air <- milt_series(AirPassengers)
 # Auto-ARIMA
 fct_arima <- milt_model("auto_arima") |> milt_fit(air) |> milt_forecast(24)
 #> Fitting <MiltAutoArima> model…
-#> Done in 1.29s.
+#> Done in 1.25s.
 plot(fct_arima)
 ```
 
@@ -85,7 +85,7 @@ fct_cv <- milt_model("ets") |>
   milt_fit(spl$train) |>
   milt_forecast(h)
 #> Fitting <MiltEts> model…
-#> Done in 0.53s.
+#> Done in 0.52s.
 
 milt_accuracy(spl$test$values(), fct_cv$as_tibble()$.mean)
 #> # A tibble: 9 × 2
@@ -115,7 +115,7 @@ fct_xgb <- milt_model("xgboost", lags = 1:12) |>
   milt_fit(air) |>
   milt_forecast(12)
 #> Fitting <MiltXGBoost> model…
-#> Done in 0.05s.
+#> Done in 0.06s.
 plot(fct_xgb)
 ```
 
@@ -125,7 +125,7 @@ plot(fct_xgb)
 
 ## 5. Model comparison
 
-[`milt_compare()`](https://ntiGideon.github.io/milt/reference/milt_compare.md)
+[`milt_compare()`](https://ntigideon.github.io/milt/reference/milt_compare.md)
 runs a rolling-origin backtest on each model and ranks them:
 
 ``` r
@@ -244,10 +244,10 @@ Combine forecasts with a mean ensemble:
 
 m1 <- milt_model("auto_arima") |> milt_fit(air)
 #> Fitting <MiltAutoArima> model…
-#> Done in 1.23s.
+#> Done in 1.12s.
 m2 <- milt_model("ets")        |> milt_fit(air)
 #> Fitting <MiltEts> model…
-#> Done in 0.55s.
+#> Done in 0.54s.
 m3 <- milt_model("naive")      |> milt_fit(air)
 #> Fitting <MiltNaive> model…
 #> Done in 0s.
@@ -294,7 +294,7 @@ fct_samples <- milt_model("naive") |>
 
 ## 8. Backtesting
 
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md)
 implements expanding- and sliding-window CV:
 
 ``` r

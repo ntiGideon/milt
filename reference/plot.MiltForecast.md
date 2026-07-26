@@ -2,7 +2,7 @@
 
 Renders the point forecast with optional prediction interval ribbons. If
 the forecast was produced by
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md)
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md)
 (which stores the training series), the historical data is shown to the
 left.
 

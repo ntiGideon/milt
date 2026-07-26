@@ -55,9 +55,9 @@ newly installed (`TRUE`) vs already present (`FALSE`).
 
 ## See also
 
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md),
-[`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md)
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md),
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md),
+[`milt_forecast()`](https://ntigideon.github.io/milt/reference/milt_forecast.md)
 
 ## Examples
 

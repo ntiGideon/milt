@@ -1,12 +1,12 @@
 # MiltBacktest — walk-forward evaluation results
 
 Returned by
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md).
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md).
 Stores per-fold forecast accuracy metrics and provides helpers for
 summarising and visualising backtest results.
 
 Users do not instantiate this class directly; use
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md)
 instead.
 
 ## Methods
@@ -34,7 +34,7 @@ instead.
 ### `MiltBacktest$new()`
 
 Initialise (called internally by
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md)).
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md)).
 
 #### Usage
 

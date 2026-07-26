@@ -59,9 +59,9 @@ Users should never call `$methods()` directly.
     everything else depends on it. Wraps a tibble with a time column,
     value column(s), frequency, and optional covariates.
 2.  **`MiltForecast`** (`R/MiltForecast.R`) — result of
-    [`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md)
+    [`milt_forecast()`](https://ntigideon.github.io/milt/reference/milt_forecast.md)
 3.  **`MiltAnomalies`** (`R/MiltAnomalies.R`) — result of
-    [`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md)
+    [`milt_detect()`](https://ntigideon.github.io/milt/reference/milt_detect.md)
 
 ### Universal Model Interface
 

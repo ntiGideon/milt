@@ -49,15 +49,15 @@ Requires the `CausalImpact` package (\>= 1.2.7).
 
 ## See also
 
-[`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md)
+[`milt_changepoints()`](https://ntigideon.github.io/milt/reference/milt_changepoints.md)
 
 Other anomaly:
-[`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md),
-[`milt_anomaly_score()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_score.md),
-[`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md),
-[`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md),
-[`milt_detect_anomalies()`](https://ntiGideon.github.io/milt/reference/milt_detect_anomalies.md),
-[`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md)
+[`milt_anomaly_model()`](https://ntigideon.github.io/milt/reference/milt_anomaly_model.md),
+[`milt_anomaly_score()`](https://ntigideon.github.io/milt/reference/milt_anomaly_score.md),
+[`milt_changepoints()`](https://ntigideon.github.io/milt/reference/milt_changepoints.md),
+[`milt_detect()`](https://ntigideon.github.io/milt/reference/milt_detect.md),
+[`milt_detect_anomalies()`](https://ntigideon.github.io/milt/reference/milt_detect_anomalies.md),
+[`milt_detector()`](https://ntigideon.github.io/milt/reference/milt_detector.md)
 
 ## Examples
 

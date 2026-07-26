@@ -11,7 +11,7 @@ library(milt)
 
 milt handles multi-series data natively. A grouped `MiltSeries` stores
 multiple series in a single object, and
-[`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md)
+[`milt_local_model()`](https://ntigideon.github.io/milt/reference/milt_local_model.md)
 fits one model per series in parallel.
 
 ------------------------------------------------------------------------
@@ -70,7 +70,7 @@ plot(ms)
 
 ## 3. Local models — one per series
 
-[`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md)
+[`milt_local_model()`](https://ntigideon.github.io/milt/reference/milt_local_model.md)
 wraps any model to train independently on each group:
 
 ``` r
@@ -79,7 +79,7 @@ local_m <- milt_local_model(milt_model("ets"))
 fitted  <- milt_fit(local_m, ms)
 #> Fitting <MiltLocalModel> model…
 #> Local model: fitting 3 groups…
-#> Done in 1.65s.
+#> Done in 1.63s.
 fct     <- milt_forecast(fitted, 12)
 #> Local model: generating forecasts for 3 groups.
 print(fct)
@@ -192,16 +192,16 @@ s_total <- milt_series(
 
 fc_total <- milt_model("ets") |> milt_fit(s_total)  |> milt_forecast(6)
 #> Fitting <MiltEts> model…
-#> Done in 0.83s.
+#> Done in 0.76s.
 fc_A     <- milt_model("ets") |> milt_fit(series_list[[1L]]) |> milt_forecast(6)
 #> Fitting <MiltEts> model…
-#> Done in 0.54s.
+#> Done in 0.53s.
 fc_B     <- milt_model("ets") |> milt_fit(series_list[[2L]]) |> milt_forecast(6)
 #> Fitting <MiltEts> model…
-#> Done in 0.51s.
+#> Done in 0.5s.
 fc_C     <- milt_model("ets") |> milt_fit(series_list[[3L]]) |> milt_forecast(6)
 #> Fitting <MiltEts> model…
-#> Done in 0.46s.
+#> Done in 0.45s.
 
 # Summing matrix (Total = A + B + C)
 S <- matrix(c(1,1,1, 1,0,0, 0,1,0, 0,0,1),

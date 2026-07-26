@@ -8,15 +8,15 @@ library(milt)
 ## Overview
 
 Once a model is trained it can be: 1. **Saved to disk** with
-[`milt_save()`](https://ntiGideon.github.io/milt/reference/milt_save.md)
+[`milt_save()`](https://ntigideon.github.io/milt/reference/milt_save.md)
 and restored with
-[`milt_load()`](https://ntiGideon.github.io/milt/reference/milt_load.md).
+[`milt_load()`](https://ntigideon.github.io/milt/reference/milt_load.md).
 2. **Served as a REST API** with
-[`milt_serve()`](https://ntiGideon.github.io/milt/reference/milt_serve.md)
+[`milt_serve()`](https://ntigideon.github.io/milt/reference/milt_serve.md)
 (Plumber). 3. **Explored in a dashboard** with
-[`milt_dashboard()`](https://ntiGideon.github.io/milt/reference/milt_dashboard.md)
+[`milt_dashboard()`](https://ntigideon.github.io/milt/reference/milt_dashboard.md)
 (Shiny). 4. **Included in a report** with
-[`milt_report()`](https://ntiGideon.github.io/milt/reference/milt_report.md)
+[`milt_report()`](https://ntigideon.github.io/milt/reference/milt_report.md)
 (R Markdown / Quarto).
 
 ------------------------------------------------------------------------
@@ -45,7 +45,7 @@ Any milt object can be saved: `MiltSeries`, `MiltForecast`,
 
 ## 2. REST API with Plumber
 
-[`milt_serve()`](https://ntiGideon.github.io/milt/reference/milt_serve.md)
+[`milt_serve()`](https://ntigideon.github.io/milt/reference/milt_serve.md)
 wraps the model in a Plumber API that exposes:
 
 | Endpoint       | Method | Description                                         |
@@ -76,7 +76,7 @@ curl -s -X POST http://127.0.0.1:8000/forecast \
 
 ## 3. Shiny monitoring dashboard
 
-[`milt_dashboard()`](https://ntiGideon.github.io/milt/reference/milt_dashboard.md)
+[`milt_dashboard()`](https://ntigideon.github.io/milt/reference/milt_dashboard.md)
 launches an interactive four-tab app:
 
 - **Series** — interactive line chart of training data.
@@ -93,7 +93,7 @@ milt_dashboard(m)
 
 ## 4. Automated reports
 
-[`milt_report()`](https://ntiGideon.github.io/milt/reference/milt_report.md)
+[`milt_report()`](https://ntigideon.github.io/milt/reference/milt_report.md)
 renders a self-contained HTML or PDF analysis report:
 
 ``` r

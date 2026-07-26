@@ -126,7 +126,7 @@ print(s_cal)
 
 ## 5. Scaling
 
-[`milt_step_scale()`](https://ntiGideon.github.io/milt/reference/milt_step_scale.md)
+[`milt_step_scale()`](https://ntigideon.github.io/milt/reference/milt_step_scale.md)
 normalises values and returns an invertible step object:
 
 ``` r

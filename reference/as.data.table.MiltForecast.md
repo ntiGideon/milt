@@ -24,4 +24,4 @@ as.data.table(x, ...)
 A
 [`data.table::data.table()`](https://rdrr.io/pkg/data.table/man/data.table.html)
 with the same columns as
-[`as_tibble.MiltForecast()`](https://ntiGideon.github.io/milt/reference/as_tibble.MiltForecast.md).
+[`as_tibble.MiltForecast()`](https://ntigideon.github.io/milt/reference/as_tibble.MiltForecast.md).

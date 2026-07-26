@@ -184,7 +184,7 @@ test   <- splits$test
 splits2 <- milt_split_at(ap, date = "1958-01-01")
 ```
 
-[`milt_split()`](https://ntiGideon.github.io/milt/reference/milt_split.md)
+[`milt_split()`](https://ntigideon.github.io/milt/reference/milt_split.md)
 arguments:
 
 | Argument | Type | Default | Description |
@@ -192,7 +192,7 @@ arguments:
 | `series` | MiltSeries | — | Input series. |
 | `prop` | numeric in (0, 1) | `0.8` | Proportion of observations to keep in the training set. |
 
-[`milt_split_at()`](https://ntiGideon.github.io/milt/reference/milt_split_at.md)
+[`milt_split_at()`](https://ntigideon.github.io/milt/reference/milt_split_at.md)
 arguments:
 
 | Argument | Type | Default | Description |
@@ -242,7 +242,7 @@ daily_s <- milt_series(
 weekly_s <- milt_resample(daily_s, frequency = "weekly", fun = mean)
 ```
 
-[`milt_resample()`](https://ntiGideon.github.io/milt/reference/milt_resample.md)
+[`milt_resample()`](https://ntigideon.github.io/milt/reference/milt_resample.md)
 arguments:
 
 | Argument | Type | Default | Description |
@@ -261,7 +261,7 @@ Detect and fill irregular or missing time steps:
 filled <- milt_fill_gaps(s, method = "linear")
 ```
 
-[`milt_fill_gaps()`](https://ntiGideon.github.io/milt/reference/milt_fill_gaps.md)
+[`milt_fill_gaps()`](https://ntigideon.github.io/milt/reference/milt_fill_gaps.md)
 arguments:
 
 | Argument | Type | Default | Description |
@@ -312,7 +312,7 @@ milt_get_covariates(ap, type = "static")
 milt_get_covariates(ap, type = "future")
 ```
 
-[`milt_add_covariates()`](https://ntiGideon.github.io/milt/reference/milt_add_covariates.md)
+[`milt_add_covariates()`](https://ntigideon.github.io/milt/reference/milt_add_covariates.md)
 arguments:
 
 | Argument | Type | Default | Description |
@@ -398,11 +398,11 @@ milt_series(AirPassengers) |>
 
 ## See Also
 
-- [`vignette("milt-forecasting")`](https://ntiGideon.github.io/milt/articles/milt-forecasting.md)
+- [`vignette("milt-forecasting")`](https://ntigideon.github.io/milt/articles/milt-forecasting.md)
   — fitting and forecasting models
-- [`vignette("milt-eda-diagnostics")`](https://ntiGideon.github.io/milt/articles/milt-eda-diagnostics.md)
+- [`vignette("milt-eda-diagnostics")`](https://ntigideon.github.io/milt/articles/milt-eda-diagnostics.md)
   — exploratory analysis of a series
-- [`vignette("milt-multi-series")`](https://ntiGideon.github.io/milt/articles/milt-multi-series.md)
+- [`vignette("milt-multi-series")`](https://ntigideon.github.io/milt/articles/milt-multi-series.md)
   — multi-series and hierarchical workflows
-- [`vignette("milt-pipelines")`](https://ntiGideon.github.io/milt/articles/milt-pipelines.md)
+- [`vignette("milt-pipelines")`](https://ntigideon.github.io/milt/articles/milt-pipelines.md)
   — feature engineering pipelines

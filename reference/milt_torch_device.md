@@ -18,4 +18,4 @@ object.
 ## See also
 
 Other dl:
-[`milt_setup_darts()`](https://ntiGideon.github.io/milt/reference/milt_setup_darts.md)
+[`milt_setup_darts()`](https://ntigideon.github.io/milt/reference/milt_setup_darts.md)

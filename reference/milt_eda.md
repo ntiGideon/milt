@@ -25,7 +25,7 @@ A `MiltEDA` object.
 
 ## See also
 
-[`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md)
+[`milt_diagnose()`](https://ntigideon.github.io/milt/reference/milt_diagnose.md)
 
 ## Examples
 

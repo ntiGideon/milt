@@ -3,7 +3,7 @@
 Monthly totals of international airline passengers (thousands), January
 1949 to December 1960. This is the classic Box & Jenkins dataset
 repackaged as a plain tibble so it can be passed directly to
-[`milt_series()`](https://ntiGideon.github.io/milt/reference/milt_series.md).
+[`milt_series()`](https://ntigideon.github.io/milt/reference/milt_series.md).
 
 ## Usage
 
@@ -34,13 +34,13 @@ Analysis, Forecasting and Control*, 3rd ed. Holden-Day. Series G.
 
 ## See also
 
-[`milt_series()`](https://ntiGideon.github.io/milt/reference/milt_series.md),
-[milt_retail](https://ntiGideon.github.io/milt/reference/milt_retail.md),
-[milt_energy](https://ntiGideon.github.io/milt/reference/milt_energy.md)
+[`milt_series()`](https://ntigideon.github.io/milt/reference/milt_series.md),
+[milt_retail](https://ntigideon.github.io/milt/reference/milt_retail.md),
+[milt_energy](https://ntigideon.github.io/milt/reference/milt_energy.md)
 
 Other datasets:
-[`milt_energy`](https://ntiGideon.github.io/milt/reference/milt_energy.md),
-[`milt_retail`](https://ntiGideon.github.io/milt/reference/milt_retail.md)
+[`milt_energy`](https://ntigideon.github.io/milt/reference/milt_energy.md),
+[`milt_retail`](https://ntigideon.github.io/milt/reference/milt_retail.md)
 
 ## Examples
 

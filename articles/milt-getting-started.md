@@ -26,7 +26,7 @@ This vignette walks through the core workflow using the built-in
 
 ## 1. Creating a MiltSeries
 
-[`milt_series()`](https://ntiGideon.github.io/milt/reference/milt_series.md)
+[`milt_series()`](https://ntigideon.github.io/milt/reference/milt_series.md)
 accepts virtually any R time series object: a `ts`, a `data.frame`, a
 `tibble`, an `xts`, a `tsibble`, or a plain numeric vector.
 
@@ -91,7 +91,7 @@ air$values()        # numeric vector of the target variable
 
 ## 2. Diagnosing a series
 
-[`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md)
+[`milt_diagnose()`](https://ntigideon.github.io/milt/reference/milt_diagnose.md)
 runs a quick statistical battery: trend test, stationarity check,
 seasonality strength, and outlier count.
 
@@ -111,11 +111,11 @@ print(dx)
 ## 3. Fitting and forecasting
 
 Use
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md)
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md)
 to select a model by name,
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md)
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md)
 to train it, and
-[`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md)
+[`milt_forecast()`](https://ntigideon.github.io/milt/reference/milt_forecast.md)
 to produce point forecasts plus 80% and 95% prediction intervals.
 
 ``` r
@@ -244,7 +244,7 @@ print(acc)
 
 ## 5. Walk-forward backtesting
 
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md)
 performs time series cross-validation without data leakage. Two
 strategies are supported:
 

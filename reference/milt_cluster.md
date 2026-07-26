@@ -46,7 +46,7 @@ A `MiltClusters` object.
 
 ## See also
 
-[`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md)
+[`milt_classifier()`](https://ntigideon.github.io/milt/reference/milt_classifier.md)
 
 ## Examples
 

@@ -15,7 +15,7 @@ milt_explain(model, series = NULL, ...)
 - model:
 
   A fitted `MiltModel` (must have been fit with
-  [`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md)).
+  [`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md)).
 
 - series:
 
@@ -33,8 +33,8 @@ A `MiltExplanation` object.
 
 ## See also
 
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md)
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md),
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md)
 
 ## Examples
 

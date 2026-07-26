@@ -15,7 +15,7 @@ milt_anomaly_score(residuals, method = c("norm", "difference", "nll_gaussian"))
 - residuals:
 
   Numeric vector of residuals (e.g. from
-  [`milt_residuals()`](https://ntiGideon.github.io/milt/reference/milt_residuals.md)).
+  [`milt_residuals()`](https://ntigideon.github.io/milt/reference/milt_residuals.md)).
 
 - method:
 
@@ -24,7 +24,7 @@ milt_anomaly_score(residuals, method = c("norm", "difference", "nll_gaussian"))
   - `"norm"` (default): absolute residual, `abs(residuals)`.
 
   - `"difference"`: the signed residual itself (useful for
-    [`milt_check_seasonality()`](https://ntiGideon.github.io/milt/reference/milt_check_seasonality.md)-style
+    [`milt_check_seasonality()`](https://ntigideon.github.io/milt/reference/milt_check_seasonality.md)-style
     directional analysis).
 
   - `"nll_gaussian"`: negative log-likelihood of each residual under a
@@ -39,15 +39,15 @@ where `residuals` is `NA`).
 
 ## See also
 
-[`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md)
+[`milt_anomaly_model()`](https://ntigideon.github.io/milt/reference/milt_anomaly_model.md)
 
 Other anomaly:
-[`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md),
-[`milt_causal_impact()`](https://ntiGideon.github.io/milt/reference/milt_causal_impact.md),
-[`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md),
-[`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md),
-[`milt_detect_anomalies()`](https://ntiGideon.github.io/milt/reference/milt_detect_anomalies.md),
-[`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md)
+[`milt_anomaly_model()`](https://ntigideon.github.io/milt/reference/milt_anomaly_model.md),
+[`milt_causal_impact()`](https://ntigideon.github.io/milt/reference/milt_causal_impact.md),
+[`milt_changepoints()`](https://ntigideon.github.io/milt/reference/milt_changepoints.md),
+[`milt_detect()`](https://ntigideon.github.io/milt/reference/milt_detect.md),
+[`milt_detect_anomalies()`](https://ntigideon.github.io/milt/reference/milt_detect_anomalies.md),
+[`milt_detector()`](https://ntigideon.github.io/milt/reference/milt_detector.md)
 
 ## Examples
 

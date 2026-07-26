@@ -1,7 +1,7 @@
 # Load a milt object from disk
 
 Reads an `.milt` file previously written by
-[`milt_save()`](https://ntiGideon.github.io/milt/reference/milt_save.md)
+[`milt_save()`](https://ntigideon.github.io/milt/reference/milt_save.md)
 and returns the stored object. Issues a warning if the saved `milt`
 version differs from the installed version.
 
@@ -23,10 +23,10 @@ The deserialised milt object.
 
 ## See also
 
-[`milt_save()`](https://ntiGideon.github.io/milt/reference/milt_save.md)
+[`milt_save()`](https://ntigideon.github.io/milt/reference/milt_save.md)
 
 Other save:
-[`milt_save()`](https://ntiGideon.github.io/milt/reference/milt_save.md)
+[`milt_save()`](https://ntigideon.github.io/milt/reference/milt_save.md)
 
 ## Examples
 
@@ -34,7 +34,7 @@ Other save:
 # \donttest{
 tmp <- tempfile(fileext = ".milt")
 milt_save(milt_series(AirPassengers), tmp)
-#> Saved to /tmp/RtmpfPZx0H/file1cf939ee015c.milt.
+#> Saved to /tmp/RtmpShUBBw/file1ce539ee015c.milt.
 s <- milt_load(tmp)
 # }
 ```

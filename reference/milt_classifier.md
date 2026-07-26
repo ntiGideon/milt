@@ -1,7 +1,7 @@
 # Create a time series classifier
 
 Returns an unfitted `MiltClassifier`. Train it with
-[`milt_classify_fit()`](https://ntiGideon.github.io/milt/reference/milt_classify_fit.md).
+[`milt_classify_fit()`](https://ntigideon.github.io/milt/reference/milt_classify_fit.md).
 
 ## Usage
 
@@ -38,12 +38,12 @@ A `MiltClassifier` object.
 
 ## See also
 
-[`milt_classify_fit()`](https://ntiGideon.github.io/milt/reference/milt_classify_fit.md),
-[`milt_classify_predict()`](https://ntiGideon.github.io/milt/reference/milt_classify_predict.md)
+[`milt_classify_fit()`](https://ntigideon.github.io/milt/reference/milt_classify_fit.md),
+[`milt_classify_predict()`](https://ntigideon.github.io/milt/reference/milt_classify_predict.md)
 
 Other classify:
-[`milt_classify_fit()`](https://ntiGideon.github.io/milt/reference/milt_classify_fit.md),
-[`milt_classify_predict()`](https://ntiGideon.github.io/milt/reference/milt_classify_predict.md)
+[`milt_classify_fit()`](https://ntigideon.github.io/milt/reference/milt_classify_fit.md),
+[`milt_classify_predict()`](https://ntigideon.github.io/milt/reference/milt_classify_predict.md)
 
 ## Examples
 

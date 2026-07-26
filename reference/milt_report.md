@@ -56,8 +56,8 @@ The path to the rendered report (invisibly).
 
 ## See also
 
-[`milt_eda()`](https://ntiGideon.github.io/milt/reference/milt_eda.md),
-[`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md)
+[`milt_eda()`](https://ntigideon.github.io/milt/reference/milt_eda.md),
+[`milt_diagnose()`](https://ntigideon.github.io/milt/reference/milt_diagnose.md)
 
 ## Examples
 

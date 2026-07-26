@@ -1,11 +1,11 @@
 # Fit one shared model across every group of a multi-series MiltSeries
 
 The "global" counterpart to
-[`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md):
+[`milt_local_model()`](https://ntigideon.github.io/milt/reference/milt_local_model.md):
 instead of training one independent model per group, every group's
 lag-feature rows are pooled into a single training matrix (tagged with a
 one-hot group indicator, plus any static covariates attached via
-[`milt_add_covariates()`](https://ntiGideon.github.io/milt/reference/milt_add_covariates.md)
+[`milt_add_covariates()`](https://ntigideon.github.io/milt/reference/milt_add_covariates.md)
 as constant-per-group columns) and **one** shared model is fit across
 all of them — genuine cross-series weight sharing, the way darts' global
 forecasting models work.
@@ -50,29 +50,29 @@ milt_global_model(
 ## Value
 
 An unfitted `MiltModel`. Fit it with
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md)
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md)
 on a grouped `MiltSeries`; forecast a single group with `$forecast()` or
 every group at once with `$forecast_all()`.
 
 ## See also
 
-[`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md),
-[`milt_add_covariates()`](https://ntiGideon.github.io/milt/reference/milt_add_covariates.md)
+[`milt_local_model()`](https://ntigideon.github.io/milt/reference/milt_local_model.md),
+[`milt_add_covariates()`](https://ntigideon.github.io/milt/reference/milt_add_covariates.md)
 
 Other model:
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md),
-[`milt_compare()`](https://ntiGideon.github.io/milt/reference/milt_compare.md),
-[`milt_conformal()`](https://ntiGideon.github.io/milt/reference/milt_conformal.md),
-[`milt_cv()`](https://ntiGideon.github.io/milt/reference/milt_cv.md),
-[`milt_ensemble()`](https://ntiGideon.github.io/milt/reference/milt_ensemble.md),
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md),
-[`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md),
-[`milt_grid_search()`](https://ntiGideon.github.io/milt/reference/milt_grid_search.md),
-[`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md),
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
-[`milt_predict()`](https://ntiGideon.github.io/milt/reference/milt_predict.md),
-[`milt_refit()`](https://ntiGideon.github.io/milt/reference/milt_refit.md),
-[`milt_residuals()`](https://ntiGideon.github.io/milt/reference/milt_residuals.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md),
+[`milt_compare()`](https://ntigideon.github.io/milt/reference/milt_compare.md),
+[`milt_conformal()`](https://ntigideon.github.io/milt/reference/milt_conformal.md),
+[`milt_cv()`](https://ntigideon.github.io/milt/reference/milt_cv.md),
+[`milt_ensemble()`](https://ntigideon.github.io/milt/reference/milt_ensemble.md),
+[`milt_fit()`](https://ntigideon.github.io/milt/reference/milt_fit.md),
+[`milt_forecast()`](https://ntigideon.github.io/milt/reference/milt_forecast.md),
+[`milt_grid_search()`](https://ntigideon.github.io/milt/reference/milt_grid_search.md),
+[`milt_local_model()`](https://ntigideon.github.io/milt/reference/milt_local_model.md),
+[`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md),
+[`milt_predict()`](https://ntigideon.github.io/milt/reference/milt_predict.md),
+[`milt_refit()`](https://ntigideon.github.io/milt/reference/milt_refit.md),
+[`milt_residuals()`](https://ntigideon.github.io/milt/reference/milt_residuals.md)
 
 ## Examples
 

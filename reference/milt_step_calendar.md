@@ -41,21 +41,21 @@ The set of columns added adapts automatically to the series frequency:
 
 ## See also
 
-[`milt_step_lag()`](https://ntiGideon.github.io/milt/reference/milt_step_lag.md),
-[`milt_step_rolling()`](https://ntiGideon.github.io/milt/reference/milt_step_rolling.md),
-[`milt_step_fourier()`](https://ntiGideon.github.io/milt/reference/milt_step_fourier.md)
+[`milt_step_lag()`](https://ntigideon.github.io/milt/reference/milt_step_lag.md),
+[`milt_step_rolling()`](https://ntigideon.github.io/milt/reference/milt_step_rolling.md),
+[`milt_step_fourier()`](https://ntigideon.github.io/milt/reference/milt_step_fourier.md)
 
 Other features:
-[`milt_step_boxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_boxcox.md),
-[`milt_step_diff()`](https://ntiGideon.github.io/milt/reference/milt_step_diff.md),
-[`milt_step_fourier()`](https://ntiGideon.github.io/milt/reference/milt_step_fourier.md),
-[`milt_step_lag()`](https://ntiGideon.github.io/milt/reference/milt_step_lag.md),
-[`milt_step_map()`](https://ntiGideon.github.io/milt/reference/milt_step_map.md),
-[`milt_step_rolling()`](https://ntiGideon.github.io/milt/reference/milt_step_rolling.md),
-[`milt_step_scale()`](https://ntiGideon.github.io/milt/reference/milt_step_scale.md),
-[`milt_step_unboxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_unboxcox.md),
-[`milt_step_undiff()`](https://ntiGideon.github.io/milt/reference/milt_step_undiff.md),
-[`milt_step_unscale()`](https://ntiGideon.github.io/milt/reference/milt_step_unscale.md)
+[`milt_step_boxcox()`](https://ntigideon.github.io/milt/reference/milt_step_boxcox.md),
+[`milt_step_diff()`](https://ntigideon.github.io/milt/reference/milt_step_diff.md),
+[`milt_step_fourier()`](https://ntigideon.github.io/milt/reference/milt_step_fourier.md),
+[`milt_step_lag()`](https://ntigideon.github.io/milt/reference/milt_step_lag.md),
+[`milt_step_map()`](https://ntigideon.github.io/milt/reference/milt_step_map.md),
+[`milt_step_rolling()`](https://ntigideon.github.io/milt/reference/milt_step_rolling.md),
+[`milt_step_scale()`](https://ntigideon.github.io/milt/reference/milt_step_scale.md),
+[`milt_step_unboxcox()`](https://ntigideon.github.io/milt/reference/milt_step_unboxcox.md),
+[`milt_step_undiff()`](https://ntigideon.github.io/milt/reference/milt_step_undiff.md),
+[`milt_step_unscale()`](https://ntigideon.github.io/milt/reference/milt_step_unscale.md)
 
 ## Examples
 

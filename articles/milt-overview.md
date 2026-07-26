@@ -44,7 +44,7 @@ easier to:
 
 ## Main object model
 
-The package is centered on a small set of reusable objects.
+The package is centred on a small set of reusable objects.
 
 ### `MiltSeries`
 
@@ -445,7 +445,7 @@ print(eda)
 ### Explainability
 
 For supported model types,
-[`milt_explain()`](https://ntiGideon.github.io/milt/reference/milt_explain.md)
+[`milt_explain()`](https://ntigideon.github.io/milt/reference/milt_explain.md)
 provides feature-importance style summaries and plots.
 
 ``` r
@@ -457,7 +457,8 @@ plot(exp)
 
 ## Anomaly detection and changepoints
 
-`milt` also includes detection workflows for unusual behavior in series.
+`milt` also includes detection workflows for unusual behaviour in
+series.
 
 ``` r
 
@@ -510,12 +511,12 @@ rest of the package.
 
 The package includes several operational helpers:
 
-- [`milt_save()`](https://ntiGideon.github.io/milt/reference/milt_save.md)
+- [`milt_save()`](https://ntigideon.github.io/milt/reference/milt_save.md)
   and
-  [`milt_load()`](https://ntiGideon.github.io/milt/reference/milt_load.md)
-- [`milt_serve()`](https://ntiGideon.github.io/milt/reference/milt_serve.md)
-- [`milt_dashboard()`](https://ntiGideon.github.io/milt/reference/milt_dashboard.md)
-- [`milt_report()`](https://ntiGideon.github.io/milt/reference/milt_report.md)
+  [`milt_load()`](https://ntigideon.github.io/milt/reference/milt_load.md)
+- [`milt_serve()`](https://ntigideon.github.io/milt/reference/milt_serve.md)
+- [`milt_dashboard()`](https://ntigideon.github.io/milt/reference/milt_dashboard.md)
+- [`milt_report()`](https://ntigideon.github.io/milt/reference/milt_report.md)
 
 This makes the package useful beyond experimentation. The intended scope
 covers development, validation, and handoff or delivery workflows as

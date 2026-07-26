@@ -2,7 +2,7 @@
 
 Stores per-model backtest results and provides a ranked summary table.
 Produced by
-[`milt_compare()`](https://ntiGideon.github.io/milt/reference/milt_compare.md).
+[`milt_compare()`](https://ntigideon.github.io/milt/reference/milt_compare.md).
 Use [`print()`](https://rdrr.io/r/base/print.html),
 [`plot()`](https://rdrr.io/r/graphics/plot.default.html), or
 `as_tibble()` to inspect results.
@@ -28,7 +28,7 @@ Use [`print()`](https://rdrr.io/r/base/print.html),
 ### `MiltComparison$new()`
 
 Initialise (called by
-[`milt_compare()`](https://ntiGideon.github.io/milt/reference/milt_compare.md)).
+[`milt_compare()`](https://ntigideon.github.io/milt/reference/milt_compare.md)).
 
 #### Usage
 

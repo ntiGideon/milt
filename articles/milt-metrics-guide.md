@@ -10,19 +10,19 @@ when to use it, and what its weaknesses are.
 
 | Function | Name | Scale-free? | Requires training? | Notes |
 |----|----|----|----|----|
-| [`milt_mae()`](https://ntiGideon.github.io/milt/reference/milt_mae.md) | MAE | No | No | Robust to outliers |
-| [`milt_mse()`](https://ntiGideon.github.io/milt/reference/milt_mse.md) | MSE | No | No | Sensitive to large errors |
-| [`milt_rmse()`](https://ntiGideon.github.io/milt/reference/milt_rmse.md) | RMSE | No | No | Same units as data |
-| [`milt_mape()`](https://ntiGideon.github.io/milt/reference/milt_mape.md) | MAPE | Yes | No | Undefined when actual = 0 |
-| [`milt_smape()`](https://ntiGideon.github.io/milt/reference/milt_smape.md) | sMAPE | Yes | No | Bounded in \[0, 2\] |
-| [`milt_mase()`](https://ntiGideon.github.io/milt/reference/milt_mase.md) | MASE | Yes | Yes | Best for cross-series comparison |
-| [`milt_rmsse()`](https://ntiGideon.github.io/milt/reference/milt_rmsse.md) | RMSSE | Yes | Yes | RMSE analogue of MASE |
-| [`milt_mrae()`](https://ntiGideon.github.io/milt/reference/milt_mrae.md) | MRAE | Yes | No | Relative to a benchmark |
-| [`milt_r_squared()`](https://ntiGideon.github.io/milt/reference/milt_r_squared.md) | R² | Yes | No | Can be negative |
-| [`milt_crps()`](https://ntiGideon.github.io/milt/reference/milt_crps.md) | CRPS | No | No | Distributional forecast |
-| [`milt_pinball()`](https://ntiGideon.github.io/milt/reference/milt_pinball.md) | Pinball loss | No | No | Quantile forecast |
-| [`milt_winkler()`](https://ntiGideon.github.io/milt/reference/milt_winkler.md) | Winkler score | No | No | Prediction interval |
-| [`milt_coverage()`](https://ntiGideon.github.io/milt/reference/milt_coverage.md) | Coverage | Yes | No | Interval calibration |
+| [`milt_mae()`](https://ntigideon.github.io/milt/reference/milt_mae.md) | MAE | No | No | Robust to outliers |
+| [`milt_mse()`](https://ntigideon.github.io/milt/reference/milt_mse.md) | MSE | No | No | Sensitive to large errors |
+| [`milt_rmse()`](https://ntigideon.github.io/milt/reference/milt_rmse.md) | RMSE | No | No | Same units as data |
+| [`milt_mape()`](https://ntigideon.github.io/milt/reference/milt_mape.md) | MAPE | Yes | No | Undefined when actual = 0 |
+| [`milt_smape()`](https://ntigideon.github.io/milt/reference/milt_smape.md) | sMAPE | Yes | No | Bounded in \[0, 2\] |
+| [`milt_mase()`](https://ntigideon.github.io/milt/reference/milt_mase.md) | MASE | Yes | Yes | Best for cross-series comparison |
+| [`milt_rmsse()`](https://ntigideon.github.io/milt/reference/milt_rmsse.md) | RMSSE | Yes | Yes | RMSE analogue of MASE |
+| [`milt_mrae()`](https://ntigideon.github.io/milt/reference/milt_mrae.md) | MRAE | Yes | No | Relative to a benchmark |
+| [`milt_r_squared()`](https://ntigideon.github.io/milt/reference/milt_r_squared.md) | R² | Yes | No | Can be negative |
+| [`milt_crps()`](https://ntigideon.github.io/milt/reference/milt_crps.md) | CRPS | No | No | Distributional forecast |
+| [`milt_pinball()`](https://ntigideon.github.io/milt/reference/milt_pinball.md) | Pinball loss | No | No | Quantile forecast |
+| [`milt_winkler()`](https://ntigideon.github.io/milt/reference/milt_winkler.md) | Winkler score | No | No | Prediction interval |
+| [`milt_coverage()`](https://ntigideon.github.io/milt/reference/milt_coverage.md) | Coverage | Yes | No | Interval calibration |
 
 ------------------------------------------------------------------------
 
@@ -223,7 +223,7 @@ milt_mase(test_data, fc_naive, training = train_data, season = 12L)
 ```
 
 Same signature as
-[`milt_mase()`](https://ntiGideon.github.io/milt/reference/milt_mase.md).
+[`milt_mase()`](https://ntigideon.github.io/milt/reference/milt_mase.md).
 
 **Interpretation:** the RMSE analogue of MASE. Values \< 1 indicate
 better-than-naive performance. RMSSE penalises large errors more than
@@ -288,7 +288,7 @@ milt_r_squared(actual, predicted)
 
 ## 2. Aggregate Accuracy — `milt_accuracy()`
 
-[`milt_accuracy()`](https://ntiGideon.github.io/milt/reference/milt_accuracy.md)
+[`milt_accuracy()`](https://ntigideon.github.io/milt/reference/milt_accuracy.md)
 computes multiple metrics at once for a fitted model or backtest result:
 
 ``` r
@@ -496,10 +496,10 @@ milt_coverage(actual_vals, lower_80, upper_80)
 
 ## 5. Using Metrics in Backtesting
 
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md)
-and [`milt_cv()`](https://ntiGideon.github.io/milt/reference/milt_cv.md)
+[`milt_backtest()`](https://ntigideon.github.io/milt/reference/milt_backtest.md)
+and [`milt_cv()`](https://ntigideon.github.io/milt/reference/milt_cv.md)
 return `MiltBacktest` objects. Pass them to
-[`milt_accuracy()`](https://ntiGideon.github.io/milt/reference/milt_accuracy.md)
+[`milt_accuracy()`](https://ntigideon.github.io/milt/reference/milt_accuracy.md)
 to aggregate metrics across all folds:
 
 ``` r
@@ -522,9 +522,9 @@ milt_accuracy(bt)
 
 ## See Also
 
-- [`vignette("milt-forecasting")`](https://ntiGideon.github.io/milt/articles/milt-forecasting.md)
+- [`vignette("milt-forecasting")`](https://ntigideon.github.io/milt/articles/milt-forecasting.md)
   — fitting models and obtaining forecasts
-- [`vignette("milt-model-reference")`](https://ntiGideon.github.io/milt/articles/milt-model-reference.md)
+- [`vignette("milt-model-reference")`](https://ntigideon.github.io/milt/articles/milt-model-reference.md)
   — full model parameter reference
-- [`vignette("milt-eda-diagnostics")`](https://ntiGideon.github.io/milt/articles/milt-eda-diagnostics.md)
+- [`vignette("milt-eda-diagnostics")`](https://ntigideon.github.io/milt/articles/milt-eda-diagnostics.md)
   — pre-modelling diagnostics

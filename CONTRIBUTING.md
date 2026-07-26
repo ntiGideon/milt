@@ -3,7 +3,7 @@
 Thank you for considering a contribution to **milt**. This document
 covers the mechanics of making a pull request, writing tests, and
 following the project’s coding standards. Please also read the [Code of
-Conduct](https://ntiGideon.github.io/milt/CODE_OF_CONDUCT.md).
+Conduct](https://ntigideon.github.io/milt/CODE_OF_CONDUCT.md).
 
 ------------------------------------------------------------------------
 
@@ -29,9 +29,9 @@ Rscript -e "devtools::check()"
 ## What to work on
 
 - **Bug reports** — search existing
-  [issues](https://github.com/gideon-ntiboateng/milt/issues) first. If
-  your bug isn’t there, open one with the *bug report* template before
-  submitting a fix.
+  [issues](https://github.com/ntiGideon/milt/issues) first. If your bug
+  isn’t there, open one with the *bug report* template before submitting
+  a fix.
 - **Feature requests** — open a *feature request* issue first so we can
   discuss the design before you invest time writing code.
 - **Documentation** — typos, clarifications, and new examples are always
@@ -157,6 +157,5 @@ Example:
 
 ## Getting help
 
-Open a
-[discussion](https://github.com/gideon-ntiboateng/milt/discussions) for
-questions that don’t fit into a bug report or feature request.
+Open an [issue](https://github.com/ntiGideon/milt/issues) for questions
+that don’t fit into a bug report or feature request.

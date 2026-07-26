@@ -14,7 +14,7 @@ register_milt_model(name, class, description = "", supports = list())
 - name:
 
   Character scalar. The model identifier passed to
-  [`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md).
+  [`milt_model()`](https://ntigideon.github.io/milt/reference/milt_model.md).
 
 - class:
 
@@ -23,7 +23,7 @@ register_milt_model(name, class, description = "", supports = list())
 - description:
 
   One-sentence description shown in
-  [`list_milt_models()`](https://ntiGideon.github.io/milt/reference/list_milt_models.md).
+  [`list_milt_models()`](https://ntigideon.github.io/milt/reference/list_milt_models.md).
 
 - supports:
 

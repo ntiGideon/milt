@@ -47,10 +47,10 @@ The dashboard provides four tabs:
 
 ## See also
 
-[`milt_serve()`](https://ntiGideon.github.io/milt/reference/milt_serve.md)
+[`milt_serve()`](https://ntigideon.github.io/milt/reference/milt_serve.md)
 
 Other deploy:
-[`milt_serve()`](https://ntiGideon.github.io/milt/reference/milt_serve.md)
+[`milt_serve()`](https://ntigideon.github.io/milt/reference/milt_serve.md)
 
 ## Examples
 

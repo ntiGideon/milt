@@ -46,11 +46,11 @@ The `plumber` router object (invisibly when `launch = TRUE`).
 
 ## See also
 
-[`milt_save()`](https://ntiGideon.github.io/milt/reference/milt_save.md),
-[`milt_dashboard()`](https://ntiGideon.github.io/milt/reference/milt_dashboard.md)
+[`milt_save()`](https://ntigideon.github.io/milt/reference/milt_save.md),
+[`milt_dashboard()`](https://ntigideon.github.io/milt/reference/milt_dashboard.md)
 
 Other deploy:
-[`milt_dashboard()`](https://ntiGideon.github.io/milt/reference/milt_dashboard.md)
+[`milt_dashboard()`](https://ntigideon.github.io/milt/reference/milt_dashboard.md)
 
 ## Examples
 
