@@ -28,8 +28,22 @@ Create and manipulate MiltSeries objects
   : Convert a MiltSeries to a base R ts object
 - [`milt_to_tsibble()`](https://ntiGideon.github.io/milt/reference/milt_to_tsibble.md)
   : Convert a MiltSeries to a tsibble
+- [`milt_read_parquet()`](https://ntiGideon.github.io/milt/reference/milt_read_parquet.md)
+  : Read a MiltSeries from a Parquet file
+- [`milt_write_parquet()`](https://ntiGideon.github.io/milt/reference/milt_write_parquet.md)
+  : Write a MiltSeries to a Parquet file
+- [`milt_stack()`](https://ntiGideon.github.io/milt/reference/milt_stack.md)
+  : Stack MiltSeries into one multivariate series
+- [`milt_add_datetime_component()`](https://ntiGideon.github.io/milt/reference/milt_add_datetime_component.md)
+  : Add a datetime attribute as a new series component
+- [`milt_add_holidays()`](https://ntiGideon.github.io/milt/reference/milt_add_holidays.md)
+  : Add a binary holidays component
+- [`milt_check_seasonality()`](https://ntiGideon.github.io/milt/reference/milt_check_seasonality.md)
+  : Check whether a series has a significant seasonal period
 - [`` `[`( ``*`<MiltSeries>`*`)`](https://ntiGideon.github.io/milt/reference/sub-.MiltSeries.md)
   : Subset a MiltSeries by row index
+- [`Ops(`*`<MiltSeries>`*`)`](https://ntiGideon.github.io/milt/reference/Ops.MiltSeries.md)
+  : Arithmetic operators for MiltSeries
 
 ## Models
 
@@ -59,6 +73,14 @@ Train and forecast with time series models
   : Create an ensemble milt model
 - [`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md)
   : Create a local (per-group) model for multi-series forecasting
+- [`milt_global_model()`](https://ntiGideon.github.io/milt/reference/milt_global_model.md)
+  : Fit one shared model across every group of a multi-series MiltSeries
+- [`milt_grid_search()`](https://ntiGideon.github.io/milt/reference/milt_grid_search.md)
+  : Grid search over a model's hyperparameters via backtesting
+- [`milt_conformal()`](https://ntiGideon.github.io/milt/reference/milt_conformal.md)
+  : Wrap a milt model with conformal prediction intervals
+- [`milt_filter()`](https://ntiGideon.github.io/milt/reference/milt_filter.md)
+  : Apply a filtering model to smooth a MiltSeries
 
 ## Feature Engineering
 
@@ -97,6 +119,16 @@ Build lag, rolling, calendar, and pipeline features
   : Scale a time series
 - [`milt_step_unscale()`](https://ntiGideon.github.io/milt/reference/milt_step_unscale.md)
   : Invert a scaling step on a time series
+- [`milt_step_boxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_boxcox.md)
+  : Box-Cox power-transform a time series
+- [`milt_step_unboxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_unboxcox.md)
+  : Invert a Box-Cox transform on a time series
+- [`milt_step_diff()`](https://ntiGideon.github.io/milt/reference/milt_step_diff.md)
+  : Difference a time series
+- [`milt_step_undiff()`](https://ntiGideon.github.io/milt/reference/milt_step_undiff.md)
+  : Invert a differencing step on a time series
+- [`milt_step_map()`](https://ntiGideon.github.io/milt/reference/milt_step_map.md)
+  : Apply an arbitrary elementwise function to a time series
 
 ## Anomaly Detection
 
@@ -108,6 +140,12 @@ Detect outliers and anomalies in time series
   : Detect anomalies in a time series
 - [`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md)
   : Detect changepoints in a time series
+- [`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md)
+  : Wrap a model with residual-based anomaly detection
+- [`milt_anomaly_score()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_score.md)
+  : Compute a per-timestep anomaly score from residuals
+- [`milt_detect_anomalies()`](https://ntiGideon.github.io/milt/reference/milt_detect_anomalies.md)
+  : Detect anomalies from a fitted MiltAnomalyModel
 
 ## Multi-Series And Hierarchies
 
@@ -191,6 +229,16 @@ Forecast accuracy and probabilistic scoring metrics
   : Mean Relative Absolute Error
 - [`milt_r_squared()`](https://ntiGideon.github.io/milt/reference/milt_r_squared.md)
   : Coefficient of Determination (R^2)
+- [`milt_wmape()`](https://ntiGideon.github.io/milt/reference/milt_wmape.md)
+  : Weighted Mean Absolute Percentage Error
+- [`milt_ope()`](https://ntiGideon.github.io/milt/reference/milt_ope.md)
+  : Overall Percentage Error
+- [`milt_coefficient_of_variation()`](https://ntiGideon.github.io/milt/reference/milt_coefficient_of_variation.md)
+  : Coefficient of Variation of the RMSE
+- [`milt_marre()`](https://ntiGideon.github.io/milt/reference/milt_marre.md)
+  : Mean Absolute Ranged Relative Error
+- [`milt_rmsle()`](https://ntiGideon.github.io/milt/reference/milt_rmsle.md)
+  : Root Mean Squared Log Error
 - [`milt_coverage()`](https://ntiGideon.github.io/milt/reference/milt_coverage.md)
   : Prediction Interval Coverage
 - [`milt_crps()`](https://ntiGideon.github.io/milt/reference/milt_crps.md)
@@ -255,14 +303,24 @@ Documented S3 methods for printed, plotted, and summary outputs
   : Coerce a MiltComparison to a tibble
 - [`as_tibble(`*`<MiltForecast>`*`)`](https://ntiGideon.github.io/milt/reference/as_tibble.MiltForecast.md)
   : Convert a MiltForecast to a tibble
+- [`as.data.table(`*`<MiltAnomalies>`*`)`](https://ntiGideon.github.io/milt/reference/as.data.table.MiltAnomalies.md)
+  : Convert MiltAnomalies to a data.table
+- [`as.data.table(`*`<MiltForecast>`*`)`](https://ntiGideon.github.io/milt/reference/as.data.table.MiltForecast.md)
+  : Convert a MiltForecast to a data.table
+- [`as.data.table(`*`<MiltSeries>`*`)`](https://ntiGideon.github.io/milt/reference/as.data.table.MiltSeries.md)
+  : Convert a MiltSeries to a data.table
 - [`plot(`*`<MiltAnomalies>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltAnomalies.md)
   : Plot a MiltAnomalies object
 - [`plot(`*`<MiltBacktest>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltBacktest.md)
   : Plot a MiltBacktest
+- [`plot(`*`<MiltClusters>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltClusters.md)
+  : Plot a MiltClusters object
 - [`plot(`*`<MiltComparison>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltComparison.md)
   : Plot a MiltComparison
 - [`plot(`*`<MiltDiagnosis>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltDiagnosis.md)
   : Plot a MiltDiagnosis
+- [`plot(`*`<MiltEDA>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltEDA.md)
+  : Plot a MiltEDA object
 - [`plot(`*`<MiltForecast>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltForecast.md)
   : Plot a MiltForecast
 - [`plot(`*`<MiltSeries>`*`)`](https://ntiGideon.github.io/milt/reference/plot.MiltSeries.md)

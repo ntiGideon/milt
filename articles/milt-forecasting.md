@@ -1,6 +1,7 @@
 # Forecasting with milt
 
 ``` r
+
 library(milt)
 #> milt 0.1.0 — Modern Integrated Library for Timeseries
 #> Use `list_milt_models()` to see available models.
@@ -13,6 +14,7 @@ classical statistical models to machine learning and ensembles — using a
 single consistent API.
 
 ``` r
+
 milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon = 12)
 ```
 
@@ -23,21 +25,22 @@ milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon = 12)
 List every registered model:
 
 ``` r
+
 list_milt_models()
-#> # A tibble: 25 × 6
-#>    name           description multivariate probabilistic covariates multi_series
-#>    <chr>          <chr>       <lgl>        <lgl>         <lgl>      <lgl>       
-#>  1 snaive         "Seasonal … FALSE        TRUE          FALSE      FALSE       
-#>  2 ets            "Exponenti… FALSE        TRUE          FALSE      FALSE       
-#>  3 nbeats         ""          FALSE        FALSE         FALSE      FALSE       
-#>  4 auto_arima     "Automatic… FALSE        TRUE          TRUE       FALSE       
-#>  5 knn            "K-Nearest… FALSE        TRUE          FALSE      FALSE       
-#>  6 svm            "Support V… FALSE        TRUE          FALSE      FALSE       
-#>  7 stl            "STL decom… FALSE        TRUE          FALSE      FALSE       
-#>  8 elastic_net    ""          FALSE        FALSE         FALSE      FALSE       
-#>  9 deepar         ""          FALSE        FALSE         FALSE      FALSE       
-#> 10 darts_transfo… ""          FALSE        FALSE         FALSE      FALSE       
-#> # ℹ 15 more rows
+#> # A tibble: 31 × 6
+#>    name        description    multivariate probabilistic covariates multi_series
+#>    <chr>       <chr>          <lgl>        <lgl>         <lgl>      <lgl>       
+#>  1 snaive      "Seasonal Nai… FALSE        TRUE          FALSE      FALSE       
+#>  2 knn         "K-Nearest Ne… FALSE        TRUE          FALSE      FALSE       
+#>  3 ets         "Exponential … FALSE        TRUE          FALSE      FALSE       
+#>  4 nbeats      ""             FALSE        FALSE         FALSE      FALSE       
+#>  5 auto_arima  "Automatic AR… FALSE        TRUE          TRUE       FALSE       
+#>  6 svm         "Support Vect… FALSE        TRUE          FALSE      FALSE       
+#>  7 stl         "STL decompos… FALSE        TRUE          FALSE      FALSE       
+#>  8 elastic_net ""             FALSE        FALSE         FALSE      FALSE       
+#>  9 dlinear     ""             FALSE        FALSE         FALSE      FALSE       
+#> 10 deepar      ""             FALSE        FALSE         FALSE      FALSE       
+#> # ℹ 21 more rows
 ```
 
 ------------------------------------------------------------------------
@@ -45,6 +48,7 @@ list_milt_models()
 ## 2. Classical models
 
 ``` r
+
 air <- milt_series(AirPassengers)
 
 # Auto-ARIMA
@@ -58,10 +62,11 @@ plot(fct_arima)
 
 ``` r
 
+
 # ETS
 fct_ets <- milt_model("ets") |> milt_fit(air) |> milt_forecast(24)
 #> Fitting <MiltEts> model…
-#> Done in 0.62s.
+#> Done in 0.55s.
 plot(fct_ets)
 ```
 
@@ -72,6 +77,7 @@ plot(fct_ets)
 ## 3. Train/test evaluation
 
 ``` r
+
 spl <- milt_split(air, ratio = 0.8)
 h   <- spl$test$n_timesteps()
 
@@ -79,17 +85,21 @@ fct_cv <- milt_model("ets") |>
   milt_fit(spl$train) |>
   milt_forecast(h)
 #> Fitting <MiltEts> model…
-#> Done in 0.58s.
+#> Done in 0.53s.
 
 milt_accuracy(spl$test$values(), fct_cv$as_tibble()$.mean)
-#> # A tibble: 5 × 2
+#> # A tibble: 9 × 2
 #>   metric     value
 #>   <chr>      <dbl>
 #> 1 MAE      30.0   
 #> 2 MSE    1282.    
 #> 3 RMSE     35.8   
 #> 4 MAPE      0.0653
-#> 5 R2        0.790
+#> 5 R2        0.790 
+#> 6 WMAPE     0.0681
+#> 7 OPE       0.0361
+#> 8 CV        0.0813
+#> 9 MARRE     0.0961
 ```
 
 ------------------------------------------------------------------------
@@ -100,6 +110,7 @@ XGBoost, LightGBM, random forest, and elastic net all use automatic lag
 features. You can customise the lags:
 
 ``` r
+
 fct_xgb <- milt_model("xgboost", lags = 1:12) |>
   milt_fit(air) |>
   milt_forecast(12)
@@ -118,6 +129,7 @@ plot(fct_xgb)
 runs a rolling-origin backtest on each model and ranks them:
 
 ``` r
+
 models <- list(
   arima  = milt_model("auto_arima"),
   ets    = milt_model("ets"),
@@ -229,12 +241,13 @@ plot(cmp)
 Combine forecasts with a mean ensemble:
 
 ``` r
+
 m1 <- milt_model("auto_arima") |> milt_fit(air)
 #> Fitting <MiltAutoArima> model…
 #> Done in 1.23s.
 m2 <- milt_model("ets")        |> milt_fit(air)
 #> Fitting <MiltEts> model…
-#> Done in 0.63s.
+#> Done in 0.55s.
 m3 <- milt_model("naive")      |> milt_fit(air)
 #> Fitting <MiltNaive> model…
 #> Done in 0s.
@@ -254,6 +267,7 @@ Every model returns 80% and 95% prediction intervals. Access them via
 `as_tibble()`:
 
 ``` r
+
 tbl <- fct_arima$as_tibble()
 head(tbl)
 #> # A tibble: 6 × 7
@@ -270,6 +284,7 @@ head(tbl)
 For sample-path–based probabilistic forecasts, use `num_samples`:
 
 ``` r
+
 fct_samples <- milt_model("naive") |>
   milt_fit(air) |>
   milt_forecast(12, num_samples = 200)
@@ -283,6 +298,7 @@ fct_samples <- milt_model("naive") |>
 implements expanding- and sliding-window CV:
 
 ``` r
+
 bt <- milt_backtest(
   milt_model("ets"),
   series  = air,

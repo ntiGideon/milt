@@ -1,6 +1,7 @@
 # Building Pipelines with milt
 
 ``` r
+
 library(milt)
 #> milt 0.1.0 — Modern Integrated Library for Timeseries
 #> Use `list_milt_models()` to see available models.
@@ -17,6 +18,7 @@ native pipe `|>`.
 ## 1. Lag features
 
 ``` r
+
 air    <- milt_series(AirPassengers)
 air_lg <- milt_step_lag(air, lags = 1:12)
 print(air_lg)
@@ -42,6 +44,7 @@ print(air_lg)
 ## 2. Rolling statistics
 
 ``` r
+
 air_roll <- milt_step_rolling(air, windows = c(3, 6, 12), fns = c("mean", "sd"))
 print(air_roll)
 #> # A MiltSeries: 133 x 1 [monthly]
@@ -68,6 +71,7 @@ print(air_roll)
 Fourier terms capture complex seasonality:
 
 ``` r
+
 air_f <- milt_step_fourier(air, period = 12, K = 3)
 print(air_f)
 #> # A MiltSeries: 144 x 1 [monthly]
@@ -92,6 +96,7 @@ print(air_f)
 ## 4. Calendar features
 
 ``` r
+
 tbl <- tibble::tibble(
   date  = seq(as.Date("2020-01-01"), by = "day", length.out = 365),
   value = rnorm(365, 100, 10)
@@ -125,6 +130,7 @@ print(s_cal)
 normalises values and returns an invertible step object:
 
 ``` r
+
 out       <- milt_step_scale(air, method = "zscore")
 air_z     <- out$series    # scaled MiltSeries
 scaler    <- out$step      # MiltScaleStep — keeps centering/scaling params
@@ -150,6 +156,7 @@ cat("Restored max:", max(air_back$values()), "\n")
 Steps compose with `|>`:
 
 ``` r
+
 air_features <- air |>
   milt_step_lag(lags = 1:6)   |>
   milt_step_rolling(windows = 3, fns = "mean") |>
@@ -179,6 +186,7 @@ print(air_features)
 ## 7. Using features with an ML model
 
 ``` r
+
 # Scale → fit → forecast
 scaled_out <- milt_step_scale(air, method = "zscore")
 air_scaled <- scaled_out$series
@@ -204,9 +212,10 @@ print(round(fct_vals_orig, 1))
 After fitting an ML model, inspect feature importance:
 
 ``` r
+
 m   <- milt_model("xgboost", lags = 1:12) |> milt_fit(air)
 #> Fitting <MiltXGBoost> model…
-#> Done in 0.04s.
+#> Done in 0.05s.
 exp <- milt_explain(m)
 print(exp)
 #> # MiltExplanation [xgboost]

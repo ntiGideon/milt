@@ -1,6 +1,7 @@
 # Getting Started with milt
 
 ``` r
+
 library(milt)
 #> milt 0.1.0 — Modern Integrated Library for Timeseries
 #> Use `list_milt_models()` to see available models.
@@ -14,6 +15,7 @@ detection, classification, and clustering. Every model follows the same
 three-step pipe:
 
 ``` r
+
 milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon)
 ```
 
@@ -29,6 +31,7 @@ accepts virtually any R time series object: a `ts`, a `data.frame`, a
 `tibble`, an `xts`, a `tsibble`, or a plain numeric vector.
 
 ``` r
+
 # From a base-R ts object
 air <- milt_series(AirPassengers)
 print(air)
@@ -51,6 +54,7 @@ print(air)
 You can also build a series from a tibble and control every option:
 
 ``` r
+
 data(milt_air)
 air2 <- milt_series(
   milt_air,
@@ -63,6 +67,7 @@ air2 <- milt_series(
 Key accessors on a `MiltSeries`:
 
 ``` r
+
 air$n_timesteps()   # number of observations
 #> [1] 144
 air$freq()          # detected frequency label
@@ -91,6 +96,7 @@ runs a quick statistical battery: trend test, stationarity check,
 seasonality strength, and outlier count.
 
 ``` r
+
 dx <- milt_diagnose(air)
 print(dx)
 #> # MiltDiagnosis
@@ -113,6 +119,7 @@ to train it, and
 to produce point forecasts plus 80% and 95% prediction intervals.
 
 ``` r
+
 fct <- milt_model("naive") |>
   milt_fit(air) |>
   milt_forecast(horizon = 24)
@@ -137,6 +144,7 @@ The result is a `MiltForecast` object. Convert it to a tibble for
 downstream work:
 
 ``` r
+
 head(fct$as_tibble())
 #> # A tibble: 6 × 7
 #>   time       .model .mean .lower_80 .upper_80 .lower_95 .upper_95
@@ -152,6 +160,7 @@ head(fct$as_tibble())
 Plot the forecast with history:
 
 ``` r
+
 plot(fct)
 ```
 
@@ -160,21 +169,22 @@ plot(fct)
 ### Choosing a model
 
 ``` r
+
 list_milt_models()
-#> # A tibble: 25 × 6
-#>    name           description multivariate probabilistic covariates multi_series
-#>    <chr>          <chr>       <lgl>        <lgl>         <lgl>      <lgl>       
-#>  1 snaive         "Seasonal … FALSE        TRUE          FALSE      FALSE       
-#>  2 ets            "Exponenti… FALSE        TRUE          FALSE      FALSE       
-#>  3 nbeats         ""          FALSE        FALSE         FALSE      FALSE       
-#>  4 auto_arima     "Automatic… FALSE        TRUE          TRUE       FALSE       
-#>  5 knn            "K-Nearest… FALSE        TRUE          FALSE      FALSE       
-#>  6 svm            "Support V… FALSE        TRUE          FALSE      FALSE       
-#>  7 stl            "STL decom… FALSE        TRUE          FALSE      FALSE       
-#>  8 elastic_net    ""          FALSE        FALSE         FALSE      FALSE       
-#>  9 deepar         ""          FALSE        FALSE         FALSE      FALSE       
-#> 10 darts_transfo… ""          FALSE        FALSE         FALSE      FALSE       
-#> # ℹ 15 more rows
+#> # A tibble: 31 × 6
+#>    name        description    multivariate probabilistic covariates multi_series
+#>    <chr>       <chr>          <lgl>        <lgl>         <lgl>      <lgl>       
+#>  1 snaive      "Seasonal Nai… FALSE        TRUE          FALSE      FALSE       
+#>  2 knn         "K-Nearest Ne… FALSE        TRUE          FALSE      FALSE       
+#>  3 ets         "Exponential … FALSE        TRUE          FALSE      FALSE       
+#>  4 nbeats      ""             FALSE        FALSE         FALSE      FALSE       
+#>  5 auto_arima  "Automatic AR… FALSE        TRUE          TRUE       FALSE       
+#>  6 svm         "Support Vect… FALSE        TRUE          FALSE      FALSE       
+#>  7 stl         "STL decompos… FALSE        TRUE          FALSE      FALSE       
+#>  8 elastic_net ""             FALSE        FALSE         FALSE      FALSE       
+#>  9 dlinear     ""             FALSE        FALSE         FALSE      FALSE       
+#> 10 deepar      ""             FALSE        FALSE         FALSE      FALSE       
+#> # ℹ 21 more rows
 ```
 
 Swap `"naive"` for any registered key. Models backed by the `forecast`
@@ -182,11 +192,12 @@ package (ETS, ARIMA, Theta, STL) are loaded lazily and only require the
 `forecast` package to be installed.
 
 ``` r
+
 fct_ets <- milt_model("ets") |>
   milt_fit(air) |>
   milt_forecast(horizon = 24)
 #> Fitting <MiltEts> model…
-#> Done in 0.62s.
+#> Done in 0.55s.
 
 plot(fct_ets)
 ```
@@ -201,6 +212,7 @@ Split the series into training and test sets, forecast over the test
 horizon, and compute accuracy metrics:
 
 ``` r
+
 spl <- milt_split(air, ratio = 0.8)   # 80 % train, 20 % test
 
 fct_test <- milt_model("naive") |>
@@ -214,7 +226,7 @@ acc <- milt_accuracy(
   predicted = fct_test$as_tibble()$.mean
 )
 print(acc)
-#> # A tibble: 5 × 2
+#> # A tibble: 9 × 2
 #>   metric    value
 #>   <chr>     <dbl>
 #> 1 MAE      81.4  
@@ -222,6 +234,10 @@ print(acc)
 #> 3 RMSE     93.1  
 #> 4 MAPE      0.202
 #> 5 R2       -0.421
+#> 6 WMAPE     0.185
+#> 7 OPE       0.115
+#> 8 CV        0.212
+#> 9 MARRE     0.261
 ```
 
 ------------------------------------------------------------------------
@@ -236,6 +252,7 @@ strategies are supported:
 - **sliding** — a fixed-size training window advances by `stride` steps.
 
 ``` r
+
 bt <- milt_backtest(
   model          = milt_model("naive"),
   series         = air,
@@ -268,6 +285,7 @@ plot(bt)
 Retrieve per-fold results as a tibble:
 
 ``` r
+
 tibble::as_tibble(bt)
 #> # A tibble: 3 × 5
 #>   .fold .train_n .test_n  .MAE .RMSE
@@ -282,6 +300,7 @@ tibble::as_tibble(bt)
 ## 6. Handling gaps and missing data
 
 ``` r
+
 # Detect and fill gaps with linear interpolation
 air_gapped <- air   # hypothetical series with missing values
 air_filled <- milt_fill_gaps(air_gapped, method = "linear")
@@ -295,6 +314,7 @@ Other imputation methods: `"spline"`, `"locf"`, `"nocb"`, `"mean"`,
 ## 7. Series manipulation
 
 ``` r
+
 # Subset to 1955-1960
 air_55 <- milt_window(air,
                       start = as.Date("1955-01-01"),

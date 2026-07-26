@@ -52,17 +52,22 @@ Requires the `CausalImpact` package (\>= 1.2.7).
 [`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md)
 
 Other anomaly:
+[`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md),
+[`milt_anomaly_score()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_score.md),
 [`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md),
 [`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md),
+[`milt_detect_anomalies()`](https://ntiGideon.github.io/milt/reference/milt_detect_anomalies.md),
 [`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md)
 
 ## Examples
 
 ``` r
 # \donttest{
-s <- milt_series(AirPassengers)
-ci <- milt_causal_impact(s, event_time = as.Date("1956-01-01"))
-plot(ci)
+if (requireNamespace("CausalImpact", quietly = TRUE)) {
+  s <- milt_series(AirPassengers)
+  ci <- milt_causal_impact(s, event_time = as.Date("1956-01-01"))
+  plot(ci)
+}
 #> Warning: A <numeric> value was passed to a Date scale.
 #> ℹ The value was converted to a <Date> object.
 

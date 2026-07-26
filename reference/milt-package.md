@@ -17,3 +17,7 @@ Useful links:
 ## Author
 
 **Maintainer**: Gideon Nti Boateng <gidiboateng200@gmail.com>
+
+Authors:
+
+- Gideon Nti Boateng <gidiboateng200@gmail.com>

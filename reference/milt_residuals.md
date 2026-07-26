@@ -7,8 +7,6 @@ fitted model. Useful for residual diagnostics and assumption checking.
 
 ``` r
 milt_residuals(model, ...)
-
-milt_residuals(model, ...)
 ```
 
 ## Arguments
@@ -24,8 +22,6 @@ milt_residuals(model, ...)
 
 ## Value
 
-A numeric vector of residuals (actual minus fitted).
-
 A numeric vector of residuals with the same length as the training
 series.
 
@@ -37,22 +33,13 @@ series.
 Other model:
 [`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md),
 [`milt_compare()`](https://ntiGideon.github.io/milt/reference/milt_compare.md),
+[`milt_conformal()`](https://ntiGideon.github.io/milt/reference/milt_conformal.md),
 [`milt_cv()`](https://ntiGideon.github.io/milt/reference/milt_cv.md),
 [`milt_ensemble()`](https://ntiGideon.github.io/milt/reference/milt_ensemble.md),
 [`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md),
 [`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md),
-[`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md),
-[`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
-[`milt_predict()`](https://ntiGideon.github.io/milt/reference/milt_predict.md),
-[`milt_refit()`](https://ntiGideon.github.io/milt/reference/milt_refit.md)
-
-Other model:
-[`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md),
-[`milt_compare()`](https://ntiGideon.github.io/milt/reference/milt_compare.md),
-[`milt_cv()`](https://ntiGideon.github.io/milt/reference/milt_cv.md),
-[`milt_ensemble()`](https://ntiGideon.github.io/milt/reference/milt_ensemble.md),
-[`milt_fit()`](https://ntiGideon.github.io/milt/reference/milt_fit.md),
-[`milt_forecast()`](https://ntiGideon.github.io/milt/reference/milt_forecast.md),
+[`milt_global_model()`](https://ntiGideon.github.io/milt/reference/milt_global_model.md),
+[`milt_grid_search()`](https://ntiGideon.github.io/milt/reference/milt_grid_search.md),
 [`milt_local_model()`](https://ntiGideon.github.io/milt/reference/milt_local_model.md),
 [`milt_model()`](https://ntiGideon.github.io/milt/reference/milt_model.md),
 [`milt_predict()`](https://ntiGideon.github.io/milt/reference/milt_predict.md),

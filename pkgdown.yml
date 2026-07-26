@@ -1,5 +1,5 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   milt-anomaly-detection: milt-anomaly-detection.html
@@ -14,7 +14,7 @@ articles:
   milt-overview: milt-overview.html
   milt-pipelines: milt-pipelines.html
   milt-series-api: milt-series-api.html
-last_built: 2026-03-25T14:27Z
+last_built: 2026-07-26T20:03Z
 urls:
   reference: https://ntiGideon.github.io/milt/reference
   article: https://ntiGideon.github.io/milt/articles

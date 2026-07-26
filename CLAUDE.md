@@ -20,6 +20,7 @@ Darts/sktime, but natively in R with a tidyverse-friendly API.
 All commands are run from within R (or RStudio terminal):
 
 ``` r
+
 # Load all package code (primary dev workflow)
 devtools::load_all()
 
@@ -67,6 +68,7 @@ Users should never call `$methods()` directly.
 Every model (classical, ML, deep learning) follows the same pattern:
 
 ``` r
+
 milt_model("auto_arima") |> milt_fit(series) |> milt_forecast(h = 12)
 ```
 

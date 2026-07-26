@@ -30,9 +30,12 @@ A `MiltDetector` object.
 [`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md)
 
 Other anomaly:
+[`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md),
+[`milt_anomaly_score()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_score.md),
 [`milt_causal_impact()`](https://ntiGideon.github.io/milt/reference/milt_causal_impact.md),
 [`milt_changepoints()`](https://ntiGideon.github.io/milt/reference/milt_changepoints.md),
-[`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md)
+[`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md),
+[`milt_detect_anomalies()`](https://ntiGideon.github.io/milt/reference/milt_detect_anomalies.md)
 
 ## Examples
 

@@ -31,13 +31,13 @@ An augmented `MiltSeries` with calendar columns appended. Attribute
 
 The set of columns added adapts automatically to the series frequency:
 
-|                            |                                                                       |
-|----------------------------|-----------------------------------------------------------------------|
-| Frequency                  | Columns added                                                         |
+|  |  |
+|----|----|
+| Frequency | Columns added |
 | monthly, quarterly, annual | `.year`, `.month`, `.quarter`, `.week`, `.day_of_week`, `.is_weekend` |
-| daily                      | \+ `.day_of_month`                                                    |
-| hourly                     | \+ `.hour`                                                            |
-| minutely                   | \+ `.minute`                                                          |
+| daily | \+ `.day_of_month` |
+| hourly | \+ `.hour` |
+| minutely | \+ `.minute` |
 
 ## See also
 
@@ -46,10 +46,15 @@ The set of columns added adapts automatically to the series frequency:
 [`milt_step_fourier()`](https://ntiGideon.github.io/milt/reference/milt_step_fourier.md)
 
 Other features:
+[`milt_step_boxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_boxcox.md),
+[`milt_step_diff()`](https://ntiGideon.github.io/milt/reference/milt_step_diff.md),
 [`milt_step_fourier()`](https://ntiGideon.github.io/milt/reference/milt_step_fourier.md),
 [`milt_step_lag()`](https://ntiGideon.github.io/milt/reference/milt_step_lag.md),
+[`milt_step_map()`](https://ntiGideon.github.io/milt/reference/milt_step_map.md),
 [`milt_step_rolling()`](https://ntiGideon.github.io/milt/reference/milt_step_rolling.md),
 [`milt_step_scale()`](https://ntiGideon.github.io/milt/reference/milt_step_scale.md),
+[`milt_step_unboxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_unboxcox.md),
+[`milt_step_undiff()`](https://ntiGideon.github.io/milt/reference/milt_step_undiff.md),
 [`milt_step_unscale()`](https://ntiGideon.github.io/milt/reference/milt_step_unscale.md)
 
 ## Examples

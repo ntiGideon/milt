@@ -17,18 +17,18 @@ A tibble with columns `name`, `description`, `multivariate`,
 
 ``` r
 list_milt_models()
-#> # A tibble: 25 × 6
-#>    name           description multivariate probabilistic covariates multi_series
-#>    <chr>          <chr>       <lgl>        <lgl>         <lgl>      <lgl>       
-#>  1 snaive         "Seasonal … FALSE        TRUE          FALSE      FALSE       
-#>  2 ets            "Exponenti… FALSE        TRUE          FALSE      FALSE       
-#>  3 nbeats         ""          FALSE        FALSE         FALSE      FALSE       
-#>  4 auto_arima     "Automatic… FALSE        TRUE          TRUE       FALSE       
-#>  5 knn            "K-Nearest… FALSE        TRUE          FALSE      FALSE       
-#>  6 svm            "Support V… FALSE        TRUE          FALSE      FALSE       
-#>  7 stl            "STL decom… FALSE        TRUE          FALSE      FALSE       
-#>  8 elastic_net    ""          FALSE        FALSE         FALSE      FALSE       
-#>  9 deepar         ""          FALSE        FALSE         FALSE      FALSE       
-#> 10 darts_transfo… ""          FALSE        FALSE         FALSE      FALSE       
-#> # ℹ 15 more rows
+#> # A tibble: 31 × 6
+#>    name        description    multivariate probabilistic covariates multi_series
+#>    <chr>       <chr>          <lgl>        <lgl>         <lgl>      <lgl>       
+#>  1 snaive      "Seasonal Nai… FALSE        TRUE          FALSE      FALSE       
+#>  2 knn         "K-Nearest Ne… FALSE        TRUE          FALSE      FALSE       
+#>  3 ets         "Exponential … FALSE        TRUE          FALSE      FALSE       
+#>  4 nbeats      ""             FALSE        FALSE         FALSE      FALSE       
+#>  5 auto_arima  "Automatic AR… FALSE        TRUE          TRUE       FALSE       
+#>  6 svm         "Support Vect… FALSE        TRUE          FALSE      FALSE       
+#>  7 stl         "STL decompos… FALSE        TRUE          FALSE      FALSE       
+#>  8 elastic_net ""             FALSE        FALSE         FALSE      FALSE       
+#>  9 dlinear     ""             FALSE        FALSE         FALSE      FALSE       
+#> 10 deepar      ""             FALSE        FALSE         FALSE      FALSE       
+#> # ℹ 21 more rows
 ```

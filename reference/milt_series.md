@@ -33,7 +33,7 @@ milt_series(
 
   - A `tsibble`
 
-  - A `data.frame` or `tibble`
+  - A `data.frame`, `tibble`, or `data.table`
 
   - A numeric vector (requires `frequency` and `start`)
 
@@ -50,7 +50,8 @@ milt_series(
 - group_col:
 
   Name of the grouping column for multi-series data frames. `NULL` for
-  single series.
+  single series. When `x` is a keyed `data.table` and `group_col` is not
+  supplied, the first key column is used.
 
 - frequency:
 
@@ -85,18 +86,25 @@ A `MiltSeries` object.
 
 Other series:
 [`milt_add_covariates()`](https://ntiGideon.github.io/milt/reference/milt_add_covariates.md),
+[`milt_add_datetime_component()`](https://ntiGideon.github.io/milt/reference/milt_add_datetime_component.md),
+[`milt_add_holidays()`](https://ntiGideon.github.io/milt/reference/milt_add_holidays.md),
+[`milt_check_seasonality()`](https://ntiGideon.github.io/milt/reference/milt_check_seasonality.md),
 [`milt_concat()`](https://ntiGideon.github.io/milt/reference/milt_concat.md),
 [`milt_diagnose()`](https://ntiGideon.github.io/milt/reference/milt_diagnose.md),
 [`milt_fill_gaps()`](https://ntiGideon.github.io/milt/reference/milt_fill_gaps.md),
+[`milt_filter()`](https://ntiGideon.github.io/milt/reference/milt_filter.md),
 [`milt_get_covariates()`](https://ntiGideon.github.io/milt/reference/milt_get_covariates.md),
 [`milt_head()`](https://ntiGideon.github.io/milt/reference/milt_head.md),
 [`milt_plot_acf()`](https://ntiGideon.github.io/milt/reference/milt_plot_acf.md),
 [`milt_plot_decomp()`](https://ntiGideon.github.io/milt/reference/milt_plot_decomp.md),
+[`milt_read_parquet()`](https://ntiGideon.github.io/milt/reference/milt_read_parquet.md),
 [`milt_resample()`](https://ntiGideon.github.io/milt/reference/milt_resample.md),
 [`milt_split()`](https://ntiGideon.github.io/milt/reference/milt_split.md),
 [`milt_split_at()`](https://ntiGideon.github.io/milt/reference/milt_split_at.md),
+[`milt_stack()`](https://ntiGideon.github.io/milt/reference/milt_stack.md),
 [`milt_tail()`](https://ntiGideon.github.io/milt/reference/milt_tail.md),
 [`milt_window()`](https://ntiGideon.github.io/milt/reference/milt_window.md),
+[`milt_write_parquet()`](https://ntiGideon.github.io/milt/reference/milt_write_parquet.md),
 [`plot.MiltSeries()`](https://ntiGideon.github.io/milt/reference/plot.MiltSeries.md)
 
 ## Examples
@@ -130,4 +138,11 @@ s2 <- milt_series(df, time_col = "date", value_cols = "sales")
 # From a numeric vector
 s3 <- milt_series(as.numeric(AirPassengers), frequency = 12,
                   start = c(1949, 1))
+
+# From a data.table (grouping column auto-detected from the table's key)
+dt <- data.table::data.table(
+  date  = seq(as.Date("2020-01-01"), by = "month", length.out = 24),
+  sales = cumsum(rnorm(24, 100, 10))
+)
+s4 <- milt_series(dt, time_col = "date", value_cols = "sales")
 ```

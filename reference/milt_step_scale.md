@@ -40,10 +40,15 @@ A named list:
 [`milt_step_rolling()`](https://ntiGideon.github.io/milt/reference/milt_step_rolling.md)
 
 Other features:
+[`milt_step_boxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_boxcox.md),
 [`milt_step_calendar()`](https://ntiGideon.github.io/milt/reference/milt_step_calendar.md),
+[`milt_step_diff()`](https://ntiGideon.github.io/milt/reference/milt_step_diff.md),
 [`milt_step_fourier()`](https://ntiGideon.github.io/milt/reference/milt_step_fourier.md),
 [`milt_step_lag()`](https://ntiGideon.github.io/milt/reference/milt_step_lag.md),
+[`milt_step_map()`](https://ntiGideon.github.io/milt/reference/milt_step_map.md),
 [`milt_step_rolling()`](https://ntiGideon.github.io/milt/reference/milt_step_rolling.md),
+[`milt_step_unboxcox()`](https://ntiGideon.github.io/milt/reference/milt_step_unboxcox.md),
+[`milt_step_undiff()`](https://ntiGideon.github.io/milt/reference/milt_step_undiff.md),
 [`milt_step_unscale()`](https://ntiGideon.github.io/milt/reference/milt_step_unscale.md)
 
 ## Examples

@@ -40,12 +40,14 @@ A `MiltExplanation` object.
 
 ``` r
 # \donttest{
-s   <- milt_series(AirPassengers)
-m   <- milt_model("xgboost") |> milt_fit(s)
+if (requireNamespace("xgboost", quietly = TRUE)) {
+  s   <- milt_series(AirPassengers)
+  m   <- milt_model("xgboost") |> milt_fit(s)
+  exp <- milt_explain(m)
+  plot(exp)
+}
 #> Fitting <MiltXGBoost> model…
-#> Done in 0.76s.
-exp <- milt_explain(m)
-plot(exp)
+#> Done in 0.05s.
 
 # }
 ```

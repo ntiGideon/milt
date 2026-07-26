@@ -1,6 +1,7 @@
 # Deep Learning Models with milt
 
 ``` r
+
 library(milt)
 ```
 
@@ -15,6 +16,7 @@ as every other model.
 > interactively.
 
 ``` r
+
 install.packages("torch")
 torch::install_torch()   # downloads libtorch (~500 MB)
 ```
@@ -26,6 +28,7 @@ torch::install_torch()   # downloads libtorch (~500 MB)
 Neural basis expansion for interpretable time series forecasting:
 
 ``` r
+
 air <- milt_series(AirPassengers)
 
 fct_nbeats <- milt_model("nbeats",
@@ -45,6 +48,7 @@ plot(fct_nbeats)
 Multi-rate hierarchical interpolation:
 
 ``` r
+
 fct_nhits <- milt_model("nhits",
                           input_chunk_length  = 24,
                           output_chunk_length = 12,
@@ -63,6 +67,7 @@ plot(fct_nhits)
 Dilated causal convolutions with residual connections:
 
 ``` r
+
 fct_tcn <- milt_model("tcn",
                         n_filters   = 32,
                         kernel_size = 3,
@@ -82,6 +87,7 @@ LSTM encoder with Gaussian likelihood — returns true predictive
 distributions:
 
 ``` r
+
 fct_deepar <- milt_model("deepar",
                            n_epochs     = 30,
                            hidden_size  = 32) |>
@@ -100,6 +106,7 @@ plot(fct_deepar)
 LSTM encoder + cross-attention decoder:
 
 ``` r
+
 fct_tft <- milt_model("tft",
                         input_chunk_length  = 24,
                         output_chunk_length = 12,
@@ -118,6 +125,7 @@ plot(fct_tft)
 Transformer with patch-based tokenisation:
 
 ``` r
+
 fct_pt <- milt_model("patch_tst",
                        input_chunk_length  = 48,
                        output_chunk_length = 12,
@@ -136,6 +144,7 @@ plot(fct_pt)
 milt automatically uses a GPU if available:
 
 ``` r
+
 milt_torch_device()
 ```
 
@@ -146,6 +155,7 @@ milt_torch_device()
 For models not yet ported to torch-for-R, milt bridges to Python Darts:
 
 ``` r
+
 # One-time setup
 milt_setup_darts(install = FALSE)   # set install = TRUE to pip-install darts
 

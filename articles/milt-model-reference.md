@@ -17,14 +17,14 @@ to print the full registry at any time.
 
 ## Choosing a model
 
-| Family           | Models                                                              | Best for                             |
-|------------------|---------------------------------------------------------------------|--------------------------------------|
-| Baseline         | `naive`, `snaive`, `drift`                                          | Benchmarks, sparse data              |
-| Classical        | `auto_arima`, `ets`, `theta`, `tbats`, `stl`                        | Univariate, well-behaved seasonality |
-| Intermittent     | `croston`                                                           | Demand series with many zeros        |
-| Machine learning | `xgboost`, `lightgbm`, `random_forest`, `elastic_net`, `svm`, `knn` | Complex patterns, many covariates    |
-| Deep learning    | `nbeats`, `nhits`, `tft`, `tcn`, `patch_tst`, `deepar`              | Long series, large datasets          |
-| Prophet          | `prophet`                                                           | Strong multi-seasonality, holidays   |
+| Family | Models | Best for |
+|----|----|----|
+| Baseline | `naive`, `snaive`, `drift`, `mean`, `moving_average` | Benchmarks, sparse data |
+| Classical | `auto_arima`, `ets`, `theta`, `tbats`, `stl` | Univariate, well-behaved seasonality |
+| Intermittent | `croston` | Demand series with many zeros |
+| Machine learning | `xgboost`, `lightgbm`, `random_forest`, `elastic_net`, `svm`, `knn` | Complex patterns, many covariates |
+| Deep learning | `nbeats`, `nhits`, `tft`, `tcn`, `patch_tst`, `deepar` | Long series, large datasets |
+| Prophet | `prophet` | Strong multi-seasonality, holidays |
 
 ------------------------------------------------------------------------
 
@@ -39,6 +39,7 @@ outperform it.
 **No hyperparameters.** No package dependency.
 
 ``` r
+
 air <- milt_series(AirPassengers)
 
 naive_fct <- milt_model("naive") |>
@@ -58,11 +59,12 @@ clear seasonality.
 
 **No package dependency.**
 
-| Parameter | Type            | Default | Description                                                 |
-|-----------|-----------------|---------|-------------------------------------------------------------|
-| `period`  | integer or NULL | `NULL`  | Seasonal period. `NULL` auto-detects from series frequency. |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `period` | integer or NULL | `NULL` | Seasonal period. `NULL` auto-detects from series frequency. |
 
 ``` r
+
 snaive_fct <- milt_model("snaive") |>
   milt_fit(air) |>
   milt_forecast(horizon = 12)
@@ -78,7 +80,45 @@ training observations.
 **No hyperparameters.** No package dependency.
 
 ``` r
+
 drift_fct <- milt_model("drift") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 12)
+```
+
+------------------------------------------------------------------------
+
+### `mean` — Mean forecast
+
+Repeats the training-series mean for every forecast step, with a
+constant (non-widening) prediction interval — appropriate when the
+series has no trend or seasonality and residuals are assumed i.i.d.
+
+**No hyperparameters.** No package dependency.
+
+``` r
+
+mean_fct <- milt_model("mean") |>
+  milt_fit(air) |>
+  milt_forecast(horizon = 12)
+```
+
+------------------------------------------------------------------------
+
+### `moving_average` — Moving Average forecast
+
+Forecasts each step as the mean of the last `window` observations, then
+autoregressively slides that window forward using its own forecasts — so
+the h-step-ahead forecast eventually becomes the mean of prior forecasts
+alone.
+
+| Parameter | Type    | Default | Description                               |
+|-----------|---------|---------|-------------------------------------------|
+| `window`  | integer | `3L`    | Number of trailing observations averaged. |
+
+``` r
+
+ma_fct <- milt_model("moving_average", window = 5L) |>
   milt_fit(air) |>
   milt_forecast(horizon = 12)
 ```
@@ -96,14 +136,15 @@ optional seasonal differencing and stepwise search.
 
 **Requires:** `forecast`
 
-| Parameter       | Type            | Default | Description                                                                                                          |
-|-----------------|-----------------|---------|----------------------------------------------------------------------------------------------------------------------|
-| `stepwise`      | logical         | `TRUE`  | Use stepwise AIC search. `FALSE` tries all combinations (slower, sometimes better).                                  |
-| `approximation` | logical or NULL | `NULL`  | Use approximations for large series. `NULL` auto-selects based on series length.                                     |
-| `seasonal`      | logical         | `TRUE`  | Include a seasonal ARIMA component. Set `FALSE` for clearly non-seasonal data.                                       |
-| `...`           | —               | —       | Any argument accepted by [`forecast::auto.arima()`](https://pkg.robjhyndman.com/forecast/reference/auto.arima.html). |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `stepwise` | logical | `TRUE` | Use stepwise AIC search. `FALSE` tries all combinations (slower, sometimes better). |
+| `approximation` | logical or NULL | `NULL` | Use approximations for large series. `NULL` auto-selects based on series length. |
+| `seasonal` | logical | `TRUE` | Include a seasonal ARIMA component. Set `FALSE` for clearly non-seasonal data. |
+| `...` | — | — | Any argument accepted by [`forecast::auto.arima()`](https://pkg.robjhyndman.com/forecast/reference/auto.arima.html). |
 
 ``` r
+
 arima_fct <- milt_model("auto_arima",
                          stepwise     = TRUE,
                          seasonal     = TRUE) |>
@@ -129,13 +170,14 @@ Fits an Error-Trend-Seasonality state-space model. The model string
 
 **Requires:** `forecast`
 
-| Parameter | Type            | Default | Description                                                                                                                                                                                                                                                    |
-|-----------|-----------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `model`   | character       | `"ZZZ"` | ETS model string. Each position is E, T, or S type: `A` (additive), `M` (multiplicative), `N` (none), or `Z` (auto). Examples: `"AAN"` = additive error + additive trend + no season; `"MAM"` = multiplicative error + additive trend + multiplicative season. |
-| `damped`  | logical or NULL | `NULL`  | Force a damped trend? `NULL` auto-selects.                                                                                                                                                                                                                     |
-| `...`     | —               | —       | Any argument accepted by [`forecast::ets()`](https://pkg.robjhyndman.com/forecast/reference/ets.html).                                                                                                                                                         |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `model` | character | `"ZZZ"` | ETS model string. Each position is E, T, or S type: `A` (additive), `M` (multiplicative), `N` (none), or `Z` (auto). Examples: `"AAN"` = additive error + additive trend + no season; `"MAM"` = multiplicative error + additive trend + multiplicative season. |
+| `damped` | logical or NULL | `NULL` | Force a damped trend? `NULL` auto-selects. |
+| `...` | — | — | Any argument accepted by [`forecast::ets()`](https://pkg.robjhyndman.com/forecast/reference/ets.html). |
 
 ``` r
+
 # Automatic selection
 ets_auto <- milt_model("ets") |>
   milt_fit(air) |>
@@ -166,6 +208,7 @@ No hyperparameters (all options are passed through `...` to
 [`forecast::thetaf()`](https://pkg.robjhyndman.com/forecast/reference/forecast.theta_model.html)).
 
 ``` r
+
 theta_fct <- milt_model("theta") |>
   milt_fit(air) |>
   milt_forecast(horizon = 12)
@@ -183,14 +226,15 @@ re-seasonalises.
 
 **Requires:** `forecast`
 
-| Parameter  | Type                 | Default      | Description                                                                                                                             |
-|------------|----------------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------|
-| `method`   | character            | `"ets"`      | Model for the remainder: `"ets"` or `"arima"`.                                                                                          |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `method` | character | `"ets"` | Model for the remainder: `"ets"` or `"arima"`. |
 | `s.window` | character or integer | `"periodic"` | STL seasonal smoothing window. `"periodic"` enforces a constant seasonal pattern; an odd positive integer allows the pattern to evolve. |
-| `robust`   | logical              | `FALSE`      | Use robust STL fitting (resistant to outliers).                                                                                         |
-| `...`      | —                    | —            | Any argument accepted by [`forecast::stlf()`](https://pkg.robjhyndman.com/forecast/reference/forecast.stl.html).                        |
+| `robust` | logical | `FALSE` | Use robust STL fitting (resistant to outliers). |
+| `...` | — | — | Any argument accepted by [`forecast::stlf()`](https://pkg.robjhyndman.com/forecast/reference/forecast.stl.html). |
 
 ``` r
+
 stl_fct <- milt_model("stl",
                        method   = "ets",
                        s.window = "periodic",
@@ -211,15 +255,16 @@ seasonal patterns (e.g., hourly data with daily and weekly seasons).
 
 **Requires:** `forecast`
 
-| Parameter          | Type                   | Default | Description                                                |
-|--------------------|------------------------|---------|------------------------------------------------------------|
-| `use_box_cox`      | logical or NULL        | `NULL`  | Apply Box-Cox transformation. `NULL` auto-selects.         |
-| `use_trend`        | logical or NULL        | `NULL`  | Include a global trend. `NULL` auto-selects.               |
-| `use_damped_trend` | logical or NULL        | `NULL`  | Damp the trend. `NULL` auto-selects.                       |
-| `seasonal_periods` | numeric vector or NULL | `NULL`  | Override detected seasonal periods (e.g., `c(7, 365.25)`). |
-| `use_arma_errors`  | logical                | `TRUE`  | Include ARMA residual errors.                              |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `use_box_cox` | logical or NULL | `NULL` | Apply Box-Cox transformation. `NULL` auto-selects. |
+| `use_trend` | logical or NULL | `NULL` | Include a global trend. `NULL` auto-selects. |
+| `use_damped_trend` | logical or NULL | `NULL` | Damp the trend. `NULL` auto-selects. |
+| `seasonal_periods` | numeric vector or NULL | `NULL` | Override detected seasonal periods (e.g., `c(7, 365.25)`). |
+| `use_arma_errors` | logical | `TRUE` | Include ARMA residual errors. |
 
 ``` r
+
 tbats_fct <- milt_model("tbats",
                           use_box_cox   = NULL,
                           use_trend     = NULL,
@@ -240,11 +285,12 @@ demand sizes and the intervals between them.
 
 **Requires:** `forecast`
 
-| Parameter | Type               | Default | Description                                                     |
-|-----------|--------------------|---------|-----------------------------------------------------------------|
-| `alpha`   | numeric in (0, 1\] | `0.1`   | Smoothing parameter. Smaller values produce smoother forecasts. |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `alpha` | numeric in (0, 1\] | `0.1` | Smoothing parameter. Smaller values produce smoother forecasts. |
 
 ``` r
+
 # Simulated intermittent series
 set.seed(42)
 demand <- c(0,0,3,0,0,0,5,0,2,0,0,4,0,0,1)
@@ -270,16 +316,17 @@ irregular holidays.
 
 **Requires:** `prophet`
 
-| Parameter                 | Type                | Default      | Description                                                                                      |
-|---------------------------|---------------------|--------------|--------------------------------------------------------------------------------------------------|
-| `yearly_seasonality`      | logical or `"auto"` | `"auto"`     | Include a yearly Fourier seasonal component.                                                     |
-| `weekly_seasonality`      | logical or `"auto"` | `"auto"`     | Include a weekly Fourier seasonal component.                                                     |
-| `daily_seasonality`       | logical or `"auto"` | `"auto"`     | Include a daily Fourier seasonal component.                                                      |
-| `seasonality_mode`        | character           | `"additive"` | `"additive"` or `"multiplicative"`. Use multiplicative when seasonal swings grow with the level. |
-| `changepoint_prior_scale` | numeric             | `0.05`       | Controls trend flexibility. Larger values allow more changepoints (may overfit).                 |
-| `...`                     | —                   | —            | Any argument accepted by [`prophet::prophet()`](https://rdrr.io/pkg/prophet/man/prophet.html).   |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `yearly_seasonality` | logical or `"auto"` | `"auto"` | Include a yearly Fourier seasonal component. |
+| `weekly_seasonality` | logical or `"auto"` | `"auto"` | Include a weekly Fourier seasonal component. |
+| `daily_seasonality` | logical or `"auto"` | `"auto"` | Include a daily Fourier seasonal component. |
+| `seasonality_mode` | character | `"additive"` | `"additive"` or `"multiplicative"`. Use multiplicative when seasonal swings grow with the level. |
+| `changepoint_prior_scale` | numeric | `0.05` | Controls trend flexibility. Larger values allow more changepoints (may overfit). |
+| `...` | — | — | Any argument accepted by [`prophet::prophet()`](https://rdrr.io/pkg/prophet/man/prophet.html). |
 
 ``` r
+
 prophet_fct <- milt_model("prophet",
                            yearly_seasonality      = TRUE,
                            seasonality_mode        = "multiplicative",
@@ -304,16 +351,17 @@ and interactions automatically.
 
 **Requires:** `xgboost`
 
-| Parameter   | Type           | Default | Description                                                                                        |
-|-------------|----------------|---------|----------------------------------------------------------------------------------------------------|
-| `lags`      | integer vector | `1:12`  | Lag indices used as features (e.g., `1:12` uses lags 1 through 12).                                |
-| `nrounds`   | integer        | `100L`  | Number of boosting rounds. Increase for more complex patterns.                                     |
-| `max_depth` | integer        | `6L`    | Maximum tree depth. Deeper trees capture more interactions but may overfit.                        |
-| `eta`       | numeric        | `0.1`   | Learning rate / shrinkage. Lower values need more `nrounds`.                                       |
-| `nthread`   | integer        | `1L`    | Number of CPU threads for training.                                                                |
-| `...`       | —              | —       | Any argument accepted by [`xgboost::xgb.train()`](https://rdrr.io/pkg/xgboost/man/xgb.train.html). |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `lags` | integer vector | `1:12` | Lag indices used as features (e.g., `1:12` uses lags 1 through 12). |
+| `nrounds` | integer | `100L` | Number of boosting rounds. Increase for more complex patterns. |
+| `max_depth` | integer | `6L` | Maximum tree depth. Deeper trees capture more interactions but may overfit. |
+| `eta` | numeric | `0.1` | Learning rate / shrinkage. Lower values need more `nrounds`. |
+| `nthread` | integer | `1L` | Number of CPU threads for training. |
+| `...` | — | — | Any argument accepted by [`xgboost::xgb.train()`](https://rdrr.io/pkg/xgboost/man/xgb.train.html). |
 
 ``` r
+
 xgb_fct <- milt_model("xgboost",
                         lags      = 1:24,
                         nrounds   = 200L,
@@ -327,6 +375,7 @@ xgb_fct <- milt_model("xgboost",
 [`milt_explain()`](https://ntiGideon.github.io/milt/reference/milt_explain.md):
 
 ``` r
+
 fitted_xgb <- milt_model("xgboost", lags = 1:12) |> milt_fit(air)
 ex <- milt_explain(fitted_xgb, air)
 plot(ex)
@@ -342,16 +391,17 @@ features.
 
 **Requires:** `lightgbm`
 
-| Parameter        | Type           | Default | Description                                                                                          |
-|------------------|----------------|---------|------------------------------------------------------------------------------------------------------|
-| `lags`           | integer vector | `1:12`  | Lag indices used as features.                                                                        |
-| `num_iterations` | integer        | `100L`  | Number of boosting rounds.                                                                           |
-| `learning_rate`  | numeric        | `0.1`   | Learning rate (shrinkage).                                                                           |
-| `num_leaves`     | integer        | `31L`   | Maximum number of leaves per tree. Increase for more complex models.                                 |
-| `num_threads`    | integer        | `1L`    | Number of CPU threads.                                                                               |
-| `...`            | —              | —       | Any argument accepted by [`lightgbm::lgb.train()`](https://rdrr.io/pkg/lightgbm/man/lgb.train.html). |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `lags` | integer vector | `1:12` | Lag indices used as features. |
+| `num_iterations` | integer | `100L` | Number of boosting rounds. |
+| `learning_rate` | numeric | `0.1` | Learning rate (shrinkage). |
+| `num_leaves` | integer | `31L` | Maximum number of leaves per tree. Increase for more complex models. |
+| `num_threads` | integer | `1L` | Number of CPU threads. |
+| `...` | — | — | Any argument accepted by [`lightgbm::lgb.train()`](https://rdrr.io/pkg/lightgbm/man/lgb.train.html). |
 
 ``` r
+
 lgb_fct <- milt_model("lightgbm",
                         lags           = 1:12,
                         num_iterations = 200L,
@@ -370,17 +420,18 @@ naturally handles interactions and outliers.
 
 **Requires:** `ranger`
 
-| Parameter       | Type            | Default      | Description                                                                                         |
-|-----------------|-----------------|--------------|-----------------------------------------------------------------------------------------------------|
-| `lags`          | integer vector  | `1:12`       | Lag indices used as features.                                                                       |
-| `num.trees`     | integer         | `500L`       | Number of trees. More trees = more stable but slower.                                               |
-| `mtry`          | integer or NULL | `NULL`       | Features tried at each split. `NULL` uses `floor(sqrt(p))`.                                         |
-| `min.node.size` | integer         | `5L`         | Minimum terminal node size. Larger values regularise.                                               |
-| `num.threads`   | integer         | `1L`         | Number of CPU threads.                                                                              |
-| `importance`    | character       | `"impurity"` | Variable importance: `"impurity"` (Gini) or `"permutation"`.                                        |
-| `...`           | —               | —            | Any argument accepted by [`ranger::ranger()`](http://imbs-hl.github.io/ranger/reference/ranger.md). |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `lags` | integer vector | `1:12` | Lag indices used as features. |
+| `num.trees` | integer | `500L` | Number of trees. More trees = more stable but slower. |
+| `mtry` | integer or NULL | `NULL` | Features tried at each split. `NULL` uses `floor(sqrt(p))`. |
+| `min.node.size` | integer | `5L` | Minimum terminal node size. Larger values regularise. |
+| `num.threads` | integer | `1L` | Number of CPU threads. |
+| `importance` | character | `"impurity"` | Variable importance: `"impurity"` (Gini) or `"permutation"`. |
+| `...` | — | — | Any argument accepted by [`ranger::ranger()`](http://imbs-hl.github.io/ranger/reference/ranger.md). |
 
 ``` r
+
 rf_fct <- milt_model("random_forest",
                       lags         = 1:12,
                       num.trees    = 300L,
@@ -399,14 +450,15 @@ and fast.
 
 **Requires:** `glmnet`
 
-| Parameter | Type                | Default | Description                                                                                       |
-|-----------|---------------------|---------|---------------------------------------------------------------------------------------------------|
-| `lags`    | integer vector      | `1:12`  | Lag indices used as features.                                                                     |
-| `alpha`   | numeric in \[0, 1\] | `0.5`   | Mixing parameter: `0` = ridge, `1` = lasso, `0.5` = elastic net.                                  |
-| `lambda`  | numeric or NULL     | `NULL`  | Regularisation strength. `NULL` selects by 5-fold cross-validation.                               |
-| `...`     | —                   | —       | Any argument accepted by [`glmnet::glmnet()`](https://glmnet.stanford.edu/reference/glmnet.html). |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `lags` | integer vector | `1:12` | Lag indices used as features. |
+| `alpha` | numeric in \[0, 1\] | `0.5` | Mixing parameter: `0` = ridge, `1` = lasso, `0.5` = elastic net. |
+| `lambda` | numeric or NULL | `NULL` | Regularisation strength. `NULL` selects by 5-fold cross-validation. |
+| `...` | — | — | Any argument accepted by [`glmnet::glmnet()`](https://glmnet.stanford.edu/reference/glmnet.html). |
 
 ``` r
+
 # Lasso (alpha = 1) — maximum sparsity
 lasso_fct <- milt_model("elastic_net",
                           lags  = 1:24,
@@ -424,15 +476,16 @@ non-linear patterns.
 
 **Requires:** `e1071`
 
-| Parameter | Type            | Default    | Description                                                            |
-|-----------|-----------------|------------|------------------------------------------------------------------------|
-| `lags`    | integer vector  | `1:12`     | Lag indices used as features.                                          |
-| `kernel`  | character       | `"radial"` | Kernel: `"radial"` (RBF), `"linear"`, `"polynomial"`, `"sigmoid"`.     |
-| `cost`    | numeric         | `1`        | Regularisation cost `C`. Larger values fit training data more tightly. |
-| `epsilon` | numeric         | `0.1`      | Epsilon-insensitive loss tube width.                                   |
-| `gamma`   | numeric or NULL | `NULL`     | Kernel coefficient. `NULL` uses `1 / n_features`.                      |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `lags` | integer vector | `1:12` | Lag indices used as features. |
+| `kernel` | character | `"radial"` | Kernel: `"radial"` (RBF), `"linear"`, `"polynomial"`, `"sigmoid"`. |
+| `cost` | numeric | `1` | Regularisation cost `C`. Larger values fit training data more tightly. |
+| `epsilon` | numeric | `0.1` | Epsilon-insensitive loss tube width. |
+| `gamma` | numeric or NULL | `NULL` | Kernel coefficient. `NULL` uses `1 / n_features`. |
 
 ``` r
+
 svm_fct <- milt_model("svm",
                         lags    = 1:12,
                         kernel  = "radial",
@@ -451,13 +504,14 @@ historical windows and averages their next steps.
 
 **No package dependency.**
 
-| Parameter | Type           | Default     | Description                                                               |
-|-----------|----------------|-------------|---------------------------------------------------------------------------|
-| `k`       | integer        | `5L`        | Number of nearest neighbours.                                             |
-| `lags`    | integer vector | `1:12`      | Lag indices used as features.                                             |
-| `weights` | character      | `"uniform"` | Weighting: `"uniform"` (equal weight) or `"distance"` (inverse-distance). |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `k` | integer | `5L` | Number of nearest neighbours. |
+| `lags` | integer vector | `1:12` | Lag indices used as features. |
+| `weights` | character | `"uniform"` | Weighting: `"uniform"` (equal weight) or `"distance"` (inverse-distance). |
 
 ``` r
+
 knn_fct <- milt_model("knn",
                         k       = 7L,
                         lags    = 1:12,
@@ -475,6 +529,7 @@ R](https://torch.mlverse.org/). They require `torch` to be installed
 **and** the Lantern C++ backend downloaded:
 
 ``` r
+
 milt_install_backends("deep_learning")
 torch::install_torch()   # run once after installing torch
 ```
@@ -500,20 +555,21 @@ on M4 competition without domain knowledge.
 
 **Requires:** `torch`
 
-| Parameter             | Type    | Default | Description                                                                                         |
-|-----------------------|---------|---------|-----------------------------------------------------------------------------------------------------|
-| `input_chunk_length`  | integer | `24L`   | Lookback window length fed to the network. Should cover at least 2 seasonal cycles.                 |
-| `output_chunk_length` | integer | `12L`   | Number of steps produced per forward pass. Recursive multi-step if `horizon > output_chunk_length`. |
-| `n_stacks`            | integer | `2L`    | Number of stacks.                                                                                   |
-| `n_blocks`            | integer | `3L`    | Blocks per stack.                                                                                   |
-| `hidden_size`         | integer | `64L`   | FC layer width.                                                                                     |
-| `n_layers`            | integer | `4L`    | FC layer depth per block.                                                                           |
-| `n_epochs`            | integer | `100L`  | Maximum training epochs.                                                                            |
-| `lr`                  | numeric | `1e-3`  | Adam learning rate.                                                                                 |
-| `patience`            | integer | `10L`   | Early-stopping patience.                                                                            |
-| `val_split`           | numeric | `0.1`   | Validation fraction.                                                                                |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `input_chunk_length` | integer | `24L` | Lookback window length fed to the network. Should cover at least 2 seasonal cycles. |
+| `output_chunk_length` | integer | `12L` | Number of steps produced per forward pass. Recursive multi-step if `horizon > output_chunk_length`. |
+| `n_stacks` | integer | `2L` | Number of stacks. |
+| `n_blocks` | integer | `3L` | Blocks per stack. |
+| `hidden_size` | integer | `64L` | FC layer width. |
+| `n_layers` | integer | `4L` | FC layer depth per block. |
+| `n_epochs` | integer | `100L` | Maximum training epochs. |
+| `lr` | numeric | `1e-3` | Adam learning rate. |
+| `patience` | integer | `10L` | Early-stopping patience. |
+| `val_split` | numeric | `0.1` | Validation fraction. |
 
 ``` r
+
 nbeats_fct <- milt_model("nbeats",
                            input_chunk_length  = 24L,
                            output_chunk_length = 12L,
@@ -536,20 +592,21 @@ accuracy.
 
 **Requires:** `torch`
 
-| Parameter             | Type    | Default | Description                                                                       |
-|-----------------------|---------|---------|-----------------------------------------------------------------------------------|
-| `input_chunk_length`  | integer | `24L`   | Lookback window length.                                                           |
-| `output_chunk_length` | integer | `12L`   | Steps predicted per forward pass.                                                 |
-| `n_stacks`            | integer | `3L`    | Number of hierarchical stacks (each operates at a different temporal resolution). |
-| `n_blocks`            | integer | `1L`    | Blocks per stack.                                                                 |
-| `hidden_size`         | integer | `64L`   | FC layer width.                                                                   |
-| `n_layers`            | integer | `4L`    | FC layer depth per block.                                                         |
-| `n_epochs`            | integer | `100L`  | Maximum training epochs.                                                          |
-| `lr`                  | numeric | `1e-3`  | Adam learning rate.                                                               |
-| `patience`            | integer | `10L`   | Early-stopping patience.                                                          |
-| `val_split`           | numeric | `0.1`   | Validation fraction.                                                              |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `input_chunk_length` | integer | `24L` | Lookback window length. |
+| `output_chunk_length` | integer | `12L` | Steps predicted per forward pass. |
+| `n_stacks` | integer | `3L` | Number of hierarchical stacks (each operates at a different temporal resolution). |
+| `n_blocks` | integer | `1L` | Blocks per stack. |
+| `hidden_size` | integer | `64L` | FC layer width. |
+| `n_layers` | integer | `4L` | FC layer depth per block. |
+| `n_epochs` | integer | `100L` | Maximum training epochs. |
+| `lr` | numeric | `1e-3` | Adam learning rate. |
+| `patience` | integer | `10L` | Early-stopping patience. |
+| `val_split` | numeric | `0.1` | Validation fraction. |
 
 ``` r
+
 nhits_fct <- milt_model("nhits",
                           input_chunk_length  = 36L,
                           output_chunk_length = 12L,
@@ -568,20 +625,21 @@ self-attention). Designed for multi-horizon probabilistic forecasting.
 
 **Requires:** `torch`
 
-| Parameter             | Type    | Default | Description                                |
-|-----------------------|---------|---------|--------------------------------------------|
-| `input_chunk_length`  | integer | `24L`   | Lookback window fed to the LSTM encoder.   |
-| `output_chunk_length` | integer | `12L`   | Steps predicted per forward pass.          |
-| `hidden_size`         | integer | `64L`   | LSTM hidden state and attention dimension. |
-| `n_heads`             | integer | `4L`    | Number of attention heads.                 |
-| `n_layers`            | integer | `2L`    | LSTM encoder depth.                        |
-| `dropout`             | numeric | `0.1`   | Dropout rate.                              |
-| `n_epochs`            | integer | `100L`  | Maximum training epochs.                   |
-| `lr`                  | numeric | `1e-3`  | Adam learning rate.                        |
-| `patience`            | integer | `10L`   | Early-stopping patience.                   |
-| `val_split`           | numeric | `0.1`   | Validation fraction.                       |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `input_chunk_length` | integer | `24L` | Lookback window fed to the LSTM encoder. |
+| `output_chunk_length` | integer | `12L` | Steps predicted per forward pass. |
+| `hidden_size` | integer | `64L` | LSTM hidden state and attention dimension. |
+| `n_heads` | integer | `4L` | Number of attention heads. |
+| `n_layers` | integer | `2L` | LSTM encoder depth. |
+| `dropout` | numeric | `0.1` | Dropout rate. |
+| `n_epochs` | integer | `100L` | Maximum training epochs. |
+| `lr` | numeric | `1e-3` | Adam learning rate. |
+| `patience` | integer | `10L` | Early-stopping patience. |
+| `val_split` | numeric | `0.1` | Validation fraction. |
 
 ``` r
+
 tft_fct <- milt_model("tft",
                         input_chunk_length  = 36L,
                         output_chunk_length = 12L,
@@ -603,20 +661,21 @@ recurrence.
 
 **Requires:** `torch`
 
-| Parameter             | Type    | Default | Description                                 |
-|-----------------------|---------|---------|---------------------------------------------|
-| `input_chunk_length`  | integer | `24L`   | Lookback window length.                     |
-| `output_chunk_length` | integer | `12L`   | Steps predicted per forward pass.           |
-| `n_filters`           | integer | `32L`   | Number of convolutional channels per layer. |
-| `kernel_size`         | integer | `3L`    | Convolution kernel size.                    |
-| `n_layers`            | integer | `4L`    | Number of temporal residual blocks.         |
-| `dropout`             | numeric | `0.2`   | Dropout rate in residual blocks.            |
-| `n_epochs`            | integer | `100L`  | Maximum training epochs.                    |
-| `lr`                  | numeric | `1e-3`  | Adam learning rate.                         |
-| `patience`            | integer | `10L`   | Early-stopping patience.                    |
-| `val_split`           | numeric | `0.1`   | Validation fraction.                        |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `input_chunk_length` | integer | `24L` | Lookback window length. |
+| `output_chunk_length` | integer | `12L` | Steps predicted per forward pass. |
+| `n_filters` | integer | `32L` | Number of convolutional channels per layer. |
+| `kernel_size` | integer | `3L` | Convolution kernel size. |
+| `n_layers` | integer | `4L` | Number of temporal residual blocks. |
+| `dropout` | numeric | `0.2` | Dropout rate in residual blocks. |
+| `n_epochs` | integer | `100L` | Maximum training epochs. |
+| `lr` | numeric | `1e-3` | Adam learning rate. |
+| `patience` | integer | `10L` | Early-stopping patience. |
+| `val_split` | numeric | `0.1` | Validation fraction. |
 
 ``` r
+
 tcn_fct <- milt_model("tcn",
                         input_chunk_length  = 24L,
                         output_chunk_length = 12L,
@@ -639,21 +698,22 @@ capturing long-range dependencies efficiently.
 
 **Requires:** `torch`
 
-| Parameter             | Type    | Default | Description                                                           |
-|-----------------------|---------|---------|-----------------------------------------------------------------------|
-| `input_chunk_length`  | integer | `24L`   | Lookback window length.                                               |
-| `output_chunk_length` | integer | `12L`   | Steps predicted per forward pass.                                     |
-| `patch_len`           | integer | `8L`    | Length of each non-overlapping patch. Must be ≤ `input_chunk_length`. |
-| `d_model`             | integer | `64L`   | Patch embedding / Transformer model dimension.                        |
-| `n_heads`             | integer | `4L`    | Number of attention heads. `d_model` must be divisible by `n_heads`.  |
-| `n_layers`            | integer | `2L`    | Transformer encoder depth.                                            |
-| `dropout`             | numeric | `0.1`   | Dropout rate.                                                         |
-| `n_epochs`            | integer | `100L`  | Maximum training epochs.                                              |
-| `lr`                  | numeric | `1e-3`  | Adam learning rate.                                                   |
-| `patience`            | integer | `10L`   | Early-stopping patience.                                              |
-| `val_split`           | numeric | `0.1`   | Validation fraction.                                                  |
+| Parameter | Type | Default | Description |
+|----|----|----|----|
+| `input_chunk_length` | integer | `24L` | Lookback window length. |
+| `output_chunk_length` | integer | `12L` | Steps predicted per forward pass. |
+| `patch_len` | integer | `8L` | Length of each non-overlapping patch. Must be ≤ `input_chunk_length`. |
+| `d_model` | integer | `64L` | Patch embedding / Transformer model dimension. |
+| `n_heads` | integer | `4L` | Number of attention heads. `d_model` must be divisible by `n_heads`. |
+| `n_layers` | integer | `2L` | Transformer encoder depth. |
+| `dropout` | numeric | `0.1` | Dropout rate. |
+| `n_epochs` | integer | `100L` | Maximum training epochs. |
+| `lr` | numeric | `1e-3` | Adam learning rate. |
+| `patience` | integer | `10L` | Early-stopping patience. |
+| `val_split` | numeric | `0.1` | Validation fraction. |
 
 ``` r
+
 ptst_fct <- milt_model("patch_tst",
                          input_chunk_length  = 48L,
                          output_chunk_length = 12L,
@@ -687,6 +747,7 @@ step, which are used to construct prediction intervals analytically.
 | `val_split`           | numeric | `0.1`   | Validation fraction.              |
 
 ``` r
+
 deepar_fct <- milt_model("deepar",
                            input_chunk_length  = 36L,
                            output_chunk_length = 12L,
@@ -707,6 +768,7 @@ to run a rolling-origin backtest across multiple models and rank them by
 accuracy:
 
 ``` r
+
 models <- list(
   naive  = milt_model("naive"),
   arima  = milt_model("auto_arima"),
@@ -726,6 +788,7 @@ plot(cmp)
 Combine fitted models into a weighted or mean ensemble:
 
 ``` r
+
 m1 <- milt_model("auto_arima") |> milt_fit(air)
 m2 <- milt_model("ets")        |> milt_fit(air)
 m3 <- milt_model("xgboost", lags = 1:12) |> milt_fit(air)

@@ -42,6 +42,7 @@ Rscript -e "devtools::check()"
 ## Development workflow
 
 ``` r
+
 # Regenerate NAMESPACE + man/ after editing roxygen2 docs
 devtools::document()
 
@@ -100,6 +101,7 @@ Every exported function must have:
 ### Messages and errors
 
 ``` r
+
 # Good
 milt_abort("Expected a {.cls MiltSeries}, not {.cls {class(x)[1L]}}.")
 milt_warn("Horizon {.val {h}} exceeds training length; forecasts may be unreliable.")

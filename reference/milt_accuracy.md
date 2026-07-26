@@ -58,19 +58,24 @@ A tibble with columns `metric` (character) and `value` (numeric).
 [`milt_mase()`](https://ntiGideon.github.io/milt/reference/milt_mase.md)
 
 Other metrics:
+[`milt_coefficient_of_variation()`](https://ntiGideon.github.io/milt/reference/milt_coefficient_of_variation.md),
 [`milt_coverage()`](https://ntiGideon.github.io/milt/reference/milt_coverage.md),
 [`milt_crps()`](https://ntiGideon.github.io/milt/reference/milt_crps.md),
 [`milt_mae()`](https://ntiGideon.github.io/milt/reference/milt_mae.md),
 [`milt_mape()`](https://ntiGideon.github.io/milt/reference/milt_mape.md),
+[`milt_marre()`](https://ntiGideon.github.io/milt/reference/milt_marre.md),
 [`milt_mase()`](https://ntiGideon.github.io/milt/reference/milt_mase.md),
 [`milt_mrae()`](https://ntiGideon.github.io/milt/reference/milt_mrae.md),
 [`milt_mse()`](https://ntiGideon.github.io/milt/reference/milt_mse.md),
+[`milt_ope()`](https://ntiGideon.github.io/milt/reference/milt_ope.md),
 [`milt_pinball()`](https://ntiGideon.github.io/milt/reference/milt_pinball.md),
 [`milt_r_squared()`](https://ntiGideon.github.io/milt/reference/milt_r_squared.md),
 [`milt_rmse()`](https://ntiGideon.github.io/milt/reference/milt_rmse.md),
+[`milt_rmsle()`](https://ntiGideon.github.io/milt/reference/milt_rmsle.md),
 [`milt_rmsse()`](https://ntiGideon.github.io/milt/reference/milt_rmsse.md),
 [`milt_smape()`](https://ntiGideon.github.io/milt/reference/milt_smape.md),
-[`milt_winkler()`](https://ntiGideon.github.io/milt/reference/milt_winkler.md)
+[`milt_winkler()`](https://ntiGideon.github.io/milt/reference/milt_winkler.md),
+[`milt_wmape()`](https://ntiGideon.github.io/milt/reference/milt_wmape.md)
 
 ## Examples
 
@@ -78,12 +83,16 @@ Other metrics:
 actual    <- c(100, 120, 130, 125, 140)
 predicted <- c(105, 115, 135, 120, 145)
 milt_accuracy(actual, predicted)
-#> # A tibble: 5 × 2
-#>   metric   value
-#>   <chr>    <dbl>
-#> 1 MAE     5     
-#> 2 MSE    25     
-#> 3 RMSE    5     
-#> 4 MAPE    0.0412
-#> 5 R2      0.858 
+#> # A tibble: 9 × 2
+#>   metric    value
+#>   <chr>     <dbl>
+#> 1 MAE     5      
+#> 2 MSE    25      
+#> 3 RMSE    5      
+#> 4 MAPE    0.0412 
+#> 5 R2      0.858  
+#> 6 WMAPE   0.0407 
+#> 7 OPE     0.00813
+#> 8 CV      0.0407 
+#> 9 MARRE   0.125  
 ```

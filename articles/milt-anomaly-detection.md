@@ -1,6 +1,7 @@
 # Anomaly Detection with milt
 
 ``` r
+
 library(milt)
 #> milt 0.1.0 — Modern Integrated Library for Timeseries
 #> Use `list_milt_models()` to see available models.
@@ -11,6 +12,7 @@ library(milt)
 milt’s anomaly detection API follows a two-step pattern:
 
 ``` r
+
 detector <- milt_detector("<method>", ...)
 anomalies <- milt_detect(detector, series)
 ```
@@ -25,6 +27,7 @@ Results are returned as a `MiltAnomalies` object with
 ## 1. Create a series with injected spikes
 
 ``` r
+
 set.seed(42)
 tbl <- tibble::tibble(
   date  = seq(as.Date("2020-01-01"), by = "month", length.out = 60),
@@ -42,6 +45,7 @@ plot(s)
 ## 2. IQR detector (fast, no assumptions)
 
 ``` r
+
 d   <- milt_detector("iqr", k = 1.5)
 anm <- milt_detect(d, s)
 print(anm)
@@ -64,6 +68,7 @@ plot(anm)
 ## 3. GESD test (statistical, iterative)
 
 ``` r
+
 d_gesd <- milt_detector("gesd", max_anoms = 5, alpha = 0.05)
 anm_gesd <- milt_detect(d_gesd, s)
 plot(anm_gesd)
@@ -78,6 +83,7 @@ plot(anm_gesd)
 STL separates trend and seasonality; anomalies are in the remainder:
 
 ``` r
+
 air <- milt_series(AirPassengers)
 d_stl  <- milt_detector("stl", threshold = 3)
 anm_stl <- milt_detect(d_stl, air)
@@ -106,6 +112,7 @@ plot(anm_stl)
 Requires the `isotree` package:
 
 ``` r
+
 d_if  <- milt_detector("iforest", n_trees = 50, threshold = 0.6)
 anm_if <- milt_detect(d_if, s)
 plot(anm_if)
@@ -120,6 +127,7 @@ plot(anm_if)
 Requires the `dbscan` package:
 
 ``` r
+
 d_lof  <- milt_detector("lof", k = 5, threshold = 1.5)
 anm_lof <- milt_detect(d_lof, s)
 plot(anm_lof)
@@ -134,6 +142,7 @@ plot(anm_lof)
 Combine multiple detectors with majority vote or mean score:
 
 ``` r
+
 d1  <- milt_detector("iqr",   k = 1.5)
 d2  <- milt_detector("grubbs", alpha = 0.05)
 d3  <- milt_detector("gesd",  max_anoms = 5)
@@ -152,6 +161,7 @@ plot(anm_ens)
 ## 8. Changepoint detection
 
 ``` r
+
 cp <- milt_changepoints(air, method = "pelt", stat = "mean")
 print(cp)
 #> # MiltChangepoints [pelt]
@@ -181,6 +191,7 @@ plot(cp)
 ## 9. Tidy output
 
 ``` r
+
 tbl_out <- tibble::as_tibble(milt_detect(milt_detector("iqr"), s))
 head(tbl_out)
 #> # A tibble: 6 × 6

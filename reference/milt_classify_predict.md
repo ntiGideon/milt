@@ -34,3 +34,24 @@ A named list:
 Other classify:
 [`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md),
 [`milt_classify_fit()`](https://ntiGideon.github.io/milt/reference/milt_classify_fit.md)
+
+## Examples
+
+``` r
+# \donttest{
+if (requireNamespace("ranger", quietly = TRUE)) {
+  s1  <- milt_series(AirPassengers)
+  s2  <- milt_series(AirPassengers * 1.2)
+  clf <- milt_classifier("feature_based")
+  milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+  milt_classify_predict(clf, list(s1))
+}
+#> $labels
+#> [1] "low"
+#> 
+#> $probabilities
+#>      high  low
+#> [1,] 0.47 0.53
+#> 
+# }
+```

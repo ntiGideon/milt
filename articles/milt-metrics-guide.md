@@ -8,21 +8,21 @@ when to use it, and what its weaknesses are.
 
 ## Quick Reference
 
-| Function                                                                           | Name          | Scale-free? | Requires training? | Notes                            |
-|------------------------------------------------------------------------------------|---------------|-------------|--------------------|----------------------------------|
-| [`milt_mae()`](https://ntiGideon.github.io/milt/reference/milt_mae.md)             | MAE           | No          | No                 | Robust to outliers               |
-| [`milt_mse()`](https://ntiGideon.github.io/milt/reference/milt_mse.md)             | MSE           | No          | No                 | Sensitive to large errors        |
-| [`milt_rmse()`](https://ntiGideon.github.io/milt/reference/milt_rmse.md)           | RMSE          | No          | No                 | Same units as data               |
-| [`milt_mape()`](https://ntiGideon.github.io/milt/reference/milt_mape.md)           | MAPE          | Yes         | No                 | Undefined when actual = 0        |
-| [`milt_smape()`](https://ntiGideon.github.io/milt/reference/milt_smape.md)         | sMAPE         | Yes         | No                 | Bounded in \[0, 2\]              |
-| [`milt_mase()`](https://ntiGideon.github.io/milt/reference/milt_mase.md)           | MASE          | Yes         | Yes                | Best for cross-series comparison |
-| [`milt_rmsse()`](https://ntiGideon.github.io/milt/reference/milt_rmsse.md)         | RMSSE         | Yes         | Yes                | RMSE analogue of MASE            |
-| [`milt_mrae()`](https://ntiGideon.github.io/milt/reference/milt_mrae.md)           | MRAE          | Yes         | No                 | Relative to a benchmark          |
-| [`milt_r_squared()`](https://ntiGideon.github.io/milt/reference/milt_r_squared.md) | R²            | Yes         | No                 | Can be negative                  |
-| [`milt_crps()`](https://ntiGideon.github.io/milt/reference/milt_crps.md)           | CRPS          | No          | No                 | Distributional forecast          |
-| [`milt_pinball()`](https://ntiGideon.github.io/milt/reference/milt_pinball.md)     | Pinball loss  | No          | No                 | Quantile forecast                |
-| [`milt_winkler()`](https://ntiGideon.github.io/milt/reference/milt_winkler.md)     | Winkler score | No          | No                 | Prediction interval              |
-| [`milt_coverage()`](https://ntiGideon.github.io/milt/reference/milt_coverage.md)   | Coverage      | Yes         | No                 | Interval calibration             |
+| Function | Name | Scale-free? | Requires training? | Notes |
+|----|----|----|----|----|
+| [`milt_mae()`](https://ntiGideon.github.io/milt/reference/milt_mae.md) | MAE | No | No | Robust to outliers |
+| [`milt_mse()`](https://ntiGideon.github.io/milt/reference/milt_mse.md) | MSE | No | No | Sensitive to large errors |
+| [`milt_rmse()`](https://ntiGideon.github.io/milt/reference/milt_rmse.md) | RMSE | No | No | Same units as data |
+| [`milt_mape()`](https://ntiGideon.github.io/milt/reference/milt_mape.md) | MAPE | Yes | No | Undefined when actual = 0 |
+| [`milt_smape()`](https://ntiGideon.github.io/milt/reference/milt_smape.md) | sMAPE | Yes | No | Bounded in \[0, 2\] |
+| [`milt_mase()`](https://ntiGideon.github.io/milt/reference/milt_mase.md) | MASE | Yes | Yes | Best for cross-series comparison |
+| [`milt_rmsse()`](https://ntiGideon.github.io/milt/reference/milt_rmsse.md) | RMSSE | Yes | Yes | RMSE analogue of MASE |
+| [`milt_mrae()`](https://ntiGideon.github.io/milt/reference/milt_mrae.md) | MRAE | Yes | No | Relative to a benchmark |
+| [`milt_r_squared()`](https://ntiGideon.github.io/milt/reference/milt_r_squared.md) | R² | Yes | No | Can be negative |
+| [`milt_crps()`](https://ntiGideon.github.io/milt/reference/milt_crps.md) | CRPS | No | No | Distributional forecast |
+| [`milt_pinball()`](https://ntiGideon.github.io/milt/reference/milt_pinball.md) | Pinball loss | No | No | Quantile forecast |
+| [`milt_winkler()`](https://ntiGideon.github.io/milt/reference/milt_winkler.md) | Winkler score | No | No | Prediction interval |
+| [`milt_coverage()`](https://ntiGideon.github.io/milt/reference/milt_coverage.md) | Coverage | Yes | No | Interval calibration |
 
 ------------------------------------------------------------------------
 
@@ -33,7 +33,9 @@ arguments are numeric vectors of the same length.
 
 ### Mean Absolute Error — `milt_mae()`
 
-$$\text{MAE} = \frac{1}{n}\sum\limits_{t = 1}^{n}\left| y_{t} - {\widehat{y}}_{t} \right|$$
+``` math
+\text{MAE} = \frac{1}{n}\sum_{t=1}^{n} |y_t - \hat{y}_t|
+```
 
 **Returns:** a single non-negative number in the same units as `actual`.
 
@@ -48,6 +50,7 @@ error measure on a single series where scale comparisons are meaningful.
 units.
 
 ``` r
+
 library(milt)
 
 actual    <- c(100, 110, 95, 130, 120)
@@ -61,7 +64,9 @@ milt_mae(actual, predicted)
 
 ### Mean Squared Error — `milt_mse()`
 
-$$\text{MSE} = \frac{1}{n}\sum\limits_{t = 1}^{n}\left( y_{t} - {\widehat{y}}_{t} \right)^{2}$$
+``` math
+\text{MSE} = \frac{1}{n}\sum_{t=1}^{n} (y_t - \hat{y}_t)^2
+```
 
 **Returns:** a single non-negative number in squared units.
 
@@ -76,6 +81,7 @@ than one with consistently small errors.
 scale-free.
 
 ``` r
+
 milt_mse(actual, predicted)
 #> [1] 28.4
 ```
@@ -84,7 +90,9 @@ milt_mse(actual, predicted)
 
 ### Root Mean Squared Error — `milt_rmse()`
 
-$$\text{RMSE} = \sqrt{\text{MSE}}$$
+``` math
+\text{RMSE} = \sqrt{\text{MSE}}
+```
 
 **Returns:** a single non-negative number in the same units as `actual`.
 
@@ -96,6 +104,7 @@ reported metric in academic forecasting competitions.
 penalises large mistakes.
 
 ``` r
+
 milt_rmse(actual, predicted)
 #> [1] 5.329
 ```
@@ -104,7 +113,9 @@ milt_rmse(actual, predicted)
 
 ### Mean Absolute Percentage Error — `milt_mape()`
 
-$$\text{MAPE} = \frac{1}{n}\sum\limits_{t = 1}^{n}\left| \frac{y_{t} - {\widehat{y}}_{t}}{y_{t}} \right|$$
+``` math
+\text{MAPE} = \frac{1}{n}\sum_{t=1}^{n} \left|\frac{y_t - \hat{y}_t}{y_t}\right|
+```
 
 **Returns:** a single numeric value (expressed as a fraction, not a
 percentage — multiply by 100 for display). A value of `0.05` means 5 %.
@@ -121,6 +132,7 @@ when the actual is small vs. large. - Biased towards forecasts that are
 too low.
 
 ``` r
+
 milt_mape(actual, predicted)
 #> [1] 0.04085
 # i.e. ≈ 4.1 %
@@ -134,7 +146,9 @@ milt_smape(actuals_with_zero, c(1, 9, 22, 28))
 
 ### Symmetric MAPE — `milt_smape()`
 
-$$\text{sMAPE} = \frac{2}{n}\sum\limits_{t = 1}^{n}\frac{\left| y_{t} - {\widehat{y}}_{t} \right|}{\left| y_{t} \right| + \left| {\widehat{y}}_{t} \right|}$$
+``` math
+\text{sMAPE} = \frac{2}{n}\sum_{t=1}^{n} \frac{|y_t - \hat{y}_t|}{|y_t| + |\hat{y}_t|}
+```
 
 **Returns:** a single numeric value in `[0, 2]` (i.e. `[0 %, 200 %]`).
 
@@ -149,6 +163,7 @@ want a symmetric, bounded error measure.
 zero simultaneously (milt sets those terms to 0 and emits a warning).
 
 ``` r
+
 milt_smape(actual, predicted)
 #> [1] 0.04078
 ```
@@ -157,20 +172,23 @@ milt_smape(actual, predicted)
 
 ### Mean Absolute Scaled Error — `milt_mase()`
 
-$$\text{MASE} = \frac{\text{MAE}}{\frac{1}{n - m}\sum\limits_{t = m + 1}^{n}\left| y_{t} - y_{t - m} \right|}$$
+``` math
+\text{MASE} = \frac{\text{MAE}}{\frac{1}{n-m}\sum_{t=m+1}^{n}|y_t - y_{t-m}|}
+```
 
 where *m* is the seasonal period.
 
 ``` r
+
 milt_mase(actual, predicted, training, season = 1L)
 ```
 
-| Argument    | Type             | Default | Description                                                                                   |
-|-------------|------------------|---------|-----------------------------------------------------------------------------------------------|
-| `actual`    | numeric vector   | —       | Observed values in the test set.                                                              |
-| `predicted` | numeric vector   | —       | Forecast values.                                                                              |
-| `training`  | numeric vector   | —       | In-sample (training) values used to compute the scaling denominator.                          |
-| `season`    | positive integer | `1L`    | Seasonal period. Use `1` for non-seasonal. Use `12` for monthly data with annual seasonality. |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `actual` | numeric vector | — | Observed values in the test set. |
+| `predicted` | numeric vector | — | Forecast values. |
+| `training` | numeric vector | — | In-sample (training) values used to compute the scaling denominator. |
+| `season` | positive integer | `1L` | Seasonal period. Use `1` for non-seasonal. Use `12` for monthly data with annual seasonality. |
 
 **Returns:** a single non-negative number.
 
@@ -187,6 +205,7 @@ seasonal naïve forecast on the training data, providing a scale-free,
 unbiased baseline.
 
 ``` r
+
 train_data <- as.numeric(AirPassengers)[1:120]
 test_data  <- as.numeric(AirPassengers)[121:144]
 fc_naive   <- rep(tail(train_data, 12), 2)  # seasonal naïve
@@ -199,7 +218,9 @@ milt_mase(test_data, fc_naive, training = train_data, season = 12L)
 
 ### Root Mean Squared Scaled Error — `milt_rmsse()`
 
-$$\text{RMSSE} = \sqrt{\frac{\text{MSE}}{\frac{1}{n - m}\sum\limits_{t = m + 1}^{n}\left( y_{t} - y_{t - m} \right)^{2}}}$$
+``` math
+\text{RMSSE} = \sqrt{\frac{\text{MSE}}{\frac{1}{n-m}\sum_{t=m+1}^{n}(y_t - y_{t-m})^2}}
+```
 
 Same signature as
 [`milt_mase()`](https://ntiGideon.github.io/milt/reference/milt_mase.md).
@@ -209,6 +230,7 @@ better-than-naive performance. RMSSE penalises large errors more than
 MASE. Used as the primary metric in the M5 forecasting competition.
 
 ``` r
+
 milt_rmsse(test_data, fc_naive, training = train_data, season = 12L)
 ```
 
@@ -216,9 +238,12 @@ milt_rmsse(test_data, fc_naive, training = train_data, season = 12L)
 
 ### Mean Relative Absolute Error — `milt_mrae()`
 
-$$\text{MRAE} = \frac{1}{n}\sum\limits_{t = 1}^{n}\frac{\left| y_{t} - {\widehat{y}}_{t} \right|}{\left| y_{t} - {\widehat{b}}_{t} \right|}$$
+``` math
+\text{MRAE} = \frac{1}{n}\sum_{t=1}^{n} \frac{|y_t - \hat{y}_t|}{|y_t - \hat{b}_t|}
+```
 
 ``` r
+
 milt_mrae(actual, predicted, benchmark)
 ```
 
@@ -232,6 +257,7 @@ milt_mrae(actual, predicted, benchmark)
 benchmark.
 
 ``` r
+
 benchmark <- rep(mean(actual), length(actual))
 milt_mrae(actual, predicted, benchmark)
 ```
@@ -240,9 +266,11 @@ milt_mrae(actual, predicted, benchmark)
 
 ### Coefficient of Determination — `milt_r_squared()`
 
-$$R^{2} = 1 - \frac{\sum\left( y_{t} - {\widehat{y}}_{t} \right)^{2}}{\sum\left( y_{t} - \bar{y} \right)^{2}}$$
+``` math
+R^2 = 1 - \frac{\sum(y_t - \hat{y}_t)^2}{\sum(y_t - \bar{y})^2}
+```
 
-**Returns:** a numeric value, typically in $( - \infty,1\rbrack$.
+**Returns:** a numeric value, typically in $`(-\infty, 1]`$.
 
 **Interpretation:** - R² = 1: perfect fit. - R² = 0: model is no better
 than predicting the mean. - R² \< 0: model is worse than predicting the
@@ -252,6 +280,7 @@ mean.
 informative than MASE or RMSSE for time series.
 
 ``` r
+
 milt_r_squared(actual, predicted)
 ```
 
@@ -263,18 +292,20 @@ milt_r_squared(actual, predicted)
 computes multiple metrics at once for a fitted model or backtest result:
 
 ``` r
+
 milt_accuracy(object, metrics = c("MAE", "RMSE", "MAPE", "MASE", "RMSSE"))
 ```
 
-| Argument  | Type                                          | Default                                 | Description                                                                                                        |
-|-----------|-----------------------------------------------|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| `object`  | MiltForecast, MiltBacktest, or MiltComparison | —                                       | The result object to evaluate.                                                                                     |
-| `metrics` | character vector                              | `c("MAE","RMSE","MAPE","MASE","RMSSE")` | Which metrics to compute. Supported: `"MAE"`, `"MSE"`, `"RMSE"`, `"MAPE"`, `"SMAPE"`, `"MASE"`, `"RMSSE"`, `"R2"`. |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `object` | MiltForecast, MiltBacktest, or MiltComparison | — | The result object to evaluate. |
+| `metrics` | character vector | `c("MAE","RMSE","MAPE","MASE","RMSSE")` | Which metrics to compute. Supported: `"MAE"`, `"MSE"`, `"RMSE"`, `"MAPE"`, `"SMAPE"`, `"MASE"`, `"RMSSE"`, `"R2"`. |
 
 **Returns:** a tibble with one row per model (or series) and one column
 per metric.
 
 ``` r
+
 ap  <- milt_series(AirPassengers)
 sp  <- milt_split(ap, prop = 0.8)
 
@@ -296,20 +327,23 @@ forecast.
 ### Continuous Ranked Probability Score — `milt_crps()`
 
 ``` r
+
 milt_crps(actual, forecast_dist)
 ```
 
-| Argument        | Type                        | Description                                                                                          |
-|-----------------|-----------------------------|------------------------------------------------------------------------------------------------------|
-| `actual`        | numeric vector (length *n*) | Observed values.                                                                                     |
-| `forecast_dist` | numeric matrix (*n* × *S*)  | *S* sample paths from the predictive distribution. Each row is a time step; each column is a sample. |
+| Argument | Type | Description |
+|----|----|----|
+| `actual` | numeric vector (length *n*) | Observed values. |
+| `forecast_dist` | numeric matrix (*n* × *S*) | *S* sample paths from the predictive distribution. Each row is a time step; each column is a sample. |
 
 **Formula (energy score form):**
 
-$$\text{CRPS} = {\mathbb{E}}|X - y| - \frac{1}{2}{\mathbb{E}}|X - X\prime|$$
+``` math
+\text{CRPS} = \mathbb{E}|X - y| - \frac{1}{2}\mathbb{E}|X - X'|
+```
 
-where $X,X\prime$ are independent draws from the forecast distribution
-and $y$ is the observation.
+where $`X, X'`$ are independent draws from the forecast distribution and
+$`y`$ is the observation.
 
 **Interpretation:** the lower the better. A CRPS of 0 is perfect
 (degenerate distribution concentrated on the true value). CRPS collapses
@@ -319,6 +353,7 @@ to MAE when only a point forecast is given.
 or when evaluating whether uncertainty estimates are well-calibrated.
 
 ``` r
+
 # Simulate 100 sample paths from a simple normal predictive distribution
 set.seed(42)
 n_steps  <- 12
@@ -336,29 +371,30 @@ milt_crps(actual_vals, forecast_dist)
 ### Pinball Loss — `milt_pinball()`
 
 ``` r
+
 milt_pinball(actual, quantile_forecast, tau)
 ```
 
-| Argument            | Type              | Description                                          |
-|---------------------|-------------------|------------------------------------------------------|
-| `actual`            | numeric vector    | Observed values.                                     |
-| `quantile_forecast` | numeric vector    | Forecast at quantile level `tau`.                    |
-| `tau`               | numeric in (0, 1) | Quantile level (e.g. `0.9` for the 90th percentile). |
+| Argument | Type | Description |
+|----|----|----|
+| `actual` | numeric vector | Observed values. |
+| `quantile_forecast` | numeric vector | Forecast at quantile level `tau`. |
+| `tau` | numeric in (0, 1) | Quantile level (e.g. `0.9` for the 90th percentile). |
 
 **Formula:**
 
-$$L_{\tau}\left( y,\widehat{q} \right) = \begin{cases}
-{\tau\left( y - \widehat{q} \right)} & {{\text{if}\mspace{6mu}}y \geq \widehat{q}} \\
-{(1 - \tau)\left( \widehat{q} - y \right)} & {{\text{if}\mspace{6mu}}y < \widehat{q}}
-\end{cases}$$
+``` math
+L_\tau(y, \hat{q}) = \begin{cases} \tau (y - \hat{q}) & \text{if } y \ge \hat{q} \\ (1 - \tau)(\hat{q} - y) & \text{if } y < \hat{q} \end{cases}
+```
 
-**Interpretation:** minimising the average pinball loss at level $\tau$
-yields the optimal $\tau$-quantile forecast. Lower is better.
+**Interpretation:** minimising the average pinball loss at level
+$`\tau`$ yields the optimal $`\tau`$-quantile forecast. Lower is better.
 
 **When to use:** evaluating quantile forecasts, e.g. to assess a model’s
 10th or 90th percentile estimates independently.
 
 ``` r
+
 # Evaluate the 90th-percentile forecast
 actual_vals      <- c(95, 103, 110, 98, 115, 122, 108)
 q90_forecast     <- c(100, 110, 112, 105, 118, 120, 115)
@@ -371,23 +407,22 @@ milt_pinball(actual_vals, q90_forecast, tau = 0.9)
 ### Winkler Score — `milt_winkler()`
 
 ``` r
+
 milt_winkler(actual, lower, upper, alpha)
 ```
 
-| Argument | Type              | Description                                                                                                      |
-|----------|-------------------|------------------------------------------------------------------------------------------------------------------|
-| `actual` | numeric vector    | Observed values.                                                                                                 |
-| `lower`  | numeric vector    | Lower bound of the prediction interval.                                                                          |
-| `upper`  | numeric vector    | Upper bound of the prediction interval.                                                                          |
-| `alpha`  | numeric in (0, 1) | Significance level — the interval targets `(1 - alpha) * 100 %` coverage. E.g. `alpha = 0.2` for 80 % intervals. |
+| Argument | Type | Description |
+|----|----|----|
+| `actual` | numeric vector | Observed values. |
+| `lower` | numeric vector | Lower bound of the prediction interval. |
+| `upper` | numeric vector | Upper bound of the prediction interval. |
+| `alpha` | numeric in (0, 1) | Significance level — the interval targets `(1 - alpha) * 100 %` coverage. E.g. `alpha = 0.2` for 80 % intervals. |
 
 **Formula:**
 
-$$W_{\alpha} = \begin{cases}
-{(U - L) + \frac{2}{\alpha}(L - y)} & {{\text{if}\mspace{6mu}}y < L} \\
-(U - L) & {{\text{if}\mspace{6mu}}L \leq y \leq U} \\
-{(U - L) + \frac{2}{\alpha}(y - U)} & {{\text{if}\mspace{6mu}}y > U}
-\end{cases}$$
+``` math
+W_\alpha = \begin{cases} (U - L) + \frac{2}{\alpha}(L - y) & \text{if } y < L \\ (U - L) & \text{if } L \le y \le U \\ (U - L) + \frac{2}{\alpha}(y - U) & \text{if } y > U \end{cases}
+```
 
 **Interpretation:** the score equals the interval width when the
 observation falls inside; a penalty proportional to the miss distance is
@@ -398,6 +433,7 @@ missing the observation incurs a large penalty. Lower is better.
 intervals jointly (sharpness and calibration simultaneously).
 
 ``` r
+
 actual_vals <- c(95, 103, 110, 98, 115, 122, 108)
 lower_80    <- c(82,  90, 95,  86, 100, 105,  93)
 upper_80    <- c(115, 120, 128, 112, 132, 138, 122)
@@ -410,6 +446,7 @@ milt_winkler(actual_vals, lower_80, upper_80, alpha = 0.2)
 ### Interval Coverage — `milt_coverage()`
 
 ``` r
+
 milt_coverage(actual, lower, upper)
 ```
 
@@ -421,7 +458,9 @@ milt_coverage(actual, lower, upper)
 
 **Formula:**
 
-$$\text{Coverage} = \frac{1}{n}\sum\limits_{t = 1}^{n}\mathbf{1}\left\lbrack L_{t} \leq y_{t} \leq U_{t} \right\rbrack$$
+``` math
+\text{Coverage} = \frac{1}{n}\sum_{t=1}^{n} \mathbf{1}[L_t \le y_t \le U_t]
+```
 
 **Interpretation:** the fraction of observations that fall within the
 stated prediction interval. A well-calibrated 80 % interval should have
@@ -432,6 +471,7 @@ coverage \< nominal = under-conservative (too narrow).
 producing prediction intervals.
 
 ``` r
+
 milt_coverage(actual_vals, lower_80, upper_80)
 #> [1] 1.0  # all 7 observations within the 80 % interval
 ```
@@ -463,6 +503,7 @@ return `MiltBacktest` objects. Pass them to
 to aggregate metrics across all folds:
 
 ``` r
+
 bt <- milt_backtest(
   milt_model("auto_arima"),
   milt_series(AirPassengers),

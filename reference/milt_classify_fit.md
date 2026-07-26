@@ -35,3 +35,16 @@ The fitted `MiltClassifier` (invisibly, mutated in place).
 Other classify:
 [`milt_classifier()`](https://ntiGideon.github.io/milt/reference/milt_classifier.md),
 [`milt_classify_predict()`](https://ntiGideon.github.io/milt/reference/milt_classify_predict.md)
+
+## Examples
+
+``` r
+# \donttest{
+if (requireNamespace("ranger", quietly = TRUE)) {
+  s1  <- milt_series(AirPassengers)
+  s2  <- milt_series(AirPassengers * 1.2)
+  clf <- milt_classifier("feature_based")
+  milt_classify_fit(clf, list(s1, s2), labels = c("low", "high"))
+}
+# }
+```

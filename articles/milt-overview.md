@@ -1,6 +1,7 @@
 # milt Package Overview
 
 ``` r
+
 library(milt)
 #> milt 0.1.0 — Modern Integrated Library for Timeseries
 #> Use `list_milt_models()` to see available models.
@@ -29,6 +30,7 @@ learning, it uses a single workflow pattern across the library.
 The central workflow is:
 
 ``` r
+
 milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon = 12)
 ```
 
@@ -53,6 +55,7 @@ the package. Most user-facing functions either consume or return a
 Create it from many source types:
 
 ``` r
+
 air <- milt_series(AirPassengers)
 print(air)
 #> # A MiltSeries: 144 x 1 [monthly]
@@ -74,6 +77,7 @@ print(air)
 Common accessors:
 
 ``` r
+
 air$n_timesteps()
 #> [1] 144
 air$freq()
@@ -92,6 +96,7 @@ head(air$values())
 fitted model states after training.
 
 ``` r
+
 model <- milt_model("naive")
 model
 #> # A MiltModel <naive> [unfitted]
@@ -103,6 +108,7 @@ Forecast results are returned as a `MiltForecast`, which contains point
 forecasts, interval columns, and plotting/printing helpers.
 
 ``` r
+
 fct <- milt_model("naive") |>
   milt_fit(air) |>
   milt_forecast(horizon = 12)
@@ -149,11 +155,12 @@ Other workflows return their own result classes, including:
 Forecasting is one major pillar of the package.
 
 ``` r
+
 fct_ets <- milt_model("ets") |>
   milt_fit(air) |>
   milt_forecast(horizon = 24)
 #> Fitting <MiltEts> model…
-#> Done in 0.62s.
+#> Done in 0.55s.
 
 plot(fct_ets)
 ```
@@ -173,21 +180,22 @@ The forecasting layer supports several families of models:
 Inspect the available registry:
 
 ``` r
+
 list_milt_models()
-#> # A tibble: 25 × 6
-#>    name           description multivariate probabilistic covariates multi_series
-#>    <chr>          <chr>       <lgl>        <lgl>         <lgl>      <lgl>       
-#>  1 snaive         "Seasonal … FALSE        TRUE          FALSE      FALSE       
-#>  2 ets            "Exponenti… FALSE        TRUE          FALSE      FALSE       
-#>  3 nbeats         ""          FALSE        FALSE         FALSE      FALSE       
-#>  4 auto_arima     "Automatic… FALSE        TRUE          TRUE       FALSE       
-#>  5 knn            "K-Nearest… FALSE        TRUE          FALSE      FALSE       
-#>  6 svm            "Support V… FALSE        TRUE          FALSE      FALSE       
-#>  7 stl            "STL decom… FALSE        TRUE          FALSE      FALSE       
-#>  8 elastic_net    ""          FALSE        FALSE         FALSE      FALSE       
-#>  9 deepar         ""          FALSE        FALSE         FALSE      FALSE       
-#> 10 darts_transfo… ""          FALSE        FALSE         FALSE      FALSE       
-#> # ℹ 15 more rows
+#> # A tibble: 31 × 6
+#>    name        description    multivariate probabilistic covariates multi_series
+#>    <chr>       <chr>          <lgl>        <lgl>         <lgl>      <lgl>       
+#>  1 snaive      "Seasonal Nai… FALSE        TRUE          FALSE      FALSE       
+#>  2 knn         "K-Nearest Ne… FALSE        TRUE          FALSE      FALSE       
+#>  3 ets         "Exponential … FALSE        TRUE          FALSE      FALSE       
+#>  4 nbeats      ""             FALSE        FALSE         FALSE      FALSE       
+#>  5 auto_arima  "Automatic AR… FALSE        TRUE          TRUE       FALSE       
+#>  6 svm         "Support Vect… FALSE        TRUE          FALSE      FALSE       
+#>  7 stl         "STL decompos… FALSE        TRUE          FALSE      FALSE       
+#>  8 elastic_net ""             FALSE        FALSE         FALSE      FALSE       
+#>  9 dlinear     ""             FALSE        FALSE         FALSE      FALSE       
+#> 10 deepar      ""             FALSE        FALSE         FALSE      FALSE       
+#> # ℹ 21 more rows
 ```
 
 ## Evaluation and backtesting
@@ -197,6 +205,7 @@ The package includes multiple levels of evaluation.
 ### Train/test splits
 
 ``` r
+
 spl <- milt_split(air, ratio = 0.8)
 spl$train$n_timesteps()
 #> [1] 115
@@ -207,6 +216,7 @@ spl$test$n_timesteps()
 ### Accuracy metrics
 
 ``` r
+
 fct_test <- milt_model("naive") |>
   milt_fit(spl$train) |>
   milt_forecast(spl$test$n_timesteps())
@@ -217,7 +227,7 @@ milt_accuracy(
   actual = spl$test$values(),
   predicted = fct_test$as_tibble()$.mean
 )
-#> # A tibble: 5 × 2
+#> # A tibble: 9 × 2
 #>   metric    value
 #>   <chr>     <dbl>
 #> 1 MAE      81.4  
@@ -225,11 +235,16 @@ milt_accuracy(
 #> 3 RMSE     93.1  
 #> 4 MAPE      0.202
 #> 5 R2       -0.421
+#> 6 WMAPE     0.185
+#> 7 OPE       0.115
+#> 8 CV        0.212
+#> 9 MARRE     0.261
 ```
 
 ### Rolling-origin backtesting
 
 ``` r
+
 bt <- milt_backtest(
   model = milt_model("naive"),
   series = air,
@@ -259,6 +274,7 @@ print(bt)
 ### Model comparison
 
 ``` r
+
 cmp <- milt_compare(
   models = list(
     naive = milt_model("naive"),
@@ -297,6 +313,7 @@ print(cmp)
 ### Direct steps
 
 ``` r
+
 air_features <- air |>
   milt_step_lag(lags = 1:6) |>
   milt_step_rolling(windows = 3L, fns = "mean") |>
@@ -335,6 +352,7 @@ Pipelines let you define repeatable transformations and model
 application in a single object.
 
 ``` r
+
 pipe <- milt_pipeline() |>
   milt_pipe_step_lag(lags = 1:12) |>
   milt_pipe_step_rolling(windows = c(3L, 6L), fns = "mean") |>
@@ -351,6 +369,7 @@ The package includes diagnostics beyond forecasting.
 ### Series diagnostics
 
 ``` r
+
 dx <- milt_diagnose(air)
 print(dx)
 #> # MiltDiagnosis
@@ -363,6 +382,7 @@ print(dx)
 ### Exploratory analysis
 
 ``` r
+
 eda <- milt_eda(air)
 #> Registered S3 method overwritten by 'quantmod':
 #>   method            from
@@ -429,6 +449,7 @@ For supported model types,
 provides feature-importance style summaries and plots.
 
 ``` r
+
 exp <- milt_explain(fitted_model)
 print(exp)
 plot(exp)
@@ -439,6 +460,7 @@ plot(exp)
 `milt` also includes detection workflows for unusual behavior in series.
 
 ``` r
+
 detector <- milt_detector("iqr")
 anom <- milt_detect(detector, air)
 print(anom)
@@ -450,6 +472,7 @@ print(anom)
 Changepoint analysis is exposed separately:
 
 ``` r
+
 cp <- milt_changepoints(air)
 print(cp)
 #> # MiltChangepoints [pelt]
@@ -503,6 +526,7 @@ well.
 The package ships with example data for demonstrations and tests:
 
 ``` r
+
 data(milt_air)
 data(milt_retail)
 data(milt_energy)

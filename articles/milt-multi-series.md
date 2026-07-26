@@ -1,6 +1,7 @@
 # Working with Multiple Series
 
 ``` r
+
 library(milt)
 #> milt 0.1.0 — Modern Integrated Library for Timeseries
 #> Use `list_milt_models()` to see available models.
@@ -18,6 +19,7 @@ fits one model per series in parallel.
 ## 1. Creating a multi-series MiltSeries
 
 ``` r
+
 # Build a synthetic dataset with 3 stores
 set.seed(42)
 n   <- 48L
@@ -58,6 +60,7 @@ print(ms)
 ## 2. Visualise all series
 
 ``` r
+
 plot(ms)
 ```
 
@@ -71,11 +74,12 @@ plot(ms)
 wraps any model to train independently on each group:
 
 ``` r
+
 local_m <- milt_local_model(milt_model("ets"))
 fitted  <- milt_fit(local_m, ms)
 #> Fitting <MiltLocalModel> model…
 #> Local model: fitting 3 groups…
-#> Done in 1.71s.
+#> Done in 1.65s.
 fct     <- milt_forecast(fitted, 12)
 #> Local model: generating forecasts for 3 groups.
 print(fct)
@@ -100,6 +104,7 @@ plot(fct)
 ## 4. Split and manipulate individual series
 
 ``` r
+
 # Extract one group by filtering the underlying tibble
 s_A <- milt_series(
   dplyr::filter(ms$as_tibble(), store == "A"),
@@ -117,6 +122,7 @@ cat("Train:", spl$train$n_timesteps(), "Test:", spl$test$n_timesteps(), "\n")
 ## 5. Concatenate series
 
 ``` r
+
 s1 <- milt_series(AirPassengers)[1:72]
 s2 <- milt_series(AirPassengers)[73:144]
 s_full <- milt_concat(s1, s2)
@@ -131,6 +137,7 @@ cat("Combined length:", s_full$n_timesteps(), "\n")
 Group series by shape similarity:
 
 ``` r
+
 # Create a list of separate MiltSeries for clustering
 series_list <- lapply(c("A", "B", "C"), function(g) {
   milt_window(ms, group = g)
@@ -152,6 +159,7 @@ print(cl)
 Train a classifier on labelled series:
 
 ``` r
+
 # Assign synthetic labels
 labels <- c("high", "high", "low")   # stores A, B, C
 
@@ -170,6 +178,7 @@ cat("Predicted labels:", pred$labels, "\n")
 Ensure aggregate forecasts are coherent with bottom-level sums:
 
 ``` r
+
 # Fit models for Total + each store
 s_total <- milt_series(
   tibble::tibble(
@@ -183,16 +192,16 @@ s_total <- milt_series(
 
 fc_total <- milt_model("ets") |> milt_fit(s_total)  |> milt_forecast(6)
 #> Fitting <MiltEts> model…
-#> Done in 0.5s.
+#> Done in 0.83s.
 fc_A     <- milt_model("ets") |> milt_fit(series_list[[1L]]) |> milt_forecast(6)
 #> Fitting <MiltEts> model…
-#> Done in 0.56s.
+#> Done in 0.54s.
 fc_B     <- milt_model("ets") |> milt_fit(series_list[[2L]]) |> milt_forecast(6)
 #> Fitting <MiltEts> model…
 #> Done in 0.51s.
 fc_C     <- milt_model("ets") |> milt_fit(series_list[[3L]]) |> milt_forecast(6)
 #> Fitting <MiltEts> model…
-#> Done in 0.47s.
+#> Done in 0.46s.
 
 # Summing matrix (Total = A + B + C)
 S <- matrix(c(1,1,1, 1,0,0, 0,1,0, 0,0,1),

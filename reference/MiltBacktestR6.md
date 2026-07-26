@@ -13,32 +13,32 @@ instead.
 
 ### Public methods
 
-- [`MiltBacktestR6$new()`](#method-MiltBacktest-new)
+- [`MiltBacktest$new()`](#method-MiltBacktest-initialize)
 
-- [`MiltBacktestR6$model_name()`](#method-MiltBacktest-model_name)
+- [`MiltBacktest$model_name()`](#method-MiltBacktest-model_name)
 
-- [`MiltBacktestR6$method()`](#method-MiltBacktest-method)
+- [`MiltBacktest$method()`](#method-MiltBacktest-method)
 
-- [`MiltBacktestR6$horizon()`](#method-MiltBacktest-horizon)
+- [`MiltBacktest$horizon()`](#method-MiltBacktest-horizon)
 
-- [`MiltBacktestR6$n_folds()`](#method-MiltBacktest-n_folds)
+- [`MiltBacktest$n_folds()`](#method-MiltBacktest-n_folds)
 
-- [`MiltBacktestR6$metrics()`](#method-MiltBacktest-metrics)
+- [`MiltBacktest$metrics()`](#method-MiltBacktest-metrics)
 
-- [`MiltBacktestR6$summary_tbl()`](#method-MiltBacktest-summary_tbl)
+- [`MiltBacktest$summary_tbl()`](#method-MiltBacktest-summary_tbl)
 
-- [`MiltBacktestR6$as_tibble()`](#method-MiltBacktest-as_tibble)
+- [`MiltBacktest$as_tibble()`](#method-MiltBacktest-as_tibble)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `MiltBacktest$new()`
 
 Initialise (called internally by
 [`milt_backtest()`](https://ntiGideon.github.io/milt/reference/milt_backtest.md)).
 
 #### Usage
 
-    MiltBacktestR6$new(model_name, method, horizon, fold_results)
+    MiltBacktest$new(model_name, method, horizon, fold_results)
 
 #### Arguments
 
@@ -60,72 +60,72 @@ Initialise (called internally by
 
 ------------------------------------------------------------------------
 
-### Method `model_name()`
+### `MiltBacktest$model_name()`
 
 Model identifier string.
 
 #### Usage
 
-    MiltBacktestR6$model_name()
+    MiltBacktest$model_name()
 
 ------------------------------------------------------------------------
 
-### Method `method()`
+### `MiltBacktest$method()`
 
 Backtesting method: `"expanding"` or `"sliding"`.
 
 #### Usage
 
-    MiltBacktestR6$method()
+    MiltBacktest$method()
 
 ------------------------------------------------------------------------
 
-### Method `horizon()`
+### `MiltBacktest$horizon()`
 
 Forecast horizon used.
 
 #### Usage
 
-    MiltBacktestR6$horizon()
+    MiltBacktest$horizon()
 
 ------------------------------------------------------------------------
 
-### Method `n_folds()`
+### `MiltBacktest$n_folds()`
 
 Number of folds evaluated.
 
 #### Usage
 
-    MiltBacktestR6$n_folds()
+    MiltBacktest$n_folds()
 
 ------------------------------------------------------------------------
 
-### Method `metrics()`
+### `MiltBacktest$metrics()`
 
 Per-fold metric tibble. Columns: `.fold`, `.train_n`, `.test_n`, plus
 one column per metric.
 
 #### Usage
 
-    MiltBacktestR6$metrics()
+    MiltBacktest$metrics()
 
 ------------------------------------------------------------------------
 
-### Method `summary_tbl()`
+### `MiltBacktest$summary_tbl()`
 
 Aggregated summary tibble. Columns: `metric`, `mean`, `sd`, `min`,
 `max`.
 
 #### Usage
 
-    MiltBacktestR6$summary_tbl()
+    MiltBacktest$summary_tbl()
 
 ------------------------------------------------------------------------
 
-### Method `as_tibble()`
+### `MiltBacktest$as_tibble()`
 
 Return per-fold metric tibble (same as `metrics()`).
 
 #### Usage
 
-    MiltBacktestR6$as_tibble()
+    MiltBacktest$as_tibble()

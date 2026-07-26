@@ -1,6 +1,7 @@
 # Deploying milt Models
 
 ``` r
+
 library(milt)
 ```
 
@@ -23,6 +24,7 @@ and restored with
 ## 1. Save and load
 
 ``` r
+
 air <- milt_series(AirPassengers)
 m   <- milt_model("ets") |> milt_fit(air)
 
@@ -53,6 +55,7 @@ wraps the model in a Plumber API that exposes:
 | `/forecast`    | POST   | Accepts `{"horizon": <int>}`, returns JSON forecast |
 
 ``` r
+
 # Launch (blocking — runs until interrupted)
 milt_serve(m, host = "127.0.0.1", port = 8000)
 
@@ -82,6 +85,7 @@ launches an interactive four-tab app:
 - **Anomalies** — IQR anomaly overlay with adjustable multiplier.
 
 ``` r
+
 milt_dashboard(m)
 ```
 
@@ -93,6 +97,7 @@ milt_dashboard(m)
 renders a self-contained HTML or PDF analysis report:
 
 ``` r
+
 # HTML (default)
 path <- milt_report(
   series  = air,
@@ -116,6 +121,7 @@ model - Anomaly detection overview
 Save checkpoints at each refit:
 
 ``` r
+
 # After initial training
 milt_save(m, "model_v1")
 

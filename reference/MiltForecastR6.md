@@ -10,31 +10,31 @@ Produced by every model's `forecast()` method. Use
 
 ### Public methods
 
-- [`MiltForecastR6$new()`](#method-MiltForecast-new)
+- [`MiltForecast$new()`](#method-MiltForecast-initialize)
 
-- [`MiltForecastR6$point_forecast()`](#method-MiltForecast-point_forecast)
+- [`MiltForecast$point_forecast()`](#method-MiltForecast-point_forecast)
 
-- [`MiltForecastR6$has_intervals()`](#method-MiltForecast-has_intervals)
+- [`MiltForecast$has_intervals()`](#method-MiltForecast-has_intervals)
 
-- [`MiltForecastR6$has_samples()`](#method-MiltForecast-has_samples)
+- [`MiltForecast$has_samples()`](#method-MiltForecast-has_samples)
 
-- [`MiltForecastR6$levels()`](#method-MiltForecast-levels)
+- [`MiltForecast$levels()`](#method-MiltForecast-levels)
 
-- [`MiltForecastR6$horizon()`](#method-MiltForecast-horizon)
+- [`MiltForecast$horizon()`](#method-MiltForecast-horizon)
 
-- [`MiltForecastR6$model_name()`](#method-MiltForecast-model_name)
+- [`MiltForecast$model_name()`](#method-MiltForecast-model_name)
 
-- [`MiltForecastR6$as_tibble()`](#method-MiltForecast-as_tibble)
+- [`MiltForecast$as_tibble()`](#method-MiltForecast-as_tibble)
 
 ------------------------------------------------------------------------
 
-### Method `new()`
+### `MiltForecast$new()`
 
 Create a MiltForecast. Called by model backends.
 
 #### Usage
 
-    MiltForecastR6$new(
+    MiltForecast$new(
       point_forecast,
       lower = list(),
       upper = list(),
@@ -83,70 +83,70 @@ Create a MiltForecast. Called by model backends.
 
 ------------------------------------------------------------------------
 
-### Method `point_forecast()`
+### `MiltForecast$point_forecast()`
 
 Return point forecasts as a tibble.
 
 #### Usage
 
-    MiltForecastR6$point_forecast()
+    MiltForecast$point_forecast()
 
 ------------------------------------------------------------------------
 
-### Method `has_intervals()`
+### `MiltForecast$has_intervals()`
 
 `TRUE` if prediction intervals are stored.
 
 #### Usage
 
-    MiltForecastR6$has_intervals()
+    MiltForecast$has_intervals()
 
 ------------------------------------------------------------------------
 
-### Method `has_samples()`
+### `MiltForecast$has_samples()`
 
 `TRUE` if sample paths are stored.
 
 #### Usage
 
-    MiltForecastR6$has_samples()
+    MiltForecast$has_samples()
 
 ------------------------------------------------------------------------
 
-### Method [`levels()`](https://rdrr.io/r/base/levels.html)
+### `MiltForecast$levels()`
 
 Return confidence levels stored in the forecast.
 
 #### Usage
 
-    MiltForecastR6$levels()
+    MiltForecast$levels()
 
 ------------------------------------------------------------------------
 
-### Method `horizon()`
+### `MiltForecast$horizon()`
 
 Return the forecast horizon.
 
 #### Usage
 
-    MiltForecastR6$horizon()
+    MiltForecast$horizon()
 
 ------------------------------------------------------------------------
 
-### Method `model_name()`
+### `MiltForecast$model_name()`
 
 Return the model name.
 
 #### Usage
 
-    MiltForecastR6$model_name()
+    MiltForecast$model_name()
 
 ------------------------------------------------------------------------
 
-### Method `as_tibble()`
+### `MiltForecast$as_tibble()`
 
 Convert to a wide tibble with all intervals.
 
 #### Usage
 
-    MiltForecastR6$as_tibble()
+    MiltForecast$as_tibble()

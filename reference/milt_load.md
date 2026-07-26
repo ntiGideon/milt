@@ -34,7 +34,7 @@ Other save:
 # \donttest{
 tmp <- tempfile(fileext = ".milt")
 milt_save(milt_series(AirPassengers), tmp)
-#> Saved to /tmp/Rtmp0oPiQm/file1f29799d0247.milt.
+#> Saved to /tmp/RtmpfPZx0H/file1cf939ee015c.milt.
 s <- milt_load(tmp)
 # }
 ```

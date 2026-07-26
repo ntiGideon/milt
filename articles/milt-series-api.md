@@ -15,6 +15,7 @@ objects.
 The primary constructor. Accepts several input formats.
 
 ``` r
+
 milt_series(
   data,
   time_col   = NULL,
@@ -25,18 +26,19 @@ milt_series(
 )
 ```
 
-| Argument     | Type                 | Default                                      | Description                                                                                                                                                                                                         |
-|--------------|----------------------|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `data`       | varies               | —                                            | Input data. Accepts a `ts`, `zoo`, `xts`, `tsibble`, `tibble`, `data.frame`, or numeric vector.                                                                                                                     |
-| `time_col`   | character            | auto                                         | Name of the column holding timestamps. Auto-detected when `data` is a `tibble` or `data.frame`.                                                                                                                     |
-| `value_cols` | character            | auto                                         | Name(s) of the numeric value column(s). Auto-detected when not supplied.                                                                                                                                            |
-| `group_col`  | character or NULL    | `NULL`                                       | Column that identifies series in a multi-series (panel) dataset.                                                                                                                                                    |
-| `frequency`  | character or numeric | auto                                         | Sampling frequency. Accepts `"daily"`, `"weekly"`, `"monthly"`, `"quarterly"`, `"annual"`, `"hourly"`, `"minutely"`, or a positive integer (observations per year). Auto-detected from the time column when `NULL`. |
-| `metadata`   | named list           | [`list()`](https://rdrr.io/r/base/list.html) | Arbitrary metadata attached to the series (e.g. `list(source = "sensor_A")`). Retrieved with `$metadata`.                                                                                                           |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `data` | varies | — | Input data. Accepts a `ts`, `zoo`, `xts`, `tsibble`, `tibble`, `data.frame`, or numeric vector. |
+| `time_col` | character | auto | Name of the column holding timestamps. Auto-detected when `data` is a `tibble` or `data.frame`. |
+| `value_cols` | character | auto | Name(s) of the numeric value column(s). Auto-detected when not supplied. |
+| `group_col` | character or NULL | `NULL` | Column that identifies series in a multi-series (panel) dataset. |
+| `frequency` | character or numeric | auto | Sampling frequency. Accepts `"daily"`, `"weekly"`, `"monthly"`, `"quarterly"`, `"annual"`, `"hourly"`, `"minutely"`, or a positive integer (observations per year). Auto-detected from the time column when `NULL`. |
+| `metadata` | named list | [`list()`](https://rdrr.io/r/base/list.html) | Arbitrary metadata attached to the series (e.g. `list(source = "sensor_A")`). Retrieved with `$metadata`. |
 
 **From a base-R `ts` object (most common):**
 
 ``` r
+
 library(milt)
 
 ap <- milt_series(AirPassengers)
@@ -46,6 +48,7 @@ print(ap)
 **From a `tibble` with explicit column names:**
 
 ``` r
+
 library(tibble)
 
 df <- tibble(
@@ -60,6 +63,7 @@ print(s)
 **Multi-series (panel) from a long-format tibble:**
 
 ``` r
+
 panel <- tibble(
   date   = rep(seq(as.Date("2022-01-01"), by = "day", length.out = 90), 3),
   series = rep(c("A", "B", "C"), each = 90),
@@ -82,6 +86,7 @@ Once created, `MiltSeries` objects expose accessors for all metadata.
 ### Print and Summary
 
 ``` r
+
 ap <- milt_series(AirPassengers)
 
 print(ap)       # compact overview: n obs, frequency, range, value stats
@@ -93,6 +98,7 @@ summary(ap)     # detailed statistical summary
 These return metadata without modifying the object:
 
 ``` r
+
 ap$n_timesteps()      # number of time steps
 ap$n_series()         # 1 for univariate, >1 for multi-series
 ap$is_multi_series()  # TRUE/FALSE
@@ -111,6 +117,7 @@ ap$metadata           # named list of user-supplied metadata
 ### Data accessors
 
 ``` r
+
 ap$data()             # returns the underlying tibble (all columns)
 ap$values()           # numeric vector of the first value column
 ap$times()            # vector of timestamps
@@ -121,6 +128,7 @@ ap$times()            # vector of timestamps
 Convert a `MiltSeries` back to standard R formats:
 
 ``` r
+
 milt_to_ts(ap)        # base-R ts object
 milt_to_tibble(ap)    # tibble with time + value columns
 milt_to_tsibble(ap)   # tsibble (requires tsibble package)
@@ -135,6 +143,7 @@ milt_to_tsibble(ap)   # tsibble (requires tsibble package)
 `[` with integer indices returns a new `MiltSeries`:
 
 ``` r
+
 ap[1:12]        # first 12 observations
 ap[-(1:12)]     # drop first year
 ```
@@ -142,6 +151,7 @@ ap[-(1:12)]     # drop first year
 ### Head and tail
 
 ``` r
+
 milt_head(ap, n = 12)   # first 12 rows
 milt_tail(ap, n = 12)   # last 12 rows
 ```
@@ -151,18 +161,20 @@ milt_tail(ap, n = 12)   # last 12 rows
 Extract observations within a time range (both endpoints inclusive):
 
 ``` r
+
 milt_window(ap, start = "1951-01-01", end = "1955-12-01")
 ```
 
-| Argument | Type              | Default | Description                                                                                                                                                              |
-|----------|-------------------|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `series` | MiltSeries        | —       | Input series.                                                                                                                                                            |
-| `start`  | date-like or NULL | `NULL`  | Start of the window. Accepts `Date`, `POSIXct`, or a character string parseable by [`lubridate::as_datetime()`](https://lubridate.tidyverse.org/reference/as_date.html). |
-| `end`    | date-like or NULL | `NULL`  | End of the window. Same types as `start`.                                                                                                                                |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `series` | MiltSeries | — | Input series. |
+| `start` | date-like or NULL | `NULL` | Start of the window. Accepts `Date`, `POSIXct`, or a character string parseable by [`lubridate::as_datetime()`](https://lubridate.tidyverse.org/reference/as_date.html). |
+| `end` | date-like or NULL | `NULL` | End of the window. Same types as `start`. |
 
 ### Train/test split
 
 ``` r
+
 # Split into 80% training, 20% test
 splits <- milt_split(ap, prop = 0.8)
 train  <- splits$train
@@ -175,18 +187,18 @@ splits2 <- milt_split_at(ap, date = "1958-01-01")
 [`milt_split()`](https://ntiGideon.github.io/milt/reference/milt_split.md)
 arguments:
 
-| Argument | Type              | Default | Description                                             |
-|----------|-------------------|---------|---------------------------------------------------------|
-| `series` | MiltSeries        | —       | Input series.                                           |
-| `prop`   | numeric in (0, 1) | `0.8`   | Proportion of observations to keep in the training set. |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `series` | MiltSeries | — | Input series. |
+| `prop` | numeric in (0, 1) | `0.8` | Proportion of observations to keep in the training set. |
 
 [`milt_split_at()`](https://ntiGideon.github.io/milt/reference/milt_split_at.md)
 arguments:
 
-| Argument | Type       | Default | Description                                                                                                       |
-|----------|------------|---------|-------------------------------------------------------------------------------------------------------------------|
-| `series` | MiltSeries | —       | Input series.                                                                                                     |
-| `date`   | date-like  | —       | Cut-off date. All observations strictly before this date go to `$train`; all from this date onward go to `$test`. |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `series` | MiltSeries | — | Input series. |
+| `date` | date-like | — | Cut-off date. All observations strictly before this date go to `$train`; all from this date onward go to `$test`. |
 
 ------------------------------------------------------------------------
 
@@ -197,6 +209,7 @@ arguments:
 Concatenate two `MiltSeries` with the same structure end-to-end:
 
 ``` r
+
 s1 <- milt_window(ap, end = "1954-12-01")
 s2 <- milt_window(ap, start = "1955-01-01")
 
@@ -214,6 +227,7 @@ The two series must share the same `value_cols` and `frequency`.
 Change the sampling frequency of a series:
 
 ``` r
+
 # Aggregate daily → weekly (mean)
 daily_s <- milt_series(
   tibble(
@@ -231,17 +245,18 @@ weekly_s <- milt_resample(daily_s, frequency = "weekly", fun = mean)
 [`milt_resample()`](https://ntiGideon.github.io/milt/reference/milt_resample.md)
 arguments:
 
-| Argument    | Type       | Default | Description                                                                      |
-|-------------|------------|---------|----------------------------------------------------------------------------------|
-| `series`    | MiltSeries | —       | Input series.                                                                    |
-| `frequency` | character  | —       | Target frequency: `"daily"`, `"weekly"`, `"monthly"`, `"quarterly"`, `"annual"`. |
-| `fun`       | function   | `mean`  | Aggregation function applied to each bin (e.g. `sum`, `max`, `min`).             |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `series` | MiltSeries | — | Input series. |
+| `frequency` | character | — | Target frequency: `"daily"`, `"weekly"`, `"monthly"`, `"quarterly"`, `"annual"`. |
+| `fun` | function | `mean` | Aggregation function applied to each bin (e.g. `sum`, `max`, `min`). |
 
 ### Gap filling
 
 Detect and fill irregular or missing time steps:
 
 ``` r
+
 # Insert NAs at missing time steps, then linearly interpolate
 filled <- milt_fill_gaps(s, method = "linear")
 ```
@@ -249,10 +264,10 @@ filled <- milt_fill_gaps(s, method = "linear")
 [`milt_fill_gaps()`](https://ntiGideon.github.io/milt/reference/milt_fill_gaps.md)
 arguments:
 
-| Argument | Type       | Default    | Description                                                                                                                                                    |
-|----------|------------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `series` | MiltSeries | —          | Input series.                                                                                                                                                  |
-| `method` | character  | `"linear"` | Fill method: `"linear"` (linear interpolation), `"spline"` (spline interpolation), `"na"` (insert `NA` only), `"last"` (forward fill), `"mean"` (global mean). |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `series` | MiltSeries | — | Input series. |
+| `method` | character | `"linear"` | Fill method: `"linear"` (linear interpolation), `"spline"` (spline interpolation), `"na"` (insert `NA` only), `"last"` (forward fill), `"mean"` (global mean). |
 
 ------------------------------------------------------------------------
 
@@ -269,6 +284,7 @@ series:
   forecast horizon (e.g. calendar events, planned promotions).
 
 ``` r
+
 library(tibble)
 
 ap <- milt_series(AirPassengers)
@@ -299,12 +315,12 @@ milt_get_covariates(ap, type = "future")
 [`milt_add_covariates()`](https://ntiGideon.github.io/milt/reference/milt_add_covariates.md)
 arguments:
 
-| Argument | Type           | Default | Description                                                                         |
-|----------|----------------|---------|-------------------------------------------------------------------------------------|
-| `series` | MiltSeries     | —       | Target series to attach covariates to.                                              |
-| `static` | tibble or NULL | `NULL`  | One-row tibble of scalar features.                                                  |
-| `past`   | tibble or NULL | `NULL`  | Tibble with a time column matching the series’ time column plus feature columns.    |
-| `future` | tibble or NULL | `NULL`  | Tibble with a time column extending into the forecast horizon plus feature columns. |
+| Argument | Type | Default | Description |
+|----|----|----|----|
+| `series` | MiltSeries | — | Target series to attach covariates to. |
+| `static` | tibble or NULL | `NULL` | One-row tibble of scalar features. |
+| `past` | tibble or NULL | `NULL` | Tibble with a time column matching the series’ time column plus feature columns. |
+| `future` | tibble or NULL | `NULL` | Tibble with a time column extending into the forecast horizon plus feature columns. |
 
 ------------------------------------------------------------------------
 
@@ -314,6 +330,7 @@ When `group_col` is set, most milt functions automatically apply
 per-group.
 
 ``` r
+
 # Build a 3-series dataset
 panel <- tibble(
   month  = rep(seq(as.Date("2020-01-01"), by = "month", length.out = 60), 3),
@@ -348,15 +365,15 @@ print(fc)
 
 The table below lists all frequency labels milt understands:
 
-| `frequency` string      | Observations per year | Typical [`ts()`](https://rdrr.io/r/stats/ts.html) period |
-|-------------------------|-----------------------|----------------------------------------------------------|
-| `"minutely"`            | 525,600               | —                                                        |
-| `"hourly"`              | 8,760                 | 8760                                                     |
-| `"daily"`               | 365                   | 365                                                      |
-| `"weekly"`              | 52                    | 52                                                       |
-| `"monthly"`             | 12                    | 12                                                       |
-| `"quarterly"`           | 4                     | 4                                                        |
-| `"annual"` / `"yearly"` | 1                     | 1                                                        |
+| `frequency` string | Observations per year | Typical [`ts()`](https://rdrr.io/r/stats/ts.html) period |
+|----|----|----|
+| `"minutely"` | 525,600 | — |
+| `"hourly"` | 8,760 | 8760 |
+| `"daily"` | 365 | 365 |
+| `"weekly"` | 52 | 52 |
+| `"monthly"` | 12 | 12 |
+| `"quarterly"` | 4 | 4 |
+| `"annual"` / `"yearly"` | 1 | 1 |
 
 You may also pass a bare positive integer (e.g. `frequency = 7` for
 daily data with a weekly seasonal cycle).
@@ -369,6 +386,7 @@ All `milt_*` functions accept the series as their **first argument**,
 making them fully compatible with the native pipe `|>`:
 
 ``` r
+
 milt_series(AirPassengers) |>
   milt_window(start = "1950-01-01") |>
   milt_resample(frequency = "quarterly", fun = sum) |>

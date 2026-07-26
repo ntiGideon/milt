@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Model Reference Guide • milt</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Model Reference Guide">
 </head>
@@ -105,7 +105,8 @@ time.</p>
 <tr class="odd">
 <td>Baseline</td>
 <td>
-<code>naive</code>, <code>snaive</code>, <code>drift</code>
+<code>naive</code>, <code>snaive</code>, <code>drift</code>,
+<code>mean</code>, <code>moving_average</code>
 </td>
 <td>Benchmarks, sparse data</td>
 </tr>
@@ -217,6 +218,54 @@ training observations.</p>
 <span>  <span class="fu"><a href="../reference/milt_forecast.html">milt_forecast</a></span><span class="op">(</span>horizon <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
+<div class="section level3">
+<h3 id="mean-mean-forecast">
+<code>mean</code> — Mean forecast<a class="anchor" aria-label="anchor" href="#mean-mean-forecast"></a>
+</h3>
+<p>Repeats the training-series mean for every forecast step, with a
+constant (non-widening) prediction interval — appropriate when the
+series has no trend or seasonality and residuals are assumed i.i.d.</p>
+<p><strong>No hyperparameters.</strong> No package dependency.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">mean_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"mean"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/milt_forecast.html">milt_forecast</a></span><span class="op">(</span>horizon <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
+<div class="section level3">
+<h3 id="moving_average-moving-average-forecast">
+<code>moving_average</code> — Moving Average forecast<a class="anchor" aria-label="anchor" href="#moving_average-moving-average-forecast"></a>
+</h3>
+<p>Forecasts each step as the mean of the last <code>window</code>
+observations, then autoregressively slides that window forward using its
+own forecasts — so the h-step-ahead forecast eventually becomes the mean
+of prior forecasts alone.</p>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="25%">
+<col width="25%">
+<col width="25%">
+</colgroup>
+<thead><tr class="header">
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr></thead>
+<tbody><tr class="odd">
+<td><code>window</code></td>
+<td>integer</td>
+<td><code>3L</code></td>
+<td>Number of trailing observations averaged.</td>
+</tr></tbody>
+</table>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ma_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"moving_average"</span>, window <span class="op">=</span> <span class="fl">5L</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/milt_forecast.html">milt_forecast</a></span><span class="op">(</span>horizon <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
+<hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="classical-statistical-models">Classical statistical models<a class="anchor" aria-label="anchor" href="#classical-statistical-models"></a>
@@ -272,7 +321,7 @@ clearly non-seasonal data.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">arima_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"auto_arima"</span>,</span>
 <span>                         stepwise     <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                         seasonal     <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -332,7 +381,7 @@ additive trend + multiplicative season.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Automatic selection</span></span>
 <span><span class="va">ets_auto</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"ets"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -357,7 +406,7 @@ Performs well on M3 competition data.</p>
 <p><strong>Requires:</strong> <code>forecast</code></p>
 <p>No hyperparameters (all options are passed through <code>...</code>
 to <code><a href="https://pkg.robjhyndman.com/forecast/reference/forecast.theta_model.html" class="external-link">forecast::thetaf()</a></code>).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">theta_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"theta"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/milt_forecast.html">milt_forecast</a></span><span class="op">(</span>horizon <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
@@ -414,7 +463,7 @@ evolve.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stl_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"stl"</span>,</span>
 <span>                       method   <span class="op">=</span> <span class="st">"ets"</span>,</span>
 <span>                       s.window <span class="op">=</span> <span class="st">"periodic"</span>,</span>
@@ -479,7 +528,7 @@ with daily and weekly seasons).</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tbats_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"tbats"</span>,</span>
 <span>                          use_box_cox   <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>                          use_trend     <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -517,7 +566,7 @@ demand sizes and the intervals between them.</p>
 <td>Smoothing parameter. Smaller values produce smoother forecasts.</td>
 </tr></tbody>
 </table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simulated intermittent series</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span>
 <span><span class="va">demand</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">3</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">5</span>,<span class="fl">0</span>,<span class="fl">2</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">4</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span></span>
@@ -597,7 +646,7 @@ multiplicative when seasonal swings grow with the level.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prophet_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"prophet"</span>,</span>
 <span>                           yearly_seasonality      <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                           seasonality_mode        <span class="op">=</span> <span class="st">"multiplicative"</span>,</span>
@@ -676,7 +725,7 @@ overfit.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xgb_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"xgboost"</span>,</span>
 <span>                        lags      <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">24</span>,</span>
 <span>                        nrounds   <span class="op">=</span> <span class="fl">200L</span>,</span>
@@ -686,7 +735,7 @@ overfit.</td>
 <span>  <span class="fu"><a href="../reference/milt_forecast.html">milt_forecast</a></span><span class="op">(</span>horizon <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Feature importance</strong> is available via
 <code><a href="../reference/milt_explain.html">milt_explain()</a></code>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fitted_xgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"xgboost"</span>, lags <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span></span>
 <span><span class="va">ex</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_explain.html">milt_explain</a></span><span class="op">(</span><span class="va">fitted_xgb</span>, <span class="va">air</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ex</span><span class="op">)</span></span></code></pre></div>
@@ -753,7 +802,7 @@ models.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lgb_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"lightgbm"</span>,</span>
 <span>                        lags           <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span>,</span>
 <span>                        num_iterations <span class="op">=</span> <span class="fl">200L</span>,</span>
@@ -830,7 +879,7 @@ single trees; naturally handles interactions and outliers.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rf_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"random_forest"</span>,</span>
 <span>                      lags         <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span>,</span>
 <span>                      num.trees    <span class="op">=</span> <span class="fl">300L</span>,</span>
@@ -889,7 +938,7 @@ cross-validation.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Lasso (alpha = 1) — maximum sparsity</span></span>
 <span><span class="va">lasso_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"elastic_net"</span>,</span>
 <span>                          lags  <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">24</span>,</span>
@@ -954,7 +1003,7 @@ more tightly.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">svm_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"svm"</span>,</span>
 <span>                        lags    <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span>,</span>
 <span>                        kernel  <span class="op">=</span> <span class="st">"radial"</span>,</span>
@@ -1006,7 +1055,7 @@ similar historical windows and averages their next steps.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">knn_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"knn"</span>,</span>
 <span>                        k       <span class="op">=</span> <span class="fl">7L</span>,</span>
 <span>                        lags    <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span>,</span>
@@ -1022,7 +1071,7 @@ similar historical windows and averages their next steps.</p>
 <p>All deep learning backends are built with <a href="https://torch.mlverse.org/" class="external-link">torch for R</a>. They require
 <code>torch</code> to be installed <strong>and</strong> the Lantern C++
 backend downloaded:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/milt_install_backends.html">milt_install_backends</a></span><span class="op">(</span><span class="st">"deep_learning"</span><span class="op">)</span></span>
 <span><span class="fu">torch</span><span class="fu">::</span><span class="fu"><a href="https://torch.mlverse.org/docs/reference/install_torch.html" class="external-link">install_torch</a></span><span class="op">(</span><span class="op">)</span>   <span class="co"># run once after installing torch</span></span></code></pre></div>
 <p>All deep learning models share these training parameters:</p>
@@ -1140,7 +1189,7 @@ seasonal cycles.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nbeats_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"nbeats"</span>,</span>
 <span>                           input_chunk_length  <span class="op">=</span> <span class="fl">24L</span>,</span>
 <span>                           output_chunk_length <span class="op">=</span> <span class="fl">12L</span>,</span>
@@ -1238,7 +1287,7 @@ resolution).</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nhits_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"nhits"</span>,</span>
 <span>                          input_chunk_length  <span class="op">=</span> <span class="fl">36L</span>,</span>
 <span>                          output_chunk_length <span class="op">=</span> <span class="fl">12L</span>,</span>
@@ -1332,7 +1381,7 @@ forecasting.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tft_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"tft"</span>,</span>
 <span>                        input_chunk_length  <span class="op">=</span> <span class="fl">36L</span>,</span>
 <span>                        output_chunk_length <span class="op">=</span> <span class="fl">12L</span>,</span>
@@ -1428,7 +1477,7 @@ recurrence.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tcn_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"tcn"</span>,</span>
 <span>                        input_chunk_length  <span class="op">=</span> <span class="fl">24L</span>,</span>
 <span>                        output_chunk_length <span class="op">=</span> <span class="fl">12L</span>,</span>
@@ -1533,7 +1582,7 @@ jointly. Excels at capturing long-range dependencies efficiently.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptst_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"patch_tst"</span>,</span>
 <span>                         input_chunk_length  <span class="op">=</span> <span class="fl">48L</span>,</span>
 <span>                         output_chunk_length <span class="op">=</span> <span class="fl">12L</span>,</span>
@@ -1618,7 +1667,7 @@ intervals analytically.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">deepar_fct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"deepar"</span>,</span>
 <span>                           input_chunk_length  <span class="op">=</span> <span class="fl">36L</span>,</span>
 <span>                           output_chunk_length <span class="op">=</span> <span class="fl">12L</span>,</span>
@@ -1635,7 +1684,7 @@ intervals analytically.</p>
 </h2>
 <p>Use <code><a href="../reference/milt_compare.html">milt_compare()</a></code> to run a rolling-origin backtest
 across multiple models and rank them by accuracy:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">models</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  naive  <span class="op">=</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"naive"</span><span class="op">)</span>,</span>
 <span>  arima  <span class="op">=</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"auto_arima"</span><span class="op">)</span>,</span>
@@ -1652,7 +1701,7 @@ across multiple models and rank them by accuracy:</p>
 <h2 id="ensembling">Ensembling<a class="anchor" aria-label="anchor" href="#ensembling"></a>
 </h2>
 <p>Combine fitted models into a weighted or mean ensemble:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"auto_arima"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span></span>
 <span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"ets"</span><span class="op">)</span>        <span class="op">|&gt;</span> <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span></span>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/milt_model.html">milt_model</a></span><span class="op">(</span><span class="st">"xgboost"</span>, lags <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span></span>
@@ -1672,7 +1721,7 @@ across multiple models and rank them by accuracy:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -56,17 +56,22 @@ A `MiltChangepoints` object.
 [`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md)
 
 Other anomaly:
+[`milt_anomaly_model()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_model.md),
+[`milt_anomaly_score()`](https://ntiGideon.github.io/milt/reference/milt_anomaly_score.md),
 [`milt_causal_impact()`](https://ntiGideon.github.io/milt/reference/milt_causal_impact.md),
 [`milt_detect()`](https://ntiGideon.github.io/milt/reference/milt_detect.md),
+[`milt_detect_anomalies()`](https://ntiGideon.github.io/milt/reference/milt_detect_anomalies.md),
 [`milt_detector()`](https://ntiGideon.github.io/milt/reference/milt_detector.md)
 
 ## Examples
 
 ``` r
 # \donttest{
-s  <- milt_series(AirPassengers)
-cp <- milt_changepoints(s, method = "pelt", stat = "mean")
-plot(cp)
+if (requireNamespace("changepoint", quietly = TRUE)) {
+  s  <- milt_series(AirPassengers)
+  cp <- milt_changepoints(s, method = "pelt", stat = "mean")
+  plot(cp)
+}
 
 # }
 ```

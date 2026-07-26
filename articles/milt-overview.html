@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>milt Package Overview • milt</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="milt Package Overview">
 </head>
@@ -231,7 +231,7 @@ helpers.</p>
 <span>  <span class="fu"><a href="../reference/milt_fit.html">milt_fit</a></span><span class="op">(</span><span class="va">air</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/milt_forecast.html">milt_forecast</a></span><span class="op">(</span>horizon <span class="op">=</span> <span class="fl">24</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Fitting <span style="color: #0000BB;">&lt;MiltEts&gt;</span> model…</span></span>
-<span><span class="co">#&gt; Done in 0.62s.</span></span>
+<span><span class="co">#&gt; Done in 0.55s.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fct_ets</span><span class="op">)</span></span></code></pre></div>
 <p><img src="milt-overview_files/figure-html/forecasting-1.png" class="r-plt" alt="" width="672"></p>
@@ -249,20 +249,20 @@ elastic net, SVM, and related backends</li>
 <p>Inspect the available registry:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/list_milt_models.html">list_milt_models</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 25 × 6</span></span></span>
-<span><span class="co">#&gt;    name           description multivariate probabilistic covariates multi_series</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> snaive         <span style="color: #949494;">"</span>Seasonal … FALSE        TRUE          FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ets            <span style="color: #949494;">"</span>Exponenti… FALSE        TRUE          FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> nbeats         <span style="color: #949494;">""</span>          FALSE        FALSE         FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> auto_arima     <span style="color: #949494;">"</span>Automatic… FALSE        TRUE          TRUE       FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> knn            <span style="color: #949494;">"</span>K-Nearest… FALSE        TRUE          FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> svm            <span style="color: #949494;">"</span>Support V… FALSE        TRUE          FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> stl            <span style="color: #949494;">"</span>STL decom… FALSE        TRUE          FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> elastic_net    <span style="color: #949494;">""</span>          FALSE        FALSE         FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> deepar         <span style="color: #949494;">""</span>          FALSE        FALSE         FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> darts_transfo… <span style="color: #949494;">""</span>          FALSE        FALSE         FALSE      FALSE       </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 15 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 31 × 6</span></span></span>
+<span><span class="co">#&gt;    name        description    multivariate probabilistic covariates multi_series</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> snaive      <span style="color: #949494;">"</span>Seasonal Nai… FALSE        TRUE          FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> knn         <span style="color: #949494;">"</span>K-Nearest Ne… FALSE        TRUE          FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ets         <span style="color: #949494;">"</span>Exponential … FALSE        TRUE          FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> nbeats      <span style="color: #949494;">""</span>             FALSE        FALSE         FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> auto_arima  <span style="color: #949494;">"</span>Automatic AR… FALSE        TRUE          TRUE       FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> svm         <span style="color: #949494;">"</span>Support Vect… FALSE        TRUE          FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> stl         <span style="color: #949494;">"</span>STL decompos… FALSE        TRUE          FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> elastic_net <span style="color: #949494;">""</span>             FALSE        FALSE         FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> dlinear     <span style="color: #949494;">""</span>             FALSE        FALSE         FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> deepar      <span style="color: #949494;">""</span>             FALSE        FALSE         FALSE      FALSE       </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 21 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="evaluation-and-backtesting">Evaluation and backtesting<a class="anchor" aria-label="anchor" href="#evaluation-and-backtesting"></a>
@@ -292,14 +292,18 @@ elastic net, SVM, and related backends</li>
 <span>  actual <span class="op">=</span> <span class="va">spl</span><span class="op">$</span><span class="va">test</span><span class="op">$</span><span class="fu">values</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  predicted <span class="op">=</span> <span class="va">fct_test</span><span class="op">$</span><span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">.mean</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 2</span></span></span>
 <span><span class="co">#&gt;   metric    value</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> MAE      81.4  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> MSE    <span style="text-decoration: underline;">8</span>674.   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> RMSE     93.1  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> MAPE      0.202</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> R2       -<span style="color: #BB0000;">0.421</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> R2       -<span style="color: #BB0000;">0.421</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> WMAPE     0.185</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> OPE       0.115</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> CV        0.212</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> MARRE     0.261</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="rolling-origin-backtesting">Rolling-origin backtesting<a class="anchor" aria-label="anchor" href="#rolling-origin-backtesting"></a>
@@ -629,7 +633,7 @@ website.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

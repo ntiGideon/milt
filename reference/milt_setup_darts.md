@@ -33,18 +33,14 @@ Other dl:
 
 ``` r
 # \donttest{
-milt_setup_darts()                      # check only
+if (requireNamespace("reticulate", quietly = TRUE)) {
+  milt_setup_darts()                      # check only
+  milt_setup_darts(install = TRUE)        # check + install if missing
+}
 #> Downloading uv...
 #> Done!
 #> Error in milt_setup_darts(): The Python darts package is not installed.
 #> ℹ Run `milt_setup_darts(install = TRUE)` to install it automatically.
 #> ℹ Or manually from a terminal: `pip install darts`
-milt_setup_darts(install = TRUE)        # check + install if missing
-#> Installing Python darts — this may take a few minutes …
-#> Warning: An ephemeral virtual environment managed by 'reticulate' is currently in use.
-#> To add more packages to your current session, call `py_require()` instead
-#> of `py_install()`. Running:
-#>   `py_require(c("darts"))`
-#> darts installed successfully.
 # }
 ```

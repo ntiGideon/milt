@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>milt - Modern Integrated Library for Timeseries • milt</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="milt - Modern Integrated Library for Timeseries">
 <meta name="description" content="A unified R API for time series forecasting, anomaly detection, classification, and clustering. Think Python's Darts/sktime, but natively in R with a tidyverse-friendly interface.
@@ -75,7 +75,7 @@
 
 <p><code>milt</code> is a unified R framework for time series forecasting, anomaly detection, classification, clustering, diagnostics, and deployment. It is designed to give R users a single, consistent interface across classical statistical models, machine learning backends, and deep-learning integrations.</p>
 <p>The package follows one core idea: users should not need to learn a different API for each model family. Whether you are fitting a naive baseline, an Auto-ARIMA model, an XGBoost regressor, or an ensemble, the workflow stays consistent.</p>
-<p>Documentation site: <a href="https://ntigideon.github.io/milt" class="external-link uri">https://ntigideon.github.io/milt</a></p>
+<p>Documentation site: <a href="https://ntigideon.github.io/milt/" class="external-link uri">https://ntigideon.github.io/milt/</a></p>
 <div class="section level2">
 <h2 id="what-milt-covers">What milt covers<a class="anchor" aria-label="anchor" href="#what-milt-covers"></a>
 </h2>
@@ -109,28 +109,28 @@
 <span><span class="fu"><a href="reference/milt_install_backends.html">milt_install_backends</a></span><span class="op">(</span><span class="st">"reporting"</span><span class="op">)</span>             <span class="co"># rmarkdown, shiny, plumber</span></span>
 <span><span class="fu"><a href="reference/milt_install_backends.html">milt_install_backends</a></span><span class="op">(</span><span class="st">"prophet"</span><span class="op">)</span>               <span class="co"># a single package by name</span></span></code></pre></div>
 <table class="table">
-<thead><tr class="header">
+<thead><tr>
 <th>Group</th>
 <th>Packages</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>"forecasting"</code></td>
 <td>forecast, prophet</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>"ml"</code></td>
 <td>xgboost, lightgbm, glmnet, ranger, e1071</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>"deep_learning"</code></td>
 <td>torch</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>"extras"</code></td>
 <td>isotree, dbscan, dtw, CausalImpact, changepoint</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>"reporting"</code></td>
 <td>rmarkdown, shiny, plumber, jsonlite</td>
 </tr>
@@ -243,13 +243,15 @@
 </h2>
 <p>The package includes or supports:</p>
 <ul>
-<li>baseline models such as <code>naive</code>, <code>snaive</code>, and <code>drift</code>
+<li>baseline models such as <code>naive</code>, <code>snaive</code>, <code>drift</code>, <code>mean</code>, and <code>moving_average</code>
 </li>
 <li>classical statistical models such as <code>ets</code>, <code>auto_arima</code>, <code>theta</code>, <code>tbats</code>, and <code>stl</code>
 </li>
 <li>machine-learning backends such as <code>xgboost</code>, <code>lightgbm</code>, <code>ranger</code>, <code>glmnet</code>, <code>svm</code>, and KNN-based methods</li>
-<li>ensemble workflows</li>
+<li>ensemble workflows, plus model-agnostic conformal prediction intervals via <code><a href="reference/milt_conformal.html">milt_conformal()</a></code>
+</li>
 <li>deep-learning integrations through <code>torch</code> and <code>reticulate</code>-based backends</li>
+<li>filtering models (<code><a href="reference/milt_filter.html">milt_filter()</a></code>) for smoothing an already-observed series: moving-average, Kalman, and Gaussian Process</li>
 </ul>
 <p>Use <code><a href="reference/list_milt_models.html">list_milt_models()</a></code> to inspect the currently registered model set.</p>
 </div>
@@ -423,7 +425,7 @@ Layer 5  Delivery
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

@@ -11,7 +11,7 @@ different API for each model family. Whether you are fitting a naive
 baseline, an Auto-ARIMA model, an XGBoost regressor, or an ensemble, the
 workflow stays consistent.
 
-Documentation site: <https://ntigideon.github.io/milt>
+Documentation site: <https://ntigideon.github.io/milt/>
 
 ## What milt covers
 
@@ -32,6 +32,7 @@ Documentation site: <https://ntigideon.github.io/milt>
 ## Installation
 
 ``` r
+
 # install.packages("pak")
 pak::pak("ntiGideon/milt")
 ```
@@ -42,6 +43,7 @@ installs quickly and reliably. Use
 to install what you need:
 
 ``` r
+
 library(milt)
 
 milt_install_backends()                        # everything
@@ -66,6 +68,7 @@ milt_install_backends("prophet")               # a single package by name
 The central workflow is:
 
 ``` r
+
 library(milt)
 
 series <- milt_series(AirPassengers)
@@ -81,6 +84,7 @@ plot(fct)
 The same shape is used throughout the package:
 
 ``` r
+
 milt_model("<name>") |> milt_fit(series) |> milt_forecast(horizon = 12)
 ```
 
@@ -101,6 +105,7 @@ printing, and coercion patterns apply across most outputs.
 ## Quick start
 
 ``` r
+
 library(milt)
 
 # 1. Create a series
@@ -150,6 +155,7 @@ plot(bt)
 Direct feature engineering:
 
 ``` r
+
 air_features <- air |>
   milt_step_lag(lags = 1:12) |>
   milt_step_rolling(windows = c(3L, 6L), fns = c("mean", "sd")) |>
@@ -159,6 +165,7 @@ air_features <- air |>
 Pipeline workflow:
 
 ``` r
+
 pipe <- milt_pipeline() |>
   milt_pipe_step_lag(lags = 1:12) |>
   milt_pipe_step_rolling(windows = 3L, fns = "mean") |>
@@ -169,14 +176,21 @@ pipe <- milt_pipeline() |>
 
 The package includes or supports:
 
-- baseline models such as `naive`, `snaive`, and `drift`
+- baseline models such as `naive`, `snaive`, `drift`, `mean`, and
+  `moving_average`
 - classical statistical models such as `ets`, `auto_arima`, `theta`,
   `tbats`, and `stl`
 - machine-learning backends such as `xgboost`, `lightgbm`, `ranger`,
   `glmnet`, `svm`, and KNN-based methods
-- ensemble workflows
+- ensemble workflows, plus model-agnostic conformal prediction intervals
+  via
+  [`milt_conformal()`](https://ntiGideon.github.io/milt/reference/milt_conformal.md)
 - deep-learning integrations through `torch` and `reticulate`-based
   backends
+- filtering models
+  ([`milt_filter()`](https://ntiGideon.github.io/milt/reference/milt_filter.md))
+  for smoothing an already-observed series: moving-average, Kalman, and
+  Gaussian Process
 
 Use
 [`list_milt_models()`](https://ntiGideon.github.io/milt/reference/list_milt_models.md)
@@ -231,6 +245,7 @@ Trained objects can be operationalized through:
 ## Built-in datasets
 
 ``` r
+
 data(milt_air)
 data(milt_retail)
 data(milt_energy)
