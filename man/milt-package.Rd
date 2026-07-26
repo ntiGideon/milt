@@ -12,6 +12,7 @@ A unified framework for time series forecasting, anomaly detection, classificati
 Useful links:
 \itemize{
   \item \url{https://github.com/ntiGideon/milt}
+  \item \url{https://ntigideon.github.io/milt/}
   \item Report bugs at \url{https://github.com/ntiGideon/milt/issues}
 }
 
