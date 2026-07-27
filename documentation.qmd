@@ -767,7 +767,7 @@ print(lof_result)
 ```{r detect-iforest}
 #| eval: !expr requireNamespace("isotree", quietly = TRUE)
 # Isolation Forest
-iforest_result <- milt_detector("isolation_forest") |> milt_detect(ap)
+iforest_result <- milt_detector("iforest") |> milt_detect(ap)
 print(iforest_result)
 ```
 
@@ -1286,7 +1286,7 @@ milt_accuracy(spl$test$values(), tibble::as_tibble(test_fct)$.mean)
 | `"grubbs"`           | Grubbs extreme-value test   |
 | `"gesd"`             | Generalised ESD test        |
 | `"lof"`              | Local Outlier Factor        |
-| `"isolation_forest"` | Isolation Forest            |
+| `"iforest"`          | Isolation Forest            |
 | `"autoencoder"`      | Deep learning autoencoder   |
 | `"ensemble"`         | Majority-vote combination   |
 
