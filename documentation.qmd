@@ -26,8 +26,7 @@ execute:
 
 ```{r setup}
 #| include: false
-# Load the package from source (works without installing)
-devtools::load_all(quiet = TRUE)
+library(milt)
 ```
 
 # Introduction
