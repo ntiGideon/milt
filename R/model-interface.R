@@ -249,7 +249,17 @@ milt_forecast <- function(model,
 #' @param series A `MiltSeries` containing the new training data.
 #' @param ... Additional arguments forwarded to `fit()`.
 #' @return The refitted `MiltModel`, invisibly.
+#' @seealso [milt_fit()], [milt_forecast()]
 #' @family model
+#' @examples
+#' # Fit on the data available today, ship the model, then retrain the same
+#' # hyperparameters once next month's observations arrive.
+#' initial <- milt_series(AirPassengers[1:120], frequency = 12, start = c(1949, 1))
+#' m       <- milt_model("naive") |> milt_fit(initial)
+#'
+#' updated <- milt_series(AirPassengers[1:132], frequency = 12, start = c(1949, 1))
+#' m       <- milt_refit(m, updated)
+#' fct     <- milt_forecast(m, horizon = 12)
 #' @export
 milt_refit <- function(model, series, ...) {
   .assert_milt_model(model)

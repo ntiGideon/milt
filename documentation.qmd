@@ -36,14 +36,18 @@ library(milt)
 ## What Can milt Do?
 
 | Capability | Functions |
-|------------------------------------|------------------------------------|
+|----|----|
 | **Create & manipulate series** | `milt_series()`, `milt_split()`, `milt_window()`, … |
+| **TimeSeries operations** | arithmetic (`+`/`-`/`*`/`/`), `milt_stack()`, `milt_step_map()`, `milt_add_datetime_component()`, `milt_add_holidays()` |
 | **Forecast** | `milt_model()` → `milt_fit()` → `milt_forecast()` |
+| **Filter (smooth observed data)** | `milt_filter()` — moving-average, Kalman, Gaussian Process |
+| **Backtest & search hyperparameters** | `milt_backtest()`, `milt_cv()`, `milt_grid_search()` |
+| **Calibrated intervals for any model** | `milt_conformal()` |
 | **Anomaly detection** | `milt_detector()` → `milt_detect()` |
 | **Change-point analysis** | `milt_changepoints()` |
 | **Classification** | `milt_classifier()` → `milt_classify_fit()` → `milt_classify_predict()` |
 | **Clustering** | `milt_cluster()` |
-| **Feature engineering** | `milt_pipeline()` + step DSL |
+| **Feature engineering** | `milt_pipeline()` + step DSL (lags, rolling, Fourier, calendar, scale, Box-Cox, diff, map) |
 | **Explainability** | `milt_explain()` |
 | **Causal impact** | `milt_causal_impact()` |
 | **Deployment** | `milt_serve()`, `milt_dashboard()`, `milt_report()`, `milt_save()` |
@@ -197,6 +201,126 @@ plot(ap)
 
 ------------------------------------------------------------------------
 
+# TimeSeries Operations {#sec-tsops}
+
+Beyond creation and slicing (@sec-series), milt supports the same everyday `TimeSeries` operations Python's Darts offers: arithmetic, stacking, generic mapping, and enriching a series with new calendar/holiday components.
+
+## Arithmetic Operations
+
+`+`, `-`, `*`, `/`, and `^` work directly on `MiltSeries` objects — against a scalar, or against another `MiltSeries` that shares an identical time index.
+
+```{r arithmetic}
+ap <- milt_series(AirPassengers)
+
+bumped   <- ap * 1.05          # scale every value up 5%
+shifted  <- ap + 10            # scalar addition
+identity <- ap - ap            # elementwise difference of two series
+
+print(bumped)
+identical(as.numeric((ap - ap)$values()), rep(0, ap$n_timesteps()))
+```
+
+Series must share an identical time index to be combined with each other — mismatched indices raise a `milt_error_incompatible_series` error rather than silently misaligning data.
+
+## Stacking
+
+`milt_stack()` combines two or more series that share the same time index into a single **multivariate** series, placing each input's components side by side. This is different from `milt_concat()`, which joins series end-to-end along *time* rather than side-by-side along *components*.
+
+```{r stack}
+smoothed <- milt_filter(ap, "moving_average", window = 12L)
+stacked  <- milt_stack(ap, smoothed)
+
+stacked$n_components()   # 2 — "value" and "value_2"
+stacked$is_univariate()  # FALSE
+```
+
+## Mapping — On Values, and On Both Timestamps and Values
+
+`milt_step_map()` applies an arbitrary function elementwise. Supply a one-argument function to transform values only, or a **two-argument** function `function(time, value)` to also use the timestamp — milt detects the arity automatically.
+
+```{r map-values}
+# Values only
+log_out <- milt_step_map(ap, fn = log1p, inverse_fn = expm1)
+log_out$series
+
+# Both timestamps and values: zero out the first year on record
+trimmed_out <- milt_step_map(ap, fn = function(time, value) {
+  ifelse(lubridate::year(time) == lubridate::year(min(time)), 0, value)
+})
+trimmed_out$series
+```
+
+## Adding a Datetime Attribute as an Extra Dimension
+
+`milt_add_datetime_component()` extracts a calendar attribute (month, quarter, day of week, ...) from the time index and appends it as a **new component** — turning a univariate series multivariate, ready to use as a model covariate.
+
+```{r datetime-component}
+with_month <- milt_add_datetime_component(ap, "month")
+with_month$as_tibble()
+
+# Cyclic encoding avoids the false "December is far from January" discontinuity
+with_month_cyclic <- milt_add_datetime_component(ap, "month", cyclic = TRUE)
+with_month_cyclic$n_components()   # 3: value, month_sin, month_cos
+```
+
+## Adding a Binary Holidays Component
+
+`milt_add_holidays()` appends a `0`/`1` column flagging holiday dates — either from a built-in calendar (currently `"US"` federal holidays) or a custom `dates` vector for any other calendar.
+
+```{r holidays}
+with_holidays <- milt_add_holidays(ap, country = "US")
+sum(with_holidays$as_tibble()$is_holiday)   # number of holiday months on record
+
+# Custom calendar
+custom <- milt_add_holidays(ap, dates = as.Date(c("1955-11-24", "1956-11-22")),
+                             name = "is_black_friday_month")
+```
+
+## Differencing
+
+Covered in full under *Individual Feature Steps* (@sec-steps) — `milt_step_diff()` applies sequential lagged differencing (e.g. `lags = c(1, 12)` removes a trend, then a yearly seasonal pattern) and is invertible via `milt_step_undiff()`.
+
+## Working with Covariates
+
+Beyond the series' own values, milt supports three kinds of external covariate data via `milt_add_covariates()` — mirroring Darts' `past_covariates` / `future_covariates` / static-covariates model:
+
+-   **`"past"`** — time-varying covariates observed over the same time range as the series (e.g. a promotion flag, competitor pricing). Used for in-sample feature enrichment.
+-   **`"future"`** — time-varying covariates available *beyond* the series end (e.g. a calendar feature, a known future price). Used by models to produce covariate-informed forecasts.
+-   **`"static"`** — scalar attributes per group that never change over time (e.g. store size, region). Only meaningful for a multi-series (grouped) `MiltSeries`.
+
+`milt_add_covariates()` attaches the data and returns the (mutated) series; `milt_get_covariates()` retrieves what's stored.
+
+```{r covariates-past}
+ap    <- milt_series(AirPassengers)
+dates <- ap$as_tibble()$time
+
+# A past covariate: the calendar month as a plain integer
+month_cov <- data.frame(time = dates, month_num = as.integer(format(dates, "%m")))
+ap2 <- milt_add_covariates(ap, month_cov, type = "past", time_col = "time")
+
+milt_get_covariates(ap2, type = "past")
+```
+
+Static covariates require a grouped series — one row per group value:
+
+```{r covariates-static}
+tbl <- data.frame(
+  date  = rep(seq(as.Date("2020-01-01"), by = "month", length.out = 24), 2),
+  sales = c(cumsum(rnorm(24, 5)), cumsum(rnorm(24, 8))),
+  store = rep(c("A", "B"), each = 24)
+)
+grouped <- milt_series(tbl, time_col = "date", value_cols = "sales", group_col = "store")
+
+store_attrs <- data.frame(store = c("A", "B"), size_sqft = c(1200, 3400))
+grouped2 <- milt_add_covariates(grouped, store_attrs, type = "static", group_col = "store")
+
+milt_get_covariates(grouped2, type = "static")
+```
+
+Static covariates are automatically sliced per group and passed through when a model trains group-by-group — see `milt_local_model()` and `milt_global_model()` in *Multi-Series Analysis* (@sec-multi-series).
+
+------------------------------------------------------------------------
+
 # Exploratory Data Analysis {#sec-eda}
 
 `milt_eda()` gives you a quick statistical profile of your series — trend direction, seasonality, stationarity, and outlier counts.
@@ -225,6 +349,18 @@ milt_plot_decomp(ap)
 milt_diagnose(ap)
 ```
 
+## Inspecting Seasonality
+
+`milt_check_seasonality()` searches the ACF for the strongest *significant* local maximum (via Bartlett's formula for the ACF's standard error under a white-noise null) and reports it as the detected seasonal period — useful for confirming a `period`/`season` argument before fitting a seasonal model.
+
+```{r check-seasonality}
+milt_check_seasonality(ap, max_lag = 24L)
+
+# A non-seasonal series correctly reports is_seasonal = FALSE
+white_noise <- milt_series(rnorm(120), frequency = "monthly", start = c(2015, 1))
+milt_check_seasonality(white_noise, max_lag = 24L)
+```
+
 ------------------------------------------------------------------------
 
 # Forecasting {#sec-forecasting}
@@ -241,6 +377,20 @@ Let's see what models are available:
 
 ```{r list-models}
 list_milt_models()
+```
+
+## Refitting on New Data
+
+In production, new observations keep arriving and a deployed model needs to keep up. `milt_refit()` retrains a model with the **same hyperparameters** it was originally configured with, just on an updated series — no re-tuning, no need to reconstruct the `milt_model(...)` call from scratch:
+
+```{r refit}
+initial <- milt_series(AirPassengers[1:120], frequency = 12, start = c(1949, 1))
+m       <- milt_model("naive") |> milt_fit(initial)
+
+# A month later, more data has arrived
+updated <- milt_series(AirPassengers[1:132], frequency = 12, start = c(1949, 1))
+m       <- milt_refit(m, updated)
+milt_forecast(m, horizon = 12)
 ```
 
 ## Classical Statistical Models
@@ -337,7 +487,7 @@ print(croston_fct)
 
 ### Naive Baseline
 
-Always a good baseline to beat.
+Repeats the last observed value for every step of the forecast horizon — equivalent to a random-walk forecast. Always a good baseline to beat; no model deserves trust until it clears this bar.
 
 ```{r naive}
 naive_fct <- milt_model("naive") |>
@@ -345,6 +495,54 @@ naive_fct <- milt_model("naive") |>
   milt_forecast(horizon = 12)
 
 print(naive_fct)
+```
+
+### Seasonal Naive
+
+Repeats the value from exactly one seasonal cycle ago (for monthly data, the same month from the previous year). A much stronger baseline than plain naive whenever the series has clear seasonality.
+
+```{r snaive}
+snaive_fct <- milt_model("snaive") |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+print(snaive_fct)
+```
+
+### Drift
+
+Extrapolates a straight line through the first and last training observations — captures a linear trend with no seasonality.
+
+```{r drift}
+drift_fct <- milt_model("drift") |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+print(drift_fct)
+```
+
+### Mean
+
+Repeats the training-series mean for every forecast step, with a *constant* (non-widening) prediction interval — appropriate only when the series has no trend or seasonality and residuals are i.i.d.
+
+```{r mean}
+mean_fct <- milt_model("mean") |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+print(mean_fct)
+```
+
+### Moving Average
+
+Forecasts each step as the mean of the last `window` observations, then slides that window forward autoregressively using its *own* forecasts — so far-ahead steps are means of prior forecasts, not just raw data.
+
+```{r moving-average}
+ma_fct <- milt_model("moving_average", window = 5L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+print(ma_fct)
 ```
 
 ## Machine Learning Models
@@ -426,6 +624,14 @@ install.packages("torch")
 torch::install_torch()
 ```
 
+More generally, `milt_install_backends()` installs (or upgrades) any set of milt's optional backend packages in one call — `torch` included — so you don't have to hunt down each Suggests dependency by hand:
+
+``` r
+milt_install_backends("torch")           # just the DL backend
+milt_install_backends(c("xgboost", "prophet"))
+milt_install_backends("all")             # every optional backend milt knows about
+```
+
 All DL backends follow the same pattern:
 
 ``` r
@@ -454,12 +660,108 @@ tft_fct <- milt_model("tft", input_chunk_length = 24L, output_chunk_length = 12L
 patch_fct <- milt_model("patch_tst", input_chunk_length = 24L, output_chunk_length = 12L) |>
   milt_fit(ap) |>
   milt_forecast(horizon = 12)
+
+# DeepAR (LSTM + Gaussian likelihood — probabilistic by default)
+deepar_fct <- milt_model("deepar", input_chunk_length = 24L, output_chunk_length = 12L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12, num_samples = 100L)
+
+# NLinear (Zeng et al. 2022) — subtracts the last observed value before a
+# single linear layer, then adds it back; a deceptively strong, cheap
+# baseline that often matches much larger Transformer models
+nlinear_fct <- milt_model("nlinear", input_chunk_length = 24L, output_chunk_length = 12L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+# DLinear (Zeng et al. 2022) — decomposes the input window into a
+# moving-average trend and a seasonal/residual component, maps each through
+# its own linear layer, and sums the two projections
+dlinear_fct <- milt_model("dlinear", input_chunk_length = 24L, output_chunk_length = 12L,
+                          kernel_size = 25L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+# TiDE (Das et al. 2023) — an MLP encoder-decoder built from residual
+# blocks (Linear -> ReLU -> Linear -> Dropout + skip connection); a cheap,
+# strong alternative to attention-based long-horizon models
+tide_fct <- milt_model("tide", input_chunk_length = 24L, output_chunk_length = 12L,
+                       hidden_size = 64L, n_encoder_layers = 2L, n_decoder_layers = 2L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+# TSMixer (Chen et al. 2023) — a stack of residual "time-mixing" MLP
+# blocks over the lookback window, followed by a linear projection head
+# (simplified to time-mixing only, since feature-mixing is degenerate for
+# milt's single-channel series)
+tsmixer_fct <- milt_model("tsmixer", input_chunk_length = 24L, output_chunk_length = 12L,
+                          hidden_size = 64L, n_blocks = 2L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
 ```
 
 ### Checking the torch device
 
 ``` r
 milt_torch_device()  # returns cuda if GPU available, else cpu
+```
+
+## Darts Bridge Backends (Python, via `reticulate`)
+
+For models not yet natively ported to torch-for-R, milt can transparently delegate to Python's [Darts](https://github.com/unit8co/darts) library through `reticulate`. Call `milt_setup_darts()` once per session to verify (and optionally install) the Python environment.
+
+``` r
+milt_setup_darts()                      # check only
+milt_setup_darts(install = TRUE)        # check + install darts via pip
+
+rnn_fct <- milt_model("darts_rnn", input_chunk_length = 24L, output_chunk_length = 12L) |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+transformer_fct <- milt_model("darts_transformer") |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+
+darts_nbeats_fct <- milt_model("darts_nbeats") |>
+  milt_fit(ap) |>
+  milt_forecast(horizon = 12)
+```
+
+------------------------------------------------------------------------
+
+# Filtering Models {#sec-filtering}
+
+Filtering is a different job from forecasting: it estimates the underlying signal from noisy observations at the **same** timestamps as the input — it does not extrapolate into the future. Use `milt_filter()` when you want to denoise an already-observed series, e.g. before plotting, before feature engineering, or before feeding a cleaner signal into a downstream model.
+
+All three filters below are implemented on base R (`stats`) — no additional package dependencies.
+
+## Moving Average Filter
+
+A simple rolling-mean smoother.
+
+```{r filter-ma}
+noisy <- milt_series(as.numeric(AirPassengers) + rnorm(144, sd = 15),
+                      frequency = "monthly", start = c(1949, 1))
+
+smoothed_ma <- milt_filter(noisy, "moving_average", window = 5L)
+plot(smoothed_ma)
+```
+
+## Kalman Filter
+
+State-space smoothing via `stats::StructTS()` — models the series as a noisy observation of a hidden local-level (or local-trend / BSM) process and returns the Kalman-smoothed estimate of that hidden state.
+
+```{r filter-kalman}
+smoothed_kalman <- milt_filter(noisy, "kalman", type = "level")
+plot(smoothed_kalman)
+```
+
+## Gaussian Process Filter
+
+Fits a Gaussian Process with a squared-exponential (RBF) kernel to the observed points and returns the posterior mean at those same timestamps — a flexible non-parametric smoother.
+
+```{r filter-gp}
+smoothed_gp <- milt_filter(noisy, "gp", length_scale = 3, noise = 5)
+plot(smoothed_gp)
 ```
 
 ------------------------------------------------------------------------
@@ -530,6 +832,26 @@ cat("MASE: ", milt_mase(actual, pred, spl$train$values()), "\n")
 cat("R²:   ", milt_r_squared(actual, pred), "\n")
 ```
 
+### Additional Scale-Free Metrics
+
+Useful when comparing accuracy across series with very different scales, or when `milt_mape()` would blow up on near-zero actuals.
+
+```{r metrics-additional}
+#| eval: !expr requireNamespace("forecast", quietly = TRUE)
+cat("wMAPE (robust to near-zero actuals):", milt_wmape(actual, pred), "\n")
+cat("OPE (error of the totals, not per-point):", milt_ope(actual, pred), "\n")
+cat("Coefficient of Variation (RMSE / mean):", milt_coefficient_of_variation(actual, pred), "\n")
+cat("MARRE (MAE / range of actual):", milt_marre(actual, pred), "\n")
+cat("RMSLE (penalises relative, not absolute, error):", milt_rmsle(actual, pred), "\n")
+```
+
+`milt_accuracy()` includes `wMAPE`, `OPE`, `CV`, and `MARRE` by default; `RMSLE` is opt-in only (via `metrics = "RMSLE"`) since it errors on values at or below -1:
+
+```{r metrics-accuracy-explicit}
+#| eval: !expr requireNamespace("forecast", quietly = TRUE)
+milt_accuracy(actual, pred, metrics = "RMSLE")
+```
+
 ## Probabilistic Metrics
 
 ```{r probabilistic-metrics}
@@ -597,6 +919,39 @@ print(cmp)
 plot(cmp)
 ```
 
+`cmp` is a `MiltComparison` object (backed by the `MiltComparisonR6` class internally) — like every milt result object it has its own `print()`, `plot()`, and `as_tibble()` methods, so `tibble::as_tibble(cmp)` gets you the ranked comparison table for further `dplyr` work.
+
+## Searching for Hyperparameters via Backtesting
+
+`milt_grid_search()` backtests every combination of a parameter grid and ranks them by a chosen metric — works with *any* registered model, not just one specific method. (Darts' own quickstart famously demonstrates this with the Theta method's numeric `theta` parameter; R's classical `forecast::thetaf()` wrapper has no equivalent tunable parameter, so the example below sweeps `moving_average`'s `window` instead — the workflow generalises to any model with a tunable argument, e.g. `xgboost`'s `nrounds`/`max_depth`, or `ets`'s `damped`.)
+
+```{r grid-search}
+milt_grid_search(
+  "moving_average",
+  param_grid = list(window = c(2L, 3L, 5L, 8L, 12L)),
+  series     = ap,
+  horizon    = 6,
+  initial_window = 120L,
+  stride         = 6L
+)
+```
+
+Rows are returned best-first by the chosen metric — the top row is the recommended hyperparameter setting.
+
+## Conformal Prediction: Model-Agnostic Intervals
+
+`milt_conformal()` calibrates prediction intervals around *any* fitted model's forecast — even models with no native probabilistic output — using split-conformal prediction: it backtests the model on walk-forward calibration folds, then uses the empirical quantiles of the resulting per-horizon-step absolute errors as a distribution-free `point ± margin` interval.
+
+```{r conformal}
+conformal_fct <- milt_conformal(
+  milt_model("naive"), ap, horizon = 12,
+  initial_window = 120L, stride = 12L
+)
+
+print(conformal_fct)
+plot(conformal_fct)
+```
+
 ------------------------------------------------------------------------
 
 # Ensemble Models {#sec-ensemble}
@@ -657,6 +1012,14 @@ pipe_fct <- milt_pipeline_forecast(fitted_pipe, horizon = 12)
 print(pipe_fct)
 ```
 
+Sometimes you only want the engineered *features* — not a forecast. `milt_pipeline_transform()` applies a fitted pipeline's transform steps (everything except the model) to any series and hands back the resulting feature table, useful for feeding milt's feature engineering into an external modelling workflow:
+
+```{r pipeline-transform}
+#| eval: !expr requireNamespace("forecast", quietly = TRUE)
+transformed_test <- milt_pipeline_transform(fitted_pipe, spl$test)
+head(transformed_test)
+```
+
 ## Pipeline + Model
 
 Attach a model as the final step of the pipeline:
@@ -710,6 +1073,32 @@ head(fourier_df)
 # Calendar features (month, quarter, weekday, …)
 cal_df <- milt_step_calendar(ap)
 head(cal_df)
+```
+
+```{r step-boxcox}
+# Box-Cox power transform (auto-estimated lambda) — stabilises variance
+bc_out <- milt_step_boxcox(ap)
+bc_out$step$lambda()
+
+# Invert back to the original scale
+restored <- bc_out$step$inverse_transform(bc_out$series)
+all.equal(as.numeric(restored$values()), as.numeric(ap$values()))
+```
+
+```{r step-diff}
+# Sequential lagged differencing: remove a trend, then yearly seasonality
+diff_out <- milt_step_diff(ap, lags = c(1, 12))
+diff_out$series$n_timesteps()   # 144 - 13 = 131
+
+# Fully invertible, including reconstructing the dropped leading timestamps
+undiffed <- diff_out$step$inverse_transform(diff_out$series)
+undiffed$n_timesteps()          # back to 144
+```
+
+```{r step-map}
+# Generic elementwise transform, with an optional invertible pair
+map_out <- milt_step_map(ap, fn = log1p, inverse_fn = expm1)
+map_out$series
 ```
 
 ------------------------------------------------------------------------
@@ -801,6 +1190,23 @@ result <- milt_detector("iqr") |> milt_detect(ap)
 tibble::as_tibble(result) |> dplyr::filter(is_anomaly) |> head()
 ```
 
+## Anomaly Detection via Forecast Residuals
+
+The detectors above look for outliers directly in the raw series. `milt_anomaly_model()` takes a different, complementary approach — the same one Darts calls a `ForecastingAnomalyModel`: wrap **any** already-registered forecaster, fit it, score its residuals, and flag the points whose residual score crosses a threshold. A point the series *looks* normal at but that the model badly mispredicted is exactly the kind of anomaly this catches and a raw-value detector would miss.
+
+`milt_anomaly_score()` supplies the scoring function — `"norm"` (absolute residual), `"difference"` (signed residual), or `"nll_gaussian"` (negative log-likelihood under a Gaussian fit to the residual distribution, penalising extreme residuals more sharply) — and the detector thresholds those scores either by `"quantile"` or explicit `"threshold"` bounds.
+
+```{r anomaly-model}
+am    <- milt_anomaly_model(milt_model("naive"), scorer = "norm", detector = "quantile", quantile = 0.95) |>
+  milt_fit(ap)
+anoms <- milt_detect_anomalies(am)
+
+print(anoms)
+plot(anoms)
+```
+
+Fitting a `MiltAnomalyModel` clones the wrapped model internally, so the original `milt_model("naive")` object you passed in is never mutated. The wrapped model stays fully accessible — `am$model()` returns the fitted forecaster itself, and `am$scores()` returns the raw per-point anomaly scores that were thresholded — and the result is a standard `MiltAnomalies` object, so every `plot()`/`print()`/`as_tibble()` method you already know keeps working.
+
 ------------------------------------------------------------------------
 
 # Change-Point Detection {#sec-changepoints}
@@ -852,6 +1258,25 @@ ms_fit <- milt_model("ets") |> milt_fit(ms)
 ms_fct <- milt_forecast(ms_fit, horizon = 12)
 print(ms_fct)
 ```
+
+## Global Models — One Shared Model Across All Groups
+
+`milt_local_model()` (above) fits one **independent** model per group. `milt_global_model()` takes the opposite approach: it trains a single **shared** model (`"knn"` or `"xgboost"`) on every group's data pooled together, one-hot encoding group identity and appending any static covariates as constant-per-group feature columns — the same idea as Darts training one model across a `Sequence[TimeSeries]`.
+
+Global models are worth reaching for when groups are too short individually to train a good local model on their own, but collectively share enough structure that pooling helps — the shared model can borrow statistical strength across stores/sensors/customers.
+
+```{r global-model}
+gm <- milt_global_model("knn", lags = 1:6, k = 3L) |> milt_fit(ms)
+
+# forecast() targets one group at a time
+gm$forecast(horizon = 6, group = "A")
+
+# forecast_all() runs every group through the one shared model at once
+all_fcts <- gm$forecast_all(horizon = 6)
+all_fcts[["B"]]
+```
+
+Despite sharing one set of learned weights, each group still gets a genuinely different forecast — the group indicator (and any static covariates) let the shared model tell the groups apart.
 
 ------------------------------------------------------------------------
 
@@ -1038,6 +1463,15 @@ models_tbl <- list_milt_models()
 print(models_tbl)
 ```
 
+Two lower-level helpers back `list_milt_models()` and `milt_model()` — useful when you're writing code that needs to check the registry itself, e.g. inside a package extending milt with new backends:
+
+```{r registry-helpers}
+is_registered_model("naive")       # TRUE
+is_registered_model("not_a_model") # FALSE
+
+get_milt_model_class("naive")      # the MiltNaive R6 generator
+```
+
 ## Registering a Custom Model
 
 You can register any R6 class that follows the `MiltModelBase` interface:
@@ -1160,7 +1594,7 @@ Understanding how milt is structured helps when extending it.
 ## The Dependency Strategy
 
 | Type | Packages | Behaviour |
-|------------------------|------------------------|------------------------|
+|----|----|----|
 | **Imports** | `R6`, `rlang`, `cli`, `dplyr`, `tibble`, `tsibble`, … | Always available |
 | **Suggests** | `forecast`, `xgboost`, `torch`, `prophet`, … | Loaded on demand via `check_installed_backend()` |
 
@@ -1223,90 +1657,140 @@ milt_accuracy(spl$test$values(), tibble::as_tibble(test_fct)$.mean)
 
 ## Series Functions
 
-| Function                      | Purpose                     |
-|-------------------------------|-----------------------------|
-| `milt_series()`               | Create a MiltSeries         |
+| Function | Purpose |
+|----|----|
+| `milt_series()` | Create a MiltSeries |
 | `milt_head()` / `milt_tail()` | First / last N observations |
-| `milt_window()`               | Subset by date range        |
-| `milt_split()`                | Train/test split by ratio   |
-| `milt_split_at()`             | Train/test split by date    |
-| `milt_concat()`               | Join two series             |
-| `milt_resample()`             | Change frequency            |
-| `milt_fill_gaps()`            | Interpolate missing values  |
-| `milt_to_tibble()`            | Convert to tibble           |
-| `milt_to_ts()`                | Convert to base R `ts`      |
-| `milt_to_tsibble()`           | Convert to tsibble          |
+| `milt_window()` | Subset by date range |
+| `s[i]` | Subset by integer index, logical, or date range |
+| `milt_split()` | Train/test split by ratio |
+| `milt_split_at()` | Train/test split by date |
+| `milt_concat()` | Join two series end-to-end (by time) |
+| `milt_stack()` | Combine series side by side (by component) |
+| `milt_resample()` | Change frequency |
+| `milt_fill_gaps()` | Interpolate missing values |
+| `milt_filter()` | Smooth an observed series (moving average / Kalman / GP) |
+| `+`, `-`, `*`, `/`, `^` | Arithmetic between series and/or scalars |
+| `milt_add_datetime_component()` | Append a calendar attribute as a new component |
+| `milt_add_holidays()` | Append a binary holiday indicator component |
+| `milt_check_seasonality()` | Detect the strongest significant seasonal period |
+| `milt_to_tibble()` | Convert to tibble |
+| `milt_to_ts()` | Convert to base R `ts` |
+| `milt_to_tsibble()` | Convert to tsibble |
+| `as.data.table()` | Convert to data.table |
+| `milt_write_parquet()` / `milt_read_parquet()` | Parquet I/O via `arrow` |
 
 ## Model Functions
 
-| Function                        | Purpose                       |
-|---------------------------------|-------------------------------|
-| `list_milt_models()`            | Show all registered models    |
-| `milt_model(name)`              | Instantiate a model           |
-| `milt_fit(model, series)`       | Train the model               |
-| `milt_forecast(model, horizon)` | Generate forecasts            |
-| `milt_predict(model)`           | In-sample fitted values       |
-| `milt_residuals(model)`         | Training residuals            |
-| `milt_backtest()`               | Rolling-window backtest       |
-| `milt_cv()`                     | Time-series cross-validation  |
-| `milt_compare()`                | Side-by-side model comparison |
-| `milt_ensemble()`               | Weighted model ensemble       |
+| Function                        | Purpose                               |
+|---------------------------------|---------------------------------------|
+| `list_milt_models()`            | Show all registered models            |
+| `milt_model(name)`              | Instantiate a model                   |
+| `milt_fit(model, series)`       | Train the model                       |
+| `milt_forecast(model, horizon)` | Generate forecasts                    |
+| `milt_predict(model)`           | In-sample fitted values               |
+| `milt_residuals(model)`         | Training residuals                    |
+| `milt_backtest()`               | Rolling-window backtest               |
+| `milt_cv()`                     | Time-series cross-validation          |
+| `milt_compare()`                | Side-by-side model comparison         |
+| `milt_grid_search()`            | Hyperparameter search via backtesting |
+| `milt_conformal()`              | Model-agnostic conformal intervals    |
+| `milt_ensemble()`               | Weighted model ensemble               |
+| `milt_local_model()`            | Fit any model independently per group |
 
 ## Model Names
 
-| Name              | Type          | Package  |
-|-------------------|---------------|----------|
-| `"auto_arima"`    | Classical     | forecast |
-| `"ets"`           | Classical     | forecast |
-| `"stl"`           | Classical     | forecast |
-| `"theta"`         | Classical     | forecast |
-| `"tbats"`         | Classical     | forecast |
-| `"prophet"`       | Classical     | prophet  |
-| `"croston"`       | Classical     | forecast |
-| `"naive"`         | Baseline      | —        |
-| `"xgboost"`       | ML            | xgboost  |
-| `"lightgbm"`      | ML            | lightgbm |
-| `"random_forest"` | ML            | ranger   |
-| `"elastic_net"`   | ML            | glmnet   |
-| `"svm"`           | ML            | e1071    |
-| `"knn"`           | ML            | —        |
-| `"nbeats"`        | Deep Learning | torch    |
-| `"nhits"`         | Deep Learning | torch    |
-| `"tcn"`           | Deep Learning | torch    |
-| `"tft"`           | Deep Learning | torch    |
-| `"patch_tst"`     | Deep Learning | torch    |
-| `"deepar"`        | Deep Learning | torch    |
+| Name                  | Type          | Package            |
+|-----------------------|---------------|--------------------|
+| `"naive"`             | Baseline      | —                  |
+| `"snaive"`            | Baseline      | —                  |
+| `"drift"`             | Baseline      | —                  |
+| `"mean"`              | Baseline      | —                  |
+| `"moving_average"`    | Baseline      | —                  |
+| `"auto_arima"`        | Classical     | forecast           |
+| `"ets"`               | Classical     | forecast           |
+| `"stl"`               | Classical     | forecast           |
+| `"theta"`             | Classical     | forecast           |
+| `"tbats"`             | Classical     | forecast           |
+| `"croston"`           | Classical     | forecast           |
+| `"prophet"`           | Classical     | prophet            |
+| `"xgboost"`           | ML            | xgboost            |
+| `"lightgbm"`          | ML            | lightgbm           |
+| `"random_forest"`     | ML            | ranger             |
+| `"elastic_net"`       | ML            | glmnet             |
+| `"svm"`               | ML            | e1071              |
+| `"knn"`               | ML            | —                  |
+| `"nbeats"`            | Deep Learning | torch              |
+| `"nhits"`             | Deep Learning | torch              |
+| `"tcn"`               | Deep Learning | torch              |
+| `"tft"`               | Deep Learning | torch              |
+| `"patch_tst"`         | Deep Learning | torch              |
+| `"deepar"`            | Deep Learning | torch              |
+| `"nlinear"`           | Deep Learning | torch              |
+| `"dlinear"`           | Deep Learning | torch              |
+| `"tide"`              | Deep Learning | torch              |
+| `"tsmixer"`           | Deep Learning | torch              |
+| `"darts_rnn"`         | Deep Learning | reticulate + Darts |
+| `"darts_transformer"` | Deep Learning | reticulate + Darts |
+| `"darts_nbeats"`      | Deep Learning | reticulate + Darts |
+
+## Filtering Models
+
+| Name               | Method                                        |
+|--------------------|-----------------------------------------------|
+| `"moving_average"` | Rolling-mean smoother                         |
+| `"kalman"`         | State-space smoothing via `stats::StructTS()` |
+| `"gp"`             | Gaussian Process smoother (RBF kernel)        |
+
+## Feature / Transform Steps
+
+| Function | Purpose |
+|----|----|
+| `milt_step_lag()` | Lag features |
+| `milt_step_rolling()` | Rolling-window statistics |
+| `milt_step_fourier()` | Fourier seasonal terms |
+| `milt_step_calendar()` | Calendar dummy features |
+| `milt_step_scale()` / `milt_step_unscale()` | Invertible normalisation (z-score/minmax/robust) |
+| `milt_step_boxcox()` / `milt_step_unboxcox()` | Invertible Box-Cox power transform |
+| `milt_step_diff()` / `milt_step_undiff()` | Invertible sequential lagged differencing |
+| `milt_step_map()` | Generic (optionally time-aware, invertible) elementwise transform |
 
 ## Anomaly Detectors
 
-| Name                 | Method                      |
-|----------------------|-----------------------------|
-| `"iqr"`              | IQR box-plot rule           |
-| `"stl"`              | STL decomposition residuals |
-| `"grubbs"`           | Grubbs extreme-value test   |
-| `"gesd"`             | Generalised ESD test        |
-| `"lof"`              | Local Outlier Factor        |
-| `"iforest"`          | Isolation Forest            |
-| `"autoencoder"`      | Deep learning autoencoder   |
-| `"ensemble"`         | Majority-vote combination   |
+| Name            | Method                      |
+|-----------------|-----------------------------|
+| `"iqr"`         | IQR box-plot rule           |
+| `"stl"`         | STL decomposition residuals |
+| `"grubbs"`      | Grubbs extreme-value test   |
+| `"gesd"`        | Generalised ESD test        |
+| `"lof"`         | Local Outlier Factor        |
+| `"iforest"`     | Isolation Forest            |
+| `"autoencoder"` | Deep learning autoencoder   |
+| `"ensemble"`    | Majority-vote combination   |
 
 ## Metrics
 
-| Function           | Description                         |
-|--------------------|-------------------------------------|
-| `milt_accuracy()`  | All metrics at once                 |
-| `milt_mae()`       | Mean Absolute Error                 |
-| `milt_mse()`       | Mean Squared Error                  |
-| `milt_rmse()`      | Root Mean Squared Error             |
-| `milt_mape()`      | Mean Absolute % Error               |
-| `milt_smape()`     | Symmetric MAPE                      |
-| `milt_mase()`      | Mean Abs Scaled Error               |
-| `milt_rmsse()`     | Root Mean Sq Scaled Error           |
-| `milt_r_squared()` | R²                                  |
-| `milt_crps()`      | Continuous Ranked Probability Score |
-| `milt_coverage()`  | Prediction interval coverage        |
-| `milt_pinball()`   | Pinball / quantile loss             |
-| `milt_winkler()`   | Winkler interval score              |
+| Function | Description |
+|----|----|
+| `milt_accuracy()` | Multiple metrics at once |
+| `milt_mae()` | Mean Absolute Error |
+| `milt_mse()` | Mean Squared Error |
+| `milt_rmse()` | Root Mean Squared Error |
+| `milt_mape()` | Mean Absolute % Error |
+| `milt_smape()` | Symmetric MAPE |
+| `milt_wmape()` | Weighted MAPE (robust to near-zero actuals) |
+| `milt_ope()` | Overall Percentage Error (of the totals) |
+| `milt_coefficient_of_variation()` | RMSE as a fraction of the mean |
+| `milt_marre()` | Mean Absolute Ranged Relative Error |
+| `milt_rmsle()` | Root Mean Squared Log Error |
+| `milt_mase()` | Mean Abs Scaled Error |
+| `milt_rmsse()` | Root Mean Sq Scaled Error |
+| `milt_mrae()` | Mean Relative Absolute Error (vs. a benchmark) |
+| `milt_r_squared()` | R² |
+| `milt_crps()` | Continuous Ranked Probability Score |
+| `milt_coverage()` | Prediction interval coverage |
+| `milt_pinball()` | Pinball / quantile loss |
+| `milt_winkler()` | Winkler interval score |
 
 ------------------------------------------------------------------------
 

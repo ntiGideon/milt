@@ -20,7 +20,19 @@ The refitted \code{MiltModel}, invisibly.
 Uses the model's existing hyperparameters but trains on a new series.
 Useful for rolling updates in production.
 }
+\examples{
+# Fit on the data available today, ship the model, then retrain the same
+# hyperparameters once next month's observations arrive.
+initial <- milt_series(AirPassengers[1:120], frequency = 12, start = c(1949, 1))
+m       <- milt_model("naive") |> milt_fit(initial)
+
+updated <- milt_series(AirPassengers[1:132], frequency = 12, start = c(1949, 1))
+m       <- milt_refit(m, updated)
+fct     <- milt_forecast(m, horizon = 12)
+}
 \seealso{
+\code{\link[=milt_fit]{milt_fit()}}, \code{\link[=milt_forecast]{milt_forecast()}}
+
 Other model:
 \code{\link[=milt_backtest]{milt_backtest()}},
 \code{\link[=milt_compare]{milt_compare()}},
