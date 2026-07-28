@@ -13,12 +13,16 @@ home:
 
 navbar:
   structure:
-    left: [intro, reference, articles, news]
+    left: [intro, reference, articles, book, news]
     right: [github]
   components:
+    book:
+      text: "Full Guide"
+      href: https://ntigideon.github.io/milt/documentation.html
     github:
       icon: fab fa-github
       href: https://github.com/ntiGideon/milt
+      aria-label: GitHub repository
 
 articles:
   - title: "Get started"
